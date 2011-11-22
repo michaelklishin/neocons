@@ -51,6 +51,7 @@
 (defn delete
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
-    (if (missing? status)
+    (if (or (missing? status)
+            (conflict? status))
       [nil status]
       [id  status])))
