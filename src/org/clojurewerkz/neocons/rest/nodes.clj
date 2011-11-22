@@ -52,5 +52,5 @@
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
     (if (missing? status)
-      nil
-      id)))
+      [nil status]
+      [id  status])))

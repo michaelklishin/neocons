@@ -52,13 +52,16 @@
 (deftest test-creating-and-deleting-a-node-with-properties
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :key "value" }
-        created-node (nodes/create :data data)
-        deleted-id   (nodes/delete (:id created-node))]
+        created-node        (nodes/create :data data)
+        [deleted-id status] (nodes/delete (:id created-node))]
     (is (= (:id created-node) deleted-id))
-    (is (nil? (nodes/get deleted-id)))))
+    (is (nil? (nodes/get deleted-id)))
+    (is (= 204 status))))
 
 (deftest test-attempting-to-delete-a-non-existing-node
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :key "value" }
-        deleted-id   (nodes/delete 237737737)]
-    (is (nil? deleted-id))))
+        [deleted-id status] (nodes/delete 237737737)]
+    (is (nil? deleted-id))
+    (is (= 404 status))))
+
