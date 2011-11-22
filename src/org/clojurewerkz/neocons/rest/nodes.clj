@@ -6,7 +6,7 @@
             [org.clojurewerkz.neocons.rest :as rest])
   (:use     [org.clojurewerkz.neocons.rest.statuses]
             [clojure.string :only [join]])
-  (:refer-clojure :exclude (find)))
+  (:refer-clojure :exclude (get)))
 
 ;;
 ;; Implementation
@@ -40,7 +40,7 @@
         location (:self payload)]
     (Node. (extract-id location) location data (:relationships payload))))
 
-(defn find
+(defn get
   [^long id]
   (let [{ :keys [status headers body] } (rest/GET (node-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
