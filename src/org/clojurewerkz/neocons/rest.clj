@@ -9,8 +9,12 @@
 ;;
 
 (defn GET
-  [^String uri]
-  (http/get uri))
+  [^String uri &{ :keys [body] :as options }]
+  (http/get uri (merge options { :accept :json, :throw-exceptions false })))
+
+(defn POST
+  [^String uri &{ :keys [body] :as options }]
+  (http/post uri (merge options { :accept :json, :body body, :throw-exceptions false })))
 
 
 
