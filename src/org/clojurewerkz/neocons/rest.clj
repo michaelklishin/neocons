@@ -16,6 +16,9 @@
   [^String uri &{ :keys [body] :as options }]
   (http/post uri (merge options { :accept :json, :body body, :throw-exceptions false })))
 
+(defn DELETE
+  [^String uri &{ :keys [body] :as options }]
+  (http/delete uri (merge options { :accept :json, :throw-exceptions false })))
 
 
 

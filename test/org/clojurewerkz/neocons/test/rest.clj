@@ -35,6 +35,24 @@
         fetched-node (nodes/find (:id created-node))]
     (is (= (:id created-node) (:id fetched-node)))))
 
+(deftest test-creating-and-immediately-accessing-a-node-with-properties
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [data         { :key "value" }
+        created-node (nodes/create :data data)
+        fetched-node (nodes/find (:id created-node))]
+    (is (= (:id created-node) (:id fetched-node)))
+    (is (= (:data created-node) data))))
+
+
 (deftest test-accessing-a-non-existing-node
   (neorest/connect! "http://localhost:7474/db/data/")
   (is (nil? (nodes/find 928398827))))
+
+
+(deftest test-creating-and-deleting-a-node-with-properties
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [data         { :key "value" }
+        created-node (nodes/create :data data)
+        deleted-id   (nodes/delete (:id created-node))]
+    (is (= (:id created-node) deleted-id))
+    (is (nil? (nodes/find deleted-id)))))

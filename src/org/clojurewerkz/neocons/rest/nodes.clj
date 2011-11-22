@@ -34,8 +34,8 @@
 ;;
 
 (defn create
-  [&{ :keys [data] :or { data (json/json-str {}) } }]
-  (let [{ :keys [status headers body] } (rest/POST (:node-uri rest/*endpoint*) :body data)
+  [&{ :keys [data] :or { data {} } }]
+  (let [{ :keys [status headers body] } (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
         payload  (json/read-json body true)
         location (:self payload)]
     (Node. (extract-id location) location data (:relationships payload))))
@@ -47,3 +47,10 @@
     (if (missing? status)
       nil
       (instantiate-node-from status headers payload id))))
+
+(defn delete
+  [^long id]
+  (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
+    (if (missing? status)
+      nil
+      id)))

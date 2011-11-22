@@ -14,6 +14,11 @@
   [^long status]
   (and (= status 404)))
 
+(defn conflict?
+  [^long status]
+  (and (= status 409)))
+
+
 (defn redirect?
   [^long status]
   (and (>= status 300)
