@@ -120,7 +120,7 @@
         result (relationships/all-for node)]
     (is (= 3 (count result)))))
 
-(deftest test-listing-all-relationships-of-specific-kind-on-a-node
+(deftest test-listing-all-relationships-of-specific-kind
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create node (nodes/create) :likes)
@@ -138,6 +138,14 @@
 (deftest test-listing-incoming-relationships-on-a-node-that-has-2-incoming-relationships
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
+        _      (relationships/create (nodes/create) node :friend)
+        _      (relationships/create (nodes/create) node :relative)
+        result (relationships/incoming-for node :types [:friend])]
+    (is (= 1 (count result)))))
+
+(deftest test-listing-incoming-relationships-of-specific-kind
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
         _      (relationships/create (nodes/create) node :links)
         _      (relationships/create (nodes/create) node :links)
         result (relationships/incoming-for node)]
@@ -153,5 +161,13 @@
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create node (nodes/create) :links)
-        result (relationships/all-for node)]
+        result (relationships/outgoing-for node)]
+    (is (= 1 (count result)))))
+
+(deftest test-listing-outgoing-relationships-of-specific-kind
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
+        _      (relationships/create node (nodes/create) :friend)
+        _      (relationships/create node (nodes/create) :relative)
+        result (relationships/outgoing-for node :types [:relative])]
     (is (= 1 (count result)))))
