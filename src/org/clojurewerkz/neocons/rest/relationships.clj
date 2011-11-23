@@ -22,12 +22,15 @@
   (str (:relationships-uri endpoint) "/" id))
 
 (defn- relationships-location-for
-  [^Neo4JEndpoint endpoint ^Node node kind]
-  (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind)))
+  [^Neo4JEndpoint endpoint ^Node node kind types]
+  (let [query-params (if types
+                       (str "/" (join "&" (map name types)))
+                       "")]
+    (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind) query-params)))
 
 (defn- relationships-for
-  [^Node node kind]
-  (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind))
+  [^Node node kind types]
+  (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind types))
         payload  (json/read-json body true)]
     (if (missing? status)
       nil
@@ -66,13 +69,13 @@
       [id  status])))
 
 (defn all-for
-  [^Node node]
-  (relationships-for node :all))
+  [^Node node &{ :keys [types] }]
+  (relationships-for node :all types))
 
 (defn incoming-for
-  [^Node node]
-  (relationships-for node :in))
+  [^Node node &{ :keys [types] }]
+  (relationships-for node :in types))
 
 (defn outgoing-for
-  [^Node node]
-  (relationships-for node :out))
+  [^Node node &{ :keys [types] }]
+  (relationships-for node :out types))
