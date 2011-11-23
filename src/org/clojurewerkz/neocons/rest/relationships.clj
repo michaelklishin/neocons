@@ -42,3 +42,12 @@
     (if (missing? status)
       nil
       (Relationship. id (:self payload) (:start payload) (:end payload) (:type payload) (:data payload)))))
+
+
+(defn delete
+  [^long id]
+  (let [{ :keys [status headers] } (rest/DELETE (rel-location-for rest/*endpoint* id))]
+    (if (or (missing? status)
+            (conflict? status))
+      [nil status]
+      [id  status])))

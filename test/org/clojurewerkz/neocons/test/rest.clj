@@ -61,8 +61,7 @@
 
 (deftest test-attempting-to-delete-a-non-existing-node
   (neorest/connect! "http://localhost:7474/db/data/")
-  (let [data         { :key "value" }
-        [deleted-id status] (nodes/delete 237737737)]
+  (let [[deleted-id status] (nodes/delete 237737737)]
     (is (nil? deleted-id))
     (is (= 404 status))))
 
@@ -90,3 +89,18 @@
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= (:data created-rel) (:data fetched-rel)))))
+
+(deftest ^{:focus true} test-creating-and-deleting-a-relationship-without-properties
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel  (relationships/create from-node to-node :links)
+        [deleted-id status] (relationships/delete (:id created-rel))]
+    (is (= (:id created-rel) deleted-id))
+    (is (= 204 status))))
+
+(deftest ^{:focus true} test-creating-and-deleting-a-non-existing-relationship
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [[deleted-id status] (relationships/delete 87238467666)]
+    (is (nil? deleted-id))
+    (is (= 404 status))))
