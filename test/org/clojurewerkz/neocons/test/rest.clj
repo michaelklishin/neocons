@@ -116,3 +116,9 @@
   (let [node   (nodes/create)
         result (relationships/incoming-for node)]
     (is (empty? result))))
+
+(deftest ^{:focus true} test-listing-outgoing-relationships-on-a-node-that-doesnt-have-any
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
+        result (relationships/outgoing-for node)]
+    (is (empty? result))))

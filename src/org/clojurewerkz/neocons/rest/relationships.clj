@@ -72,3 +72,7 @@
 (defn incoming-for
   [^Node node]
   (relationships-for node :in))
+
+(defn outgoing-for
+  [^Node node]
+  (relationships-for node :out))
