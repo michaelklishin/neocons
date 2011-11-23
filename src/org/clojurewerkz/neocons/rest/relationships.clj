@@ -17,14 +17,22 @@
 (defrecord Relationship
     [id location-uri start-uri end-uri type data])
 
-(defn rel-location-for
+(defn- rel-location-for
   [^Neo4JEndpoint endpoint ^long id]
   (str (:relationships-uri endpoint) "/" id))
 
-(defn relationships-location-for
+(defn- relationships-location-for
   [^Neo4JEndpoint endpoint ^Node node kind]
   (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind)))
 
+(defn- relationships-for
+  [^Node node kind]
+  (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind))
+        payload  (json/read-json body true)]
+    (if (missing? status)
+      nil
+      (map (fn [rel]
+             (Relationship. (extract-id (:self rel)) (:self rel) (:start rel) (:end rel) (:type rel) (:data rel))) payload))))
 
 
 ;;
@@ -59,9 +67,8 @@
 
 (defn all-for
   [^Node node]
-  (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node :all))
-        payload  (json/read-json body true)]
-    (if (missing? status)
-      nil
-      (map (fn [rel]
-             (Relationship. (extract-id (:self rel)) (:self rel) (:start rel) (:end rel) (:type rel) (:data rel))) payload))))
+  (relationships-for node :all))
+
+(defn incoming-for
+  [^Node node]
+  (relationships-for node :in))
