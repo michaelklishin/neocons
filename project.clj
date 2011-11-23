@@ -1,4 +1,4 @@
-(defproject org.clojurewerkz/neocons "1.0.0-SNAPSHOT"
+(defproject com.novemberain/neocons "1.0.0-SNAPSHOT"
   :description "Neocons is an experimental idiomatic Clojure client for the Neo4J REST API"
   :license { :name "Eclipse Public License" }
   :repositories {
