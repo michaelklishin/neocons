@@ -21,6 +21,11 @@
   [^Neo4JEndpoint endpoint ^long id]
   (str (:relationships-uri endpoint) "/" id))
 
+(defn relationships-location-for
+  [^Neo4JEndpoint endpoint ^Node node kind]
+  (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind)))
+
+
 
 ;;
 ;; API
@@ -29,7 +34,7 @@
 (defn create
   [^Node from ^Node to rel-type &{ :keys [data] :or { data {} } }]
   (let [{ :keys [status headers body] } (rest/POST (:create-relationship-uri from)
-                                                    :body (json/json-str { :to (:location-uri to) :type rel-type :data data }))
+                                                   :body (json/json-str { :to (:location-uri to) :type rel-type :data data }))
         payload  (json/read-json body true)
         location (:self payload)]
     (Relationship. (extract-id location) location (:start payload) (:end payload) (:type payload) (:data payload))))
@@ -51,3 +56,12 @@
             (conflict? status))
       [nil status]
       [id  status])))
+
+(defn all-for
+  [^Node node]
+  (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node :all))
+        payload  (json/read-json body true)]
+    (if (missing? status)
+      nil
+      (map (fn [rel]
+             (Relationship. (extract-id (:self rel)) (:self rel) (:start rel) (:end rel) (:type rel) (:data rel))) payload))))

@@ -104,3 +104,9 @@
   (let [[deleted-id status] (relationships/delete 87238467666)]
     (is (nil? deleted-id))
     (is (= 404 status))))
+
+(deftest ^{:focus true} test-listing-relationships-on-a-node-that-doesnt-have-any
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
+        result (relationships/all-for node)]
+    (is (empty? result))))
