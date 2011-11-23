@@ -1,4 +1,4 @@
-(ns org.clojurewerkz.neocons.rest.statuses)
+(ns clojurewerkz.neocons.rest.statuses)
 
 
 ;;

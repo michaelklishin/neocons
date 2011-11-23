@@ -1,7 +1,7 @@
-(ns org.clojurewerkz.neocons.test.rest
-  (:require [org.clojurewerkz.neocons.rest               :as neorest]
-            [org.clojurewerkz.neocons.rest.nodes         :as nodes]
-            [org.clojurewerkz.neocons.rest.relationships :as relationships])
+(ns clojurewerkz.neocons.test.rest
+  (:require [clojurewerkz.neocons.rest               :as neorest]
+            [clojurewerkz.neocons.rest.nodes         :as nodes]
+            [clojurewerkz.neocons.rest.relationships :as relationships])
   (:use [clojure.test]))
 
 

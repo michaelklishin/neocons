@@ -1,4 +1,4 @@
-(ns org.clojurewerkz.neocons.rest.helpers
+(ns clojurewerkz.neocons.rest.helpers
   (:import  [java.net URI URL]))
 
 

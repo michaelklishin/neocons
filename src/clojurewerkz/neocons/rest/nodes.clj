@@ -1,11 +1,11 @@
-(ns org.clojurewerkz.neocons.rest.nodes
+(ns clojurewerkz.neocons.rest.nodes
   (:import  [java.net URI URL]
-            [org.clojurewerkz.neocons.rest Neo4JEndpoint])
+            [clojurewerkz.neocons.rest Neo4JEndpoint])
   (:require [clj-http.client               :as http]
             [clojure.data.json             :as json]
-            [org.clojurewerkz.neocons.rest :as rest])
-  (:use     [org.clojurewerkz.neocons.rest.statuses]
-            [org.clojurewerkz.neocons.rest.helpers]
+            [clojurewerkz.neocons.rest :as rest])
+  (:use     [clojurewerkz.neocons.rest.statuses]
+            [clojurewerkz.neocons.rest.helpers]
             [clojure.string :only [join]])
   (:refer-clojure :exclude (get)))
 

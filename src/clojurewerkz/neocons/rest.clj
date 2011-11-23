@@ -1,8 +1,8 @@
-(ns org.clojurewerkz.neocons.rest
+(ns clojurewerkz.neocons.rest
   (:import  [java.net URI])
   (:require [clj-http.client   :as http]
             [clojure.data.json :as json])
-  (:use     [org.clojurewerkz.neocons.rest.statuses]))
+  (:use     [clojurewerkz.neocons.rest.statuses]))
 
 ;;
 ;; Implementation
