@@ -24,7 +24,7 @@
 
 
 (defrecord Neo4JEndpoint
-    [version node-uri node-index-uri relationship-index-uri relationship-types-uri batch-uri extensions-info-uri extensions reference-node-uri])
+    [version node-uri relationships-uri node-index-uri relationship-index-uri relationship-types-uri batch-uri extensions-info-uri extensions reference-node-uri])
 
 (def ^{ :dynamic true } *endpoint*)
 
@@ -48,8 +48,11 @@
     (let [{ :keys [status headers body] } (GET uri)]
       (if (success? status)
         (let [payload (json/read-json body true)]
-          (Neo4JEndpoint. (:neo4j_version payload)
-                          (:node          payload)
+          (Neo4JEndpoint. (:neo4j_version      payload)
+                          (:node               payload)
+                          (str uri (if (.endsWith uri "/")
+                                     "relationship"
+                                     "/relationship"))
                           (:node_index         payload)
                           (:relationship_index payload)
                           (:relationship_types payload)

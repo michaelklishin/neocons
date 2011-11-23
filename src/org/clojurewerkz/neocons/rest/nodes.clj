@@ -5,6 +5,7 @@
             [clojure.data.json             :as json]
             [org.clojurewerkz.neocons.rest :as rest])
   (:use     [org.clojurewerkz.neocons.rest.statuses]
+            [org.clojurewerkz.neocons.rest.helpers]
             [clojure.string :only [join]])
   (:refer-clojure :exclude (get)))
 
@@ -13,16 +14,11 @@
 ;;
 
 (defrecord Node
-    [id location-uri data relationships-uri])
-
-(defn extract-id
-  [^String location]
-  (let [url (URL. location)]
-    (Long/valueOf ^String (first (re-seq #"\d+$" (.getPath url))))))
+    [id location-uri data relationships-uri create-relationship-uri])
 
 (defn- instantiate-node-from
   ([^long status headers payload ^long id]
-     (Node. id (:self payload) (:data payload) (:all_relationships payload))))
+     (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
 
 (defn node-location-for
   [^Neo4JEndpoint endpoint ^long id]
@@ -38,7 +34,7 @@
   (let [{ :keys [status headers body] } (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
         payload  (json/read-json body true)
         location (:self payload)]
-    (Node. (extract-id location) location data (:relationships payload))))
+    (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload))))
 
 (defn get
   [^long id]

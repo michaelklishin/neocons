@@ -1,6 +1,7 @@
 (ns org.clojurewerkz.neocons.test.rest
-  (:require [org.clojurewerkz.neocons.rest       :as neorest]
-            [org.clojurewerkz.neocons.rest.nodes :as nodes])
+  (:require [org.clojurewerkz.neocons.rest               :as neorest]
+            [org.clojurewerkz.neocons.rest.nodes         :as nodes]
+            [org.clojurewerkz.neocons.rest.relationships :as relationships])
   (:use [clojure.test]))
 
 
@@ -65,3 +66,27 @@
     (is (nil? deleted-id))
     (is (= 404 status))))
 
+
+;;
+;; Working with relationships
+;;
+
+(deftest ^{:focus true} test-creating-and-immediately-accessing-a-relationship-without-properties
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel  (relationships/create from-node to-node :links)
+        fetched-rel  (relationships/get (:id created-rel))]
+    (is (= (:id created-rel) (:id fetched-rel)))
+    (is (= (:type created-rel) (:type fetched-rel)))))
+
+(deftest ^{:focus true} test-creating-and-immediately-accessing-a-relationship-with-properties
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [data         { :one "uno" :two "due" }
+        from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel  (relationships/create from-node to-node :links :data data)
+        fetched-rel  (relationships/get (:id created-rel))]
+    (is (= (:id created-rel) (:id fetched-rel)))
+    (is (= (:type created-rel) (:type fetched-rel)))
+    (is (= (:data created-rel) (:data fetched-rel)))))
