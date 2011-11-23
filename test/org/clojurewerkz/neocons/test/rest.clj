@@ -70,7 +70,7 @@
 ;; Working with relationships
 ;;
 
-(deftest ^{:focus true} test-creating-and-immediately-accessing-a-relationship-without-properties
+(deftest test-creating-and-immediately-accessing-a-relationship-without-properties
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
@@ -79,7 +79,7 @@
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))))
 
-(deftest ^{:focus true} test-creating-and-immediately-accessing-a-relationship-with-properties
+(deftest test-creating-and-immediately-accessing-a-relationship-with-properties
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :one "uno" :two "due" }
         from-node    (nodes/create)
@@ -90,7 +90,7 @@
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= (:data created-rel) (:data fetched-rel)))))
 
-(deftest ^{:focus true} test-creating-and-deleting-a-relationship-without-properties
+(deftest test-creating-and-deleting-a-relationship-without-properties
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
@@ -99,26 +99,50 @@
     (is (= (:id created-rel) deleted-id))
     (is (= 204 status))))
 
-(deftest ^{:focus true} test-creating-and-deleting-a-non-existing-relationship
+(deftest test-creating-and-deleting-a-non-existing-relationship
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [[deleted-id status] (relationships/delete 87238467666)]
     (is (nil? deleted-id))
     (is (= 404 status))))
 
-(deftest ^{:focus true} test-listing-all-relationships-on-a-node-that-doesnt-have-any
+(deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         result (relationships/all-for node)]
     (is (empty? result))))
 
-(deftest ^{:focus true} test-listing-incoming-relationships-on-a-node-that-doesnt-have-any
+(deftest test-listing-all-relationships-on-a-node-that-has-3-relationships
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
+        _      (relationships/create node (nodes/create) :links)
+        _      (relationships/create node (nodes/create) :links)
+        _      (relationships/create node (nodes/create) :links)
+        result (relationships/all-for node)]
+    (is (= 3 (count result)))))
+
+(deftest test-listing-incoming-relationships-on-a-node-that-doesnt-have-any
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         result (relationships/incoming-for node)]
     (is (empty? result))))
 
-(deftest ^{:focus true} test-listing-outgoing-relationships-on-a-node-that-doesnt-have-any
+(deftest test-listing-incoming-relationships-on-a-node-that-has-2-incoming-relationships
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
+        _      (relationships/create (nodes/create) node :links)
+        _      (relationships/create (nodes/create) node :links)
+        result (relationships/incoming-for node)]
+    (is (= 2 (count result)))))
+
+(deftest test-listing-outgoing-relationships-on-a-node-that-doesnt-have-any
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         result (relationships/outgoing-for node)]
     (is (empty? result))))
+
+(deftest test-listing-outgoing-relationships-on-a-node-that-has-1-outgoing-relationship
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [node   (nodes/create)
+        _      (relationships/create node (nodes/create) :links)
+        result (relationships/all-for node)]
+    (is (= 1 (count result)))))
