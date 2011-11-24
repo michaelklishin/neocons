@@ -79,6 +79,18 @@
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))))
 
+(deftest test-creating-the-same-relationship-without-properties-twice
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel   (relationships/create from-node to-node :links)
+        created-rel2  (relationships/create from-node to-node :links)
+        fetched-rel   (relationships/get (:id created-rel))]
+    (is (= (:id created-rel) (:id fetched-rel)))
+    (is (not (= (:id created-rel) (:id created-rel2))))
+    (is (= (:type created-rel) (:type fetched-rel)))
+    (is (= (:type created-rel) (:type created-rel2)))))
+
 (deftest test-creating-and-immediately-accessing-a-relationship-with-properties
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :one "uno" :two "due" }
