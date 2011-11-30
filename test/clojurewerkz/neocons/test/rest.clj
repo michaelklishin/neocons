@@ -183,3 +183,8 @@
         _      (relationships/create node (nodes/create) :relative)
         result (relationships/outgoing-for node :types [:relative])]
     (is (= 1 (count result)))))
+
+
+(deftest test-listing-of-relationship-types
+  (neorest/connect! "http://localhost:7474/db/data/")
+  (is (= ["links" "likes" "follows" "friend" "relative"] (relationships/all-types))))

@@ -79,3 +79,9 @@
 (defn outgoing-for
   [^Node node &{ :keys [types] }]
   (relationships-for node :out types))
+
+
+(defn all-types
+  []
+  (let [{ :keys [_ _  body] } (rest/GET (:relationship-types-uri rest/*endpoint*))]
+    (json/read-json body true)))
