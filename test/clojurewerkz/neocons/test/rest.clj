@@ -7,6 +7,9 @@
   (:use [clojure.test]))
 
 
+(neorest/connect! "http://localhost:7474/db/data/")
+
+
 ;;
 ;; Connections/Discovery
 ;;
@@ -33,13 +36,11 @@
 ;;
 
 (deftest test-creating-and-immediately-accessing-a-node-without-properties
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [created-node (nodes/create)
         fetched-node (nodes/get (:id created-node))]
     (is (= (:id created-node) (:id fetched-node)))))
 
 (deftest test-creating-and-immediately-accessing-a-node-with-properties
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :key "value" }
         created-node (nodes/create :data data)
         fetched-node (nodes/get (:id created-node))]
@@ -48,13 +49,11 @@
 
 
 (deftest test-accessing-a-non-existing-node
-  (neorest/connect! "http://localhost:7474/db/data/")
   (is (thrown? Exception
                (nodes/get 928398827))))
 
 
 (deftest test-creating-and-deleting-a-node-with-properties
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :key "value" }
         created-node (nodes/create :data data)
         [deleted-id status] (nodes/delete (:id created-node))]
@@ -62,7 +61,6 @@
     (is (= (:id created-node) deleted-id))))
 
 (deftest test-attempting-to-delete-a-non-existing-node
-  (neorest/connect! "http://localhost:7474/db/data/")
   (is (thrown? Exception
                (nodes/delete 237737737))))
 
@@ -73,7 +71,6 @@
 ;;
 
 (deftest test-creating-and-immediately-accessing-a-relationship-without-properties
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
         created-rel  (relationships/create from-node to-node :links)
@@ -82,7 +79,6 @@
     (is (= (:type created-rel) (:type fetched-rel)))))
 
 (deftest test-creating-the-same-relationship-without-properties-twice
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
         created-rel   (relationships/create from-node to-node :links)
@@ -94,7 +90,6 @@
     (is (= (:type created-rel) (:type created-rel2)))))
 
 (deftest test-creating-and-immediately-accessing-a-relationship-with-properties
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :one "uno" :two "due" }
         from-node    (nodes/create)
         to-node      (nodes/create)
@@ -105,7 +100,6 @@
     (is (= (:data created-rel) (:data fetched-rel)))))
 
 (deftest test-creating-and-deleting-a-relationship-without-properties
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
         created-rel  (relationships/create from-node to-node :links)
@@ -113,18 +107,15 @@
     (is (= 204 status))))
 
 (deftest test-creating-and-deleting-a-non-existing-relationship
-  (neorest/connect! "http://localhost:7474/db/data/")
   (is (thrown? slingshot.Stone
                (relationships/delete 87238467666))))
 
 (deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         result (relationships/all-for node)]
     (is (empty? result))))
 
 (deftest test-listing-all-relationships-on-a-node-that-has-3-relationships
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create node (nodes/create) :links)
         _      (relationships/create node (nodes/create) :links)
@@ -133,7 +124,6 @@
     (is (= 3 (count result)))))
 
 (deftest test-listing-all-relationships-of-specific-kind
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create node (nodes/create) :likes)
         _      (relationships/create node (nodes/create) :links)
@@ -142,13 +132,11 @@
     (is (= 2 (count result)))))
 
 (deftest test-listing-incoming-relationships-on-a-node-that-doesnt-have-any
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         result (relationships/incoming-for node)]
     (is (empty? result))))
 
 (deftest test-listing-incoming-relationships-on-a-node-that-has-2-incoming-relationships
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create (nodes/create) node :friend)
         _      (relationships/create (nodes/create) node :relative)
@@ -156,7 +144,6 @@
     (is (= 1 (count result)))))
 
 (deftest test-listing-incoming-relationships-of-specific-kind
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create (nodes/create) node :links)
         _      (relationships/create (nodes/create) node :links)
@@ -164,20 +151,17 @@
     (is (= 2 (count result)))))
 
 (deftest test-listing-outgoing-relationships-on-a-node-that-doesnt-have-any
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         result (relationships/outgoing-for node)]
     (is (empty? result))))
 
 (deftest test-listing-outgoing-relationships-on-a-node-that-has-1-outgoing-relationship
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create node (nodes/create) :links)
         result (relationships/outgoing-for node)]
     (is (= 1 (count result)))))
 
 (deftest test-listing-outgoing-relationships-of-specific-kind
-  (neorest/connect! "http://localhost:7474/db/data/")
   (let [node   (nodes/create)
         _      (relationships/create node (nodes/create) :friend)
         _      (relationships/create node (nodes/create) :relative)
@@ -186,5 +170,11 @@
 
 
 (deftest test-listing-of-relationship-types
-  (neorest/connect! "http://localhost:7474/db/data/")
   (is (= ["links" "likes" "follows" "friend" "relative"] (relationships/all-types))))
+
+(deftest test-updating-a-single-node-property
+  (let [node         (nodes/create :data { :age 26 })
+        fetched-node (nodes/get (:id node))
+        new-value    (nodes/set-property (:id node) :age 27)
+        updated-node (nodes/get (:id fetched-node))]
+    (is (= new-value (-> updated-node :data :age)))))

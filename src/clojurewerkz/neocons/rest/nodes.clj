@@ -1,6 +1,7 @@
 (ns clojurewerkz.neocons.rest.nodes
   (:import  [java.net URI URL]
-            [clojurewerkz.neocons.rest Neo4JEndpoint])
+            [clojurewerkz.neocons.rest Neo4JEndpoint]
+            [clojure.lang Named])
   (:require [clj-http.client               :as http]
             [clojure.data.json             :as json]
             [clojurewerkz.neocons.rest :as rest])
@@ -24,6 +25,10 @@
   [^Neo4JEndpoint endpoint ^long id]
   (str (:node-uri endpoint) "/" id))
 
+(defn node-property-update-location-for
+  [^Neo4JEndpoint endpoint ^long id prop]
+  (str (:node-uri endpoint) "/" id "/properties/" (name prop)))
+
 
 ;;
 ;; API
@@ -46,3 +51,8 @@
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
     [id  status]))
+
+(defn set-property
+  [^long id prop value]
+  (rest/PUT (node-property-update-location-for rest/*endpoint* id prop) :body (str value))
+  value)
