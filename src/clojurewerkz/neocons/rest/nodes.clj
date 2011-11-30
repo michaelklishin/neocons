@@ -40,14 +40,9 @@
   [^long id]
   (let [{ :keys [status headers body] } (rest/GET (node-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
-    (if (missing? status)
-      nil
-      (instantiate-node-from status headers payload id))))
+    (instantiate-node-from status headers payload id)))
 
 (defn delete
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
-    (if (or (missing? status)
-            (conflict? status))
-      [nil status]
-      [id  status])))
+    [id  status]))

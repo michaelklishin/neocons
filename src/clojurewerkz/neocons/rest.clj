@@ -10,15 +10,15 @@
 
 (defn GET
   [^String uri &{ :keys [body] :as options }]
-  (http/get uri (merge options { :accept :json, :throw-exceptions false })))
+  (http/get uri (merge options { :accept :json })))
 
 (defn POST
   [^String uri &{ :keys [body] :as options }]
-  (http/post uri (merge options { :accept :json, :body body, :throw-exceptions false })))
+  (http/post uri (merge options { :accept :json, :body body })))
 
 (defn DELETE
   [^String uri &{ :keys [body] :as options }]
-  (http/delete uri (merge options { :accept :json, :throw-exceptions false })))
+  (http/delete uri (merge options { :accept :json })))
 
 
 

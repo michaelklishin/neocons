@@ -1,7 +1,9 @@
 (ns clojurewerkz.neocons.test.rest
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.relationships :as relationships])
+            [clojurewerkz.neocons.rest.relationships :as relationships]
+            [slingshot.slingshot :as slingshot])
+  (:import [slingshot Stone])
   (:use [clojure.test]))
 
 
@@ -47,23 +49,23 @@
 
 (deftest test-accessing-a-non-existing-node
   (neorest/connect! "http://localhost:7474/db/data/")
-  (is (nil? (nodes/get 928398827))))
+  (is (thrown? Exception
+               (nodes/get 928398827))))
 
 
 (deftest test-creating-and-deleting-a-node-with-properties
   (neorest/connect! "http://localhost:7474/db/data/")
   (let [data         { :key "value" }
-        created-node        (nodes/create :data data)
+        created-node (nodes/create :data data)
         [deleted-id status] (nodes/delete (:id created-node))]
-    (is (= (:id created-node) deleted-id))
-    (is (nil? (nodes/get deleted-id)))
-    (is (= 204 status))))
+    (is (= 204 status))
+    (is (= (:id created-node) deleted-id))))
 
 (deftest test-attempting-to-delete-a-non-existing-node
   (neorest/connect! "http://localhost:7474/db/data/")
-  (let [[deleted-id status] (nodes/delete 237737737)]
-    (is (nil? deleted-id))
-    (is (= 404 status))))
+  (is (thrown? Exception
+               (nodes/delete 237737737))))
+
 
 
 ;;
@@ -108,14 +110,12 @@
         to-node      (nodes/create)
         created-rel  (relationships/create from-node to-node :links)
         [deleted-id status] (relationships/delete (:id created-rel))]
-    (is (= (:id created-rel) deleted-id))
     (is (= 204 status))))
 
 (deftest test-creating-and-deleting-a-non-existing-relationship
   (neorest/connect! "http://localhost:7474/db/data/")
-  (let [[deleted-id status] (relationships/delete 87238467666)]
-    (is (nil? deleted-id))
-    (is (= 404 status))))
+  (is (thrown? slingshot.Stone
+               (relationships/delete 87238467666))))
 
 (deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
   (neorest/connect! "http://localhost:7474/db/data/")
