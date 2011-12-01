@@ -71,6 +71,11 @@
         fetched-data (nodes/get-properties (:id created-node))]
     (is (= data fetched-data))))
 
+(deftest test-creating-and-getting-empty-properties-of-one-node
+  (let [created-node (nodes/create)
+        fetched-data (nodes/get-properties (:id created-node))]
+    (is (= {} fetched-data))))
+
 
 
 
