@@ -43,12 +43,14 @@
 ;;
 
 (defn create
-  [^Node from ^Node to rel-type &{ :keys [data] :or { data {} } }]
-  (let [{ :keys [status headers body] } (rest/POST (:create-relationship-uri from)
-                                                   :body (json/json-str { :to (:location-uri to) :type rel-type :data data }))
-        payload  (json/read-json body true)
-        location (:self payload)]
-    (Relationship. (extract-id location) location (:start payload) (:end payload) (:type payload) (:data payload))))
+  ([^Node from ^Node to rel-type]
+     (create from to rel-type {}))
+  ([^Node from ^Node to rel-type data]
+     (let [{ :keys [status headers body] } (rest/POST (:create-relationship-uri from)
+                                                      :body (json/json-str { :to (:location-uri to) :type rel-type :data data }))
+           payload  (json/read-json body true)
+           location (:self payload)]
+       (Relationship. (extract-id location) location (:start payload) (:end payload) (:type payload) (:data payload)))))
 
 
 (defn get

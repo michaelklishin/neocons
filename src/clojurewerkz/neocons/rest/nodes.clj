@@ -39,11 +39,13 @@
 ;;
 
 (defn create
-  [&{ :keys [data] :or { data {} } }]
-  (let [{ :keys [status headers body] } (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
-        payload  (json/read-json body true)
-        location (:self payload)]
-    (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload))))
+  ([]
+     (create {}))
+  ([data]
+     (let [{ :keys [status headers body] } (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
+           payload  (json/read-json body true)
+           location (:self payload)]
+       (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload)))))
 
 (defn get
   [^long id]

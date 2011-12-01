@@ -42,7 +42,7 @@
 
 (deftest test-creating-and-immediately-accessing-a-node-with-properties
   (let [data         { :key "value" }
-        created-node (nodes/create :data data)
+        created-node (nodes/create data)
         fetched-node (nodes/get (:id created-node))]
     (is (= (:id created-node) (:id fetched-node)))
     (is (= (:data created-node) data))))
@@ -55,7 +55,7 @@
 
 (deftest test-creating-and-deleting-a-node-with-properties
   (let [data         { :key "value" }
-        created-node (nodes/create :data data)
+        created-node (nodes/create data)
         [deleted-id status] (nodes/delete (:id created-node))]
     (is (= 204 status))
     (is (= (:id created-node) deleted-id))))
@@ -93,7 +93,7 @@
   (let [data         { :one "uno" :two "due" }
         from-node    (nodes/create)
         to-node      (nodes/create)
-        created-rel  (relationships/create from-node to-node :links :data data)
+        created-rel  (relationships/create from-node to-node :links data)
         fetched-rel  (relationships/get (:id created-rel))]
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))
@@ -173,7 +173,7 @@
   (is (= ["links" "likes" "follows" "friend" "relative"] (relationships/all-types))))
 
 (deftest test-updating-a-single-node-property
-  (let [node         (nodes/create :data { :age 26 })
+  (let [node         (nodes/create { :age 26 })
         fetched-node (nodes/get (:id node))
         new-value    (nodes/set-property (:id node) :age 27)
         updated-node (nodes/get (:id fetched-node))]
@@ -181,7 +181,7 @@
 
 
 (deftest test-updating-node-properties
-  (let [node         (nodes/create :data { :age 26 })
+  (let [node         (nodes/create { :age 26 })
         fetched-node (nodes/get (:id node))
         new-data    (nodes/update (:id node) { :age 27 :gender "male" })
         updated-node (nodes/get (:id fetched-node))]
