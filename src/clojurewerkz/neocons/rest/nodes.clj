@@ -56,7 +56,7 @@
 (defn delete
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
-    [id  status]))
+    [id status]))
 
 (defn set-property
   [^long id prop value]
@@ -72,6 +72,11 @@
   [^long id]
   (let [{ :keys [status headers body] } (rest/GET (node-properties-location-for rest/*endpoint* id))]
     (case status
-     200 (json/read-json body true)
-     204 {}
-     (throw (Exception. (str "Unexpected response from the server: " status ", expected 200 or 204"))))))
+      200 (json/read-json body true)
+      204 {}
+      (throw (Exception. (str "Unexpected response from the server: " status ", expected 200 or 204"))))))
+
+(defn delete-properties
+  [^long id]
+  (let [{ :keys [status headers] }(rest/PUT (node-properties-location-for rest/*endpoint* id))]
+    [id status]))

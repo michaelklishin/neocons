@@ -77,6 +77,14 @@
     (is (= {} fetched-data))))
 
 
+(deftest test-deleting-all-properties-from-a-node
+  (let [data         { :key "value" }
+        created-node (nodes/create data)
+        fetched-data (nodes/get-properties (:id created-node))]
+    (is (= data fetched-data))
+    (nodes/delete-properties (:id created-node))
+    (is (= {} (nodes/get-properties (:id created-node))))))
+
 
 
 ;;
