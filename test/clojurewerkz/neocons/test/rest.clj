@@ -178,3 +178,11 @@
         new-value    (nodes/set-property (:id node) :age 27)
         updated-node (nodes/get (:id fetched-node))]
     (is (= new-value (-> updated-node :data :age)))))
+
+
+(deftest test-updating-node-properties
+  (let [node         (nodes/create :data { :age 26 })
+        fetched-node (nodes/get (:id node))
+        new-data    (nodes/update (:id node) { :age 27 :gender "male" })
+        updated-node (nodes/get (:id fetched-node))]
+    (is (= new-data (-> updated-node :data)))))

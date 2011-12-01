@@ -25,9 +25,13 @@
   [^Neo4JEndpoint endpoint ^long id]
   (str (:node-uri endpoint) "/" id))
 
+(defn node-properties-update-location-for
+  [^Neo4JEndpoint endpoint ^long id]
+  (str (:node-uri endpoint) "/" id "/properties"))
+
 (defn node-property-update-location-for
   [^Neo4JEndpoint endpoint ^long id prop]
-  (str (:node-uri endpoint) "/" id "/properties/" (name prop)))
+  (str (node-properties-update-location-for endpoint id) "/" (name prop)))
 
 
 ;;
@@ -54,5 +58,10 @@
 
 (defn set-property
   [^long id prop value]
-  (rest/PUT (node-property-update-location-for rest/*endpoint* id prop) :body (str value))
+  (rest/PUT (node-property-update-location-for rest/*endpoint* id prop) :body (json/json-str value))
   value)
+
+(defn update
+  [^long id data]
+  (rest/PUT (node-properties-update-location-for rest/*endpoint* id) :body (json/json-str data))
+  data)
