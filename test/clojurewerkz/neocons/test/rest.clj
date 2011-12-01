@@ -65,6 +65,14 @@
                (nodes/delete 237737737))))
 
 
+(deftest test-creating-and-getting-properties-of-one-node
+  (let [data         { :key "value" }
+        created-node (nodes/create data)
+        fetched-data (nodes/get-properties (:id created-node))]
+    (is (= data fetched-data))))
+
+
+
 
 ;;
 ;; Working with relationships

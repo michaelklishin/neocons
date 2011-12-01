@@ -25,13 +25,13 @@
   [^Neo4JEndpoint endpoint ^long id]
   (str (:node-uri endpoint) "/" id))
 
-(defn node-properties-update-location-for
+(defn node-properties-location-for
   [^Neo4JEndpoint endpoint ^long id]
   (str (:node-uri endpoint) "/" id "/properties"))
 
-(defn node-property-update-location-for
+(defn node-property-location-for
   [^Neo4JEndpoint endpoint ^long id prop]
-  (str (node-properties-update-location-for endpoint id) "/" (name prop)))
+  (str (node-properties-location-for endpoint id) "/" (name prop)))
 
 
 ;;
@@ -60,10 +60,18 @@
 
 (defn set-property
   [^long id prop value]
-  (rest/PUT (node-property-update-location-for rest/*endpoint* id prop) :body (json/json-str value))
+  (rest/PUT (node-property-location-for rest/*endpoint* id prop) :body (json/json-str value))
   value)
 
 (defn update
   [^long id data]
-  (rest/PUT (node-properties-update-location-for rest/*endpoint* id) :body (json/json-str data))
+  (rest/PUT (node-properties-location-for rest/*endpoint* id) :body (json/json-str data))
   data)
+
+(defn get-properties
+  [^long id]
+  (let [{ :keys [status headers body] } (rest/GET (node-properties-location-for rest/*endpoint* id))]
+    (case status
+     200 (json/read-json body true)
+     204 {}
+     (throw (Exception. (str "Unexpected response from the server: " status ", expected 200 or 204"))))))
