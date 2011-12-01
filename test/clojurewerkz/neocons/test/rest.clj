@@ -77,6 +77,22 @@
     (is (= {} fetched-data))))
 
 
+(deftest test-updating-a-single-node-property
+  (let [node         (nodes/create { :age 26 })
+        fetched-node (nodes/get (:id node))
+        new-value    (nodes/set-property (:id node) :age 27)
+        updated-node (nodes/get (:id fetched-node))]
+    (is (= new-value (-> updated-node :data :age)))))
+
+
+(deftest test-updating-node-properties
+  (let [node         (nodes/create { :age 26 })
+        fetched-node (nodes/get (:id node))
+        new-data    (nodes/update (:id node) { :age 27 :gender "male" })
+        updated-node (nodes/get (:id fetched-node))]
+    (is (= new-data (-> updated-node :data)))))
+
+
 (deftest test-deleting-all-properties-from-a-node
   (let [data         { :key "value" }
         created-node (nodes/create data)
@@ -193,17 +209,3 @@
 (deftest test-listing-of-relationship-types
   (is (= ["links" "likes" "follows" "friend" "relative"] (relationships/all-types))))
 
-(deftest test-updating-a-single-node-property
-  (let [node         (nodes/create { :age 26 })
-        fetched-node (nodes/get (:id node))
-        new-value    (nodes/set-property (:id node) :age 27)
-        updated-node (nodes/get (:id fetched-node))]
-    (is (= new-value (-> updated-node :data :age)))))
-
-
-(deftest test-updating-node-properties
-  (let [node         (nodes/create { :age 26 })
-        fetched-node (nodes/get (:id node))
-        new-data    (nodes/update (:id node) { :age 27 :gender "male" })
-        updated-node (nodes/get (:id fetched-node))]
-    (is (= new-data (-> updated-node :data)))))
