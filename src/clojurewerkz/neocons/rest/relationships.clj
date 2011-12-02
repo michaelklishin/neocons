@@ -28,6 +28,14 @@
                        "")]
     (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind) query-params)))
 
+(defn rel-properties-location-for
+  [^Neo4JEndpoint endpoint ^long id]
+  (str (:relationships-uri endpoint) "/" id "/properties"))
+
+(defn rel-property-location-for
+  [^Neo4JEndpoint endpoint ^long id prop]
+  (str (rel-properties-location-for endpoint id) "/" (name prop)))
+
 (defn- relationships-for
   [^Node node kind types]
   (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind types))
@@ -69,6 +77,20 @@
             (conflict? status))
       [nil status]
       [id  status])))
+
+
+(defn update
+  [^long id data]
+  (rest/PUT (rel-properties-location-for rest/*endpoint* id) :body (json/json-str data))
+  data)
+
+
+(defn delete-property
+  [^long id prop]
+  (rest/DELETE (rel-property-location-for rest/*endpoint* id prop))
+  nil)
+
+
 
 (defn all-for
   [^Node node &{ :keys [types] }]

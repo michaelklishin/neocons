@@ -207,5 +207,28 @@
 
 
 (deftest test-listing-of-relationship-types
-  (is (= ["links" "likes" "follows" "friend" "relative"] (relationships/all-types))))
+  (is (= (sort ["links" "likes" "follows" "friend" "relative" "loves"]) (sort (relationships/all-types)))))
 
+
+(deftest test-updating-relationship-properties
+  (let [data         { :one "uno" :two "due" }
+        from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel  (relationships/create from-node to-node :links data)
+        new-data     (relationships/update (:id created-rel) { :one "eine" :two "deux" })
+        fetched-rel  (relationships/get (:id created-rel))]
+    (is (= (:id created-rel) (:id fetched-rel)))
+    (is (= (:type created-rel) (:type fetched-rel)))
+    (is (= new-data (:data fetched-rel)))))
+
+
+(deftest test-deleting-a-specific-relationship-property
+  (let [data         { :cost "high" :legendary true }
+        from-node    (nodes/create { :name "Romeo" })
+        to-node      (nodes/create { :name "Juliet" })
+        created-rel  (relationships/create from-node to-node :loves data)
+        _            (relationships/delete-property (:id created-rel) :cost)
+        fetched-rel  (relationships/get (:id created-rel))]
+    (is (= (:id created-rel) (:id fetched-rel)))
+    (is (= (:type created-rel) (:type fetched-rel)))
+    (is (= { :legendary true } (:data fetched-rel)))))
