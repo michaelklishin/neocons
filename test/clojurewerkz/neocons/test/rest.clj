@@ -253,7 +253,6 @@
 ;;
 
 (deftest test-create-a-new-node-index-with-default-configuration
-  (println (:node-index-uri neorest/*endpoint*))
   (let [name "node-index-1-default-configuration"]
     (nodes/create-index name)))
 
@@ -261,3 +260,21 @@
   (let [name "node-index-2"
         conf { :type "fulltext" :provider "lucene" }]
     (nodes/create-index name conf)))
+
+(deftest test-listing-node-indexes
+  (let [name "node-index-3"
+        idx  (nodes/create-index name)
+        list (nodes/all-indexes)]
+    (is (some (fn [i]
+                (= name (:name i))) list))))
+
+(deftest test-listing-node-indexes-with-empty-results
+  (doseq [idx (map :name (nodes/all-indexes))]
+    (nodes/delete-index idx))
+  (is (empty? (nodes/all-indexes))))
+
+(deftest test-creating-and-immediately-deleting-a-node-index
+  (let [name "node-index-4-default-configuration"
+        idx  (nodes/create-index name)]
+    (is (= name (:name idx)))
+    (nodes/delete-index name)))

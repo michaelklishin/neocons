@@ -36,6 +36,11 @@
   [^Neo4JEndpoint endpoint ^long id prop]
   (str (node-properties-location-for endpoint id) "/" (name prop)))
 
+(defn node-index-location-for
+  [^Neo4JEndpoint endpoint idx]
+  (str (:node-index-uri endpoint) "/" (name idx)))
+
+
 
 ;;
 ;; API
@@ -86,11 +91,25 @@
 
 
 (defn create-index
-  ([name]
-     (let [{ :keys [_ _ body] } (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str { :name name }))
+  ([s]
+     (let [{ :keys [body] } (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str { :name (name s) }))
            payload (json/read-json body true)]
-       (Index. name (:template payload) "lucene" "exact")))
-  ([name configuration]
-     (let [{ :keys [_ _ body] }(rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge { :name name } configuration)))
+       (Index. (name s) (:template payload) "lucene" "exact")))
+  ([s configuration]
+     (let [{ :keys [body] }(rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge { :name (name s) } configuration)))
            payload (json/read-json body true)]
-       (Index. name (:template payload) (:provider configuration) (:type configuration)))))
+       (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
+
+(defn delete-index
+  [s]
+  (let [{ :keys [status]} (rest/DELETE (node-index-location-for rest/*endpoint* s))]
+    [s status]))
+
+
+(defn all-indexes
+  []
+  (let [{ :keys [status body] } (rest/GET (:node-index-uri rest/*endpoint*))]
+    (if (= 204 (long status))
+      []
+      (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
+           (json/read-json body true)))))
