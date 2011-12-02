@@ -34,19 +34,19 @@
 
 (defn node-property-location-for
   [^Neo4JEndpoint endpoint ^long id prop]
-  (str (node-properties-location-for endpoint id) "/" (name prop)))
+  (str (node-properties-location-for endpoint id) "/" (encode prop)))
 
 (defn node-index-location-for
   [^Neo4JEndpoint endpoint idx]
-  (str (:node-index-uri endpoint) "/" (name idx)))
+  (str (:node-index-uri endpoint) "/" (encode idx)))
 
 (defn node-in-index-location-for
   ([^Neo4JEndpoint endpoint ^long id idx]
-     (str (:node-index-uri endpoint) "/" (name idx) "/" id))
+     (str (:node-index-uri endpoint) "/" (encode idx) "/" id))
   ([^Neo4JEndpoint endpoint ^long id idx key]
-     (str (:node-index-uri endpoint) "/" (name idx) "/" (name key) "/" id))
+     (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" id))
   ([^Neo4JEndpoint endpoint id idx key value]
-     (str (:node-index-uri endpoint) "/" (name idx) "/" (name key) "/" (str value) "/" id)))
+     (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
 
 
 

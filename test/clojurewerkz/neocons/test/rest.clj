@@ -268,11 +268,6 @@
     (is (some (fn [i]
                 (= name (:name i))) list))))
 
-(deftest test-listing-node-indexes-with-empty-results
-  (doseq [idx (map :name (nodes/all-indexes))]
-    (nodes/delete-index idx))
-  (is (empty? (nodes/all-indexes))))
-
 (deftest test-creating-and-immediately-deleting-a-node-index
   (let [name "node-index-4-default-configuration"
         idx  (nodes/create-index name)]
@@ -294,7 +289,7 @@
     (nodes/delete-from-index (:id home) (:name idx))))
 
 (deftest test-remove-a-node-and-key-from-index
-  (let [idx  (nodes/create-index "uris")
+  (let [idx  (nodes/create-index "uris, urls and so on")
         uri  "http://arstechnica.com"
         home (nodes/create { :uri uri })]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
