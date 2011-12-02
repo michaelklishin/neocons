@@ -113,3 +113,11 @@
       []
       (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
            (json/read-json body true)))))
+
+
+(defn add-to-index
+  [^long id idx key value]
+  (let [body     (json/json-str { :key key :value value :uri (node-location-for rest/*endpoint* id) })
+        { :keys [status headers body] } (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
+        payload  (json/read-json body true)]
+    (instantiate-node-from status headers payload id)))

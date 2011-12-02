@@ -278,3 +278,10 @@
         idx  (nodes/create-index name)]
     (is (= name (:name idx)))
     (nodes/delete-index name)))
+
+
+(deftest test-adding-a-node-to-index
+  (let [idx  (nodes/create-index "uris")
+        uri  "http://arstechnica.com"
+        home (nodes/create { :uri uri })]
+    (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
