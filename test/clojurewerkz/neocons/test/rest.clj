@@ -48,7 +48,7 @@
     (is (= (:data created-node) data))))
 
 
-(deftest test-accessing-a-non-existing-node
+(deftest test-accessing-a-non-existent-node
   (is (thrown? Exception
                (nodes/get 928398827))))
 
@@ -60,7 +60,7 @@
     (is (= 204 status))
     (is (= (:id created-node) deleted-id))))
 
-(deftest test-attempting-to-delete-a-non-existing-node
+(deftest test-attempting-to-delete-a-non-existent-node
   (is (thrown? Exception
                (nodes/delete 237737737))))
 
@@ -143,7 +143,7 @@
         [deleted-id status] (relationships/delete (:id created-rel))]
     (is (= 204 status))))
 
-(deftest test-creating-and-deleting-a-non-existing-relationship
+(deftest test-creating-and-deleting-a-non-existent-relationship
   (is (thrown? slingshot.Stone
                (relationships/delete 87238467666))))
 
@@ -232,3 +232,17 @@
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= { :legendary true } (:data fetched-rel)))))
+
+
+(deftest test-deleting-a-non-existent-relationship-property
+  (let [data         { :cost "high" :legendary true }
+        from-node    (nodes/create { :name "Romeo" })
+        to-node      (nodes/create { :name "Juliet" })
+        created-rel  (relationships/create from-node to-node :loves data)]
+    (is (thrown? Exception
+                 (relationships/delete-property (:id created-rel) :a-non-existent-rel-property)))))
+
+
+(deftest test-deleting-a-property-on-non-existent-relationship
+  (is (thrown? Exception
+               (relationships/delete-property 8283787287 :a-non-existent-rel-property))))
