@@ -301,7 +301,7 @@
     (nodes/add-to-index (:id home) (:name idx) "lat" 20.0)
     (nodes/delete-from-index (:id home) (:name idx) "lat" 20.0)))
 
-(deftest test-finding-nodes-using-indexes
+(deftest test-finding-nodes-using-an-index
   (let [node1 (nodes/create { :name "Wired" })
         node2 (nodes/create { :name "Craigslist" })
         url1  "http://wired.com"
