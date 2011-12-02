@@ -314,3 +314,16 @@
     (let [ids (map :id (nodes/find (:name idx) :url url1))]
       (is (some (fn [id]
                   (= id (:id node1))) ids)))))
+
+
+(deftest test-finding-nodes-using-full-text-search-queries-over-index
+  (let [puma  (nodes/create { :name "Puma"  :hq-location "Herzogenaurach, Germany"})
+        apple (nodes/create { :name "Apple" :hq-location "Cupertino, CA, USA"})
+        idx   (nodes/create-index "companies")]
+    (nodes/delete-from-index (:id puma)  (:name idx))
+    (nodes/delete-from-index (:id apple) (:name idx))
+    (nodes/add-to-index (:id puma)  (:name idx) "country" "Germany")
+    (nodes/add-to-index (:id apple) (:name idx) "country" "United States of America")
+    (let [ids (map :id (nodes/query (:name idx) "country:Germany"))]
+      (is (some (fn [id]
+                  (= id (:id puma))) ids)))))

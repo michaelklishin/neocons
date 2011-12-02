@@ -8,7 +8,7 @@
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojure.string :only [join]])
-  (:refer-clojure :exclude (get)))
+  (:refer-clojure :exclude (get find)))
 
 ;;
 ;; Implementation
@@ -21,7 +21,10 @@
     [^String name ^String template ^String provider ^String type])
 
 (defn- instantiate-node-from
-  ([^long status headers payload ^long id]
+  ([^long status payload]
+     (let [id (extract-id (:self payload))]
+       (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
+  ([^long status payload ^long id]
      (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
 
 (defn node-location-for
@@ -68,9 +71,9 @@
 
 (defn get
   [^long id]
-  (let [{ :keys [status headers body] } (rest/GET (node-location-for rest/*endpoint* id))
+  (let [{ :keys [status body] } (rest/GET (node-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
-    (instantiate-node-from status headers payload id)))
+    (instantiate-node-from status payload id)))
 
 (defn delete
   [^long id]
@@ -129,9 +132,9 @@
 (defn add-to-index
   [^long id idx key value]
   (let [body     (json/json-str { :key key :value value :uri (node-location-for rest/*endpoint* id) })
-        { :keys [status headers body] } (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
+        { :keys [status body] } (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
         payload  (json/read-json body true)]
-    (instantiate-node-from status headers payload id)))
+    (instantiate-node-from status payload id)))
 
 (defn delete-from-index
   ([^long id idx]
@@ -147,10 +150,10 @@
 
 (defn fetch-from
   [^String uri]
-  (let [{ :keys [status headers body] } (rest/GET uri)
+  (let [{ :keys [status body] } (rest/GET uri)
         payload (json/read-json body true)
         id      (extract-id uri)]
-    (instantiate-node-from status headers payload id)))
+    (instantiate-node-from status payload id)))
 
 
 (defn find
@@ -158,3 +161,11 @@
   (let [{ :keys [status body] } (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
         xs (json/read-json body true)]
     (map (fn [doc] (fetch-from (:indexed doc))) xs)))
+
+
+(defn query
+  [^String idx ^String query]
+  (println (node-index-location-for rest/*endpoint* idx))
+  (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
+        xs (json/read-json body true)]
+    (map (fn [doc] (instantiate-node-from status doc)) xs)))

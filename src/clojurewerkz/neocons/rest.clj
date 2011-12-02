@@ -9,7 +9,7 @@
 ;;
 
 (defn GET
-  [^String uri &{ :keys [body] :as options }]
+  [^String uri & { :as options }]
   (http/get uri (merge options { :accept :json })))
 
 (defn POST
