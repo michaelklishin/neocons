@@ -285,3 +285,10 @@
         uri  "http://arstechnica.com"
         home (nodes/create { :uri uri })]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
+
+(deftest test-remove-a-node-from-index
+  (let [idx  (nodes/create-index "uris")
+        uri  "http://arstechnica.com"
+        home (nodes/create { :uri uri })]
+    (nodes/add-to-index (:id home) (:name idx) "uri" uri)
+    (nodes/delete-from-index (:id home) (:name idx))))

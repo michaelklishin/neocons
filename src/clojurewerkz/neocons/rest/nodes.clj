@@ -40,6 +40,10 @@
   [^Neo4JEndpoint endpoint idx]
   (str (:node-index-uri endpoint) "/" (name idx)))
 
+(defn node-in-index-location-for
+  [^Neo4JEndpoint endpoint ^long id idx]
+  (str (:node-index-uri endpoint) "/" (name idx) "/" id))
+
 
 
 ;;
@@ -121,3 +125,8 @@
         { :keys [status headers body] } (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
         payload  (json/read-json body true)]
     (instantiate-node-from status headers payload id)))
+
+(defn delete-from-index
+  [^long id idx]
+  (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
+    [id status]))
