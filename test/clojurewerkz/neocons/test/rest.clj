@@ -292,3 +292,16 @@
         home (nodes/create { :uri uri })]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
     (nodes/delete-from-index (:id home) (:name idx))))
+
+(deftest test-remove-a-node-and-key-from-index
+  (let [idx  (nodes/create-index "uris")
+        uri  "http://arstechnica.com"
+        home (nodes/create { :uri uri })]
+    (nodes/add-to-index (:id home) (:name idx) "uri" uri)
+    (nodes/delete-from-index (:id home) (:name idx) "uri")))
+
+(deftest test-remove-a-node-key-and-value-from-index
+  (let [idx  (nodes/create-index "locations")
+        home (nodes/create { :lat 20.0 })]
+    (nodes/add-to-index (:id home) (:name idx) "lat" 20.0)
+    (nodes/delete-from-index (:id home) (:name idx) "lat" 20.0)))

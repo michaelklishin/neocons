@@ -41,8 +41,12 @@
   (str (:node-index-uri endpoint) "/" (name idx)))
 
 (defn node-in-index-location-for
-  [^Neo4JEndpoint endpoint ^long id idx]
-  (str (:node-index-uri endpoint) "/" (name idx) "/" id))
+  ([^Neo4JEndpoint endpoint ^long id idx]
+     (str (:node-index-uri endpoint) "/" (name idx) "/" id))
+  ([^Neo4JEndpoint endpoint ^long id idx key]
+     (str (:node-index-uri endpoint) "/" (name idx) "/" (name key) "/" id))
+  ([^Neo4JEndpoint endpoint id idx key value]
+     (str (:node-index-uri endpoint) "/" (name idx) "/" (name key) "/" (str value) "/" id)))
 
 
 
@@ -127,6 +131,13 @@
     (instantiate-node-from status headers payload id)))
 
 (defn delete-from-index
-  [^long id idx]
-  (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
-    [id status]))
+  ([^long id idx]
+     (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
+       [id status]))
+  ([^long id idx key]
+     (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key))]
+       [id status]))
+  ([^long id idx key value]
+     (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
+       [id status])))
+
