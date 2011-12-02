@@ -300,3 +300,17 @@
         home (nodes/create { :lat 20.0 })]
     (nodes/add-to-index (:id home) (:name idx) "lat" 20.0)
     (nodes/delete-from-index (:id home) (:name idx) "lat" 20.0)))
+
+(deftest test-finding-nodes-using-indexes
+  (let [node1 (nodes/create { :name "Wired" })
+        node2 (nodes/create { :name "Craigslist" })
+        url1  "http://wired.com"
+        url2  "http://craigslist.org"
+        idx   (nodes/create-index "by-url")]
+    (nodes/delete-from-index (:id node1) (:name idx) "url")
+    (nodes/delete-from-index (:id node2) (:name idx) "url")
+    (nodes/add-to-index (:id node1) (:name idx) "url" url1)
+    (nodes/add-to-index (:id node2) (:name idx) "url" url2)
+    (let [ids (map :id (nodes/find (:name idx) :url url1))]
+      (is (some (fn [id]
+                  (= id (:id node1))) ids)))))

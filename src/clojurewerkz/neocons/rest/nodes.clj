@@ -48,6 +48,9 @@
   ([^Neo4JEndpoint endpoint id idx key value]
      (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
 
+(defn index-lookup-location-for
+  [^Neo4JEndpoint endpoint ^String idx key value]
+  (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
 
 
 ;;
@@ -141,3 +144,17 @@
      (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
        [id status])))
 
+
+(defn fetch-from
+  [^String uri]
+  (let [{ :keys [status headers body] } (rest/GET uri)
+        payload (json/read-json body true)
+        id      (extract-id uri)]
+    (instantiate-node-from status headers payload id)))
+
+
+(defn find
+  [^String idx key value]
+  (let [{ :keys [status body] } (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
+        xs (json/read-json body true)]
+    (map (fn [doc] (fetch-from (:indexed doc))) xs)))
