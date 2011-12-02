@@ -17,6 +17,9 @@
 (defrecord Node
     [id location-uri data relationships-uri create-relationship-uri])
 
+(defrecord Index
+    [^String name ^String template ^String provider ^String type])
+
 (defn- instantiate-node-from
   ([^long status headers payload ^long id]
      (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
@@ -71,7 +74,7 @@
 (defn get-properties
   [^long id]
   (let [{ :keys [status headers body] } (rest/GET (node-properties-location-for rest/*endpoint* id))]
-    (case status
+    (case (long status)
       200 (json/read-json body true)
       204 {}
       (throw (Exception. (str "Unexpected response from the server: " status ", expected 200 or 204"))))))
@@ -80,3 +83,14 @@
   [^long id]
   (let [{ :keys [status headers] }(rest/PUT (node-properties-location-for rest/*endpoint* id))]
     [id status]))
+
+
+(defn create-index
+  ([name]
+     (let [{ :keys [_ _ body] } (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str { :name name }))
+           payload (json/read-json body true)]
+       (Index. name (:template payload) "lucene" "exact")))
+  ([name configuration]
+     (let [{ :keys [_ _ body] }(rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge { :name name } configuration)))
+           payload (json/read-json body true)]
+       (Index. name (:template payload) (:provider configuration) (:type configuration)))))

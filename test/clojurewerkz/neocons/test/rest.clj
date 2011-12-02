@@ -246,3 +246,18 @@
 (deftest test-deleting-a-property-on-non-existent-relationship
   (is (thrown? Exception
                (relationships/delete-property 8283787287 :a-non-existent-rel-property))))
+
+
+;;
+;; Indexes
+;;
+
+(deftest test-create-a-new-node-index-with-default-configuration
+  (println (:node-index-uri neorest/*endpoint*))
+  (let [name "node-index-1-default-configuration"]
+    (nodes/create-index name)))
+
+(deftest test-create-a-new-node-index-with-explicit-configuration
+  (let [name "node-index-2"
+        conf { :type "fulltext" :provider "lucene" }]
+    (nodes/create-index name conf)))
