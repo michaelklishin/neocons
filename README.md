@@ -32,7 +32,7 @@ With Leiningen:
 
     [clojurewerkz/neocons "1.0.0-SNAPSHOT"]
 
-New snapshots are released to [clojars.org](https://clojars.org/org.clojurewerkz/neocons) every few days.
+New snapshots are released to [clojars.org](https://clojars.org/clojurewerkz/neocons) every few days.
 
 
 ## License
