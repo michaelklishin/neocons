@@ -5,7 +5,8 @@
             [clojurewerkz.neocons.rest.paths         :as paths]
             [slingshot.slingshot :as slingshot])
   (:import [slingshot Stone])
-  (:use [clojure.test]))
+  (:use [clojure.test]
+        [clojure.set :only [subset?]]))
 
 
 (neorest/connect! "http://localhost:7474/db/data/")
@@ -209,7 +210,7 @@
 
 
 (deftest test-listing-of-relationship-types
-  (is (= (sort ["links" "likes" "follows" "friend" "relative" "loves"]) (sort (relationships/all-types)))))
+  (is (subset? #{"links" "likes" "follows" "friend" "relative" "loves"} (set (relationships/all-types)))))
 
 
 (deftest test-updating-relationship-properties
