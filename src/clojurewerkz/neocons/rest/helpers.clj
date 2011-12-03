@@ -15,3 +15,9 @@
 (defn encode
   [s]
   (URLEncoder/encode (name s) "UTF-8"))
+
+(defn maybe-append
+  [^String s ^String prefix]
+  (.toLowerCase (if (.endsWith (.toLowerCase s) (.toLowerCase prefix))
+                  s
+                  (str s prefix))))

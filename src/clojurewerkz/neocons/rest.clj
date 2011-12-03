@@ -2,7 +2,8 @@
   (:import  [java.net URI])
   (:require [clj-http.client   :as http]
             [clojure.data.json :as json])
-  (:use     [clojurewerkz.neocons.rest.statuses]))
+  (:use     [clojurewerkz.neocons.rest.statuses]
+            [clojurewerkz.neocons.rest.helpers :only [maybe-append]]))
 
 ;;
 ;; Implementation
@@ -28,7 +29,7 @@
 
 
 (defrecord Neo4JEndpoint
-    [version node-uri relationships-uri node-index-uri relationship-index-uri relationship-types-uri batch-uri extensions-info-uri extensions reference-node-uri])
+    [version node-uri relationships-uri node-index-uri relationship-index-uri relationship-types-uri batch-uri extensions-info-uri extensions reference-node-uri uri])
 
 (def ^{ :dynamic true } *endpoint*)
 
@@ -49,7 +50,7 @@
 
   String
   (connect [uri]
-    (let [{ :keys [status headers body] } (GET uri)]
+    (let [{ :keys [status body] } (GET uri)]
       (if (success? status)
         (let [payload (json/read-json body true)]
           (Neo4JEndpoint. (:neo4j_version      payload)
@@ -63,6 +64,7 @@
                           (:batch              payload)
                           (:extensions_info    payload)
                           (:extensions         payload)
-                          (:reference_node     payload))))))
+                          (:reference_node     payload)
+                          (maybe-append uri "/"))))))
   (connect! [uri]
     (defonce ^{ :dynamic true } *endpoint* (connect uri))))
