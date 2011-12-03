@@ -57,9 +57,8 @@
   ([^Node from ^Node to rel-type data]
      (let [{ :keys [status headers body] } (rest/POST (:create-relationship-uri from)
                                                       :body (json/json-str { :to (:location-uri to) :type rel-type :data data }))
-           payload  (json/read-json body true)
-           location (:self payload)]
-       (Relationship. (extract-id location) location (:start payload) (:end payload) (:type payload) (:data payload)))))
+           payload  (json/read-json body true)]
+       (instantiate-rel-from payload))))
 
 
 (defn get
