@@ -2,6 +2,21 @@
 
 Neocons is an experimental idiomatic Clojure client for the Neo4J REST API.
 
+
+## Supported Features
+
+Neocons currently supports the following features (all via REST API, so [you can use open source Neo4J Server edition for commercial projects](http://neo4j.org/licensing-guide/)):
+
+ * Create, read, update and delete nodes
+ * Create, read, update and delete relationships
+ * Fetch relationships for given node
+ * Create and delete indexes
+ * Index nodes
+ * Query node indexes for exact matches and using full text search queries
+ * Query automatic node index
+ * Traverse nodes
+
+
 ## Usage
 
 Neocons is a very young project and until 1.0 is released and documentation guides are written,
