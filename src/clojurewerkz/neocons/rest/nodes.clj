@@ -63,6 +63,11 @@
   [^Neo4JEndpoint endpoint key value]
   (str (auto-index-location-for endpoint) (encode key) "/" (encode (str value))))
 
+(defn node-traverse-location-for
+  [^Neo4JEndpoint endpoint ^long id rel-type]
+  (str (:node-uri endpoint) "/" id "/traverse/" rel-type))
+
+
 
 ;;
 ;; API
@@ -166,21 +171,41 @@
 
 (defn find
   ([^String key value]
-  (let [{ :keys [status body] } (rest/GET (auto-index-lookup-location-for rest/*endpoint* key value))
-        xs (json/read-json body true)]
-    (map (fn [doc] (fetch-from (:indexed doc))) xs)))
+     (let [{ :keys [status body] } (rest/GET (auto-index-lookup-location-for rest/*endpoint* key value))
+           xs (json/read-json body true)]
+       (map (fn [doc] (fetch-from (:indexed doc))) xs)))
   ([^String idx key value]
-  (let [{ :keys [status body] } (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
-        xs (json/read-json body true)]
-    (map (fn [doc] (fetch-from (:indexed doc))) xs))))
+     (let [{ :keys [status body] } (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
+           xs (json/read-json body true)]
+       (map (fn [doc] (fetch-from (:indexed doc))) xs))))
 
 
 (defn query
   ([^String query]
-  (let [{ :keys [status body] } (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
-        xs (json/read-json body true)]
-    (map (fn [doc] (instantiate-node-from status doc)) xs)))
+     (let [{ :keys [status body] } (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
+           xs (json/read-json body true)]
+       (map (fn [doc] (instantiate-node-from status doc)) xs)))
   ([^String idx ^String query]
-  (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
-        xs (json/read-json body true)]
-    (map (fn [doc] (instantiate-node-from status doc)) xs))))
+     (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
+           xs (json/read-json body true)]
+       (map (fn [doc] (instantiate-node-from status doc)) xs))))
+
+
+(defn traverse
+  ([id & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {
+                                                                                               order         "breadth_first"
+                                                                                               uniqueness    "node_global"
+                                                                                               prune-evaluator { :language "builtin" :name "none" }
+                                                                                               return-filter   { :language "builtin" :name "all"  }
+                                                                                               } }]
+     (let [request-body {
+                         :order           order
+                         :relationships   relationships
+                         :uniqueness      uniqueness
+                         :prune_evaluator prune-evaluator
+                         :return_filter   return-filter
+                         }
+           { :keys [status body] } (rest/POST (node-traverse-location-for rest/*endpoint* id "node") :body (json/json-str request-body))
+           xs (json/read-json body true)]
+       (map (fn [doc]
+              (instantiate-node-from status doc)) xs))))

@@ -327,3 +327,43 @@
     (let [ids (map :id (nodes/query (:name idx) "country:Germany"))]
       (is (some (fn [id]
                   (= id (:id puma))) ids)))))
+
+
+(deftest test-traversing-nodes-using-all-return-filter-all-relationships-and-no-pagination
+  (let [john (nodes/create { :name "John" })
+        adam (nodes/create { :name "Alan" })
+        pete (nodes/create { :name "Peter" })
+        _    (relationships/create john adam :friend)
+        _    (relationships/create john pete :friend)
+        _    (relationships/create adam pete :friend)
+        xs1  (nodes/traverse (:id john) :relationships [{ :direction "all" :type "friend" }])
+        ids1 (vec (map :id xs1))
+        xs2  (nodes/traverse (:id john) :relationships [{ :direction "all" :type "enemy" }])
+        ids2 (map :id xs2)]
+    (is (= [(:id john) (:id adam) (:id pete)] ids1))
+    (is (= [(:id john)] ids2))))
+
+
+(deftest test-traversing-nodes-using-all-but-start-node-return-filter-out-relationships-and-no-pagination
+  (let [john (nodes/create { :name "John" })
+        adam (nodes/create { :name "Alan" })
+        pete (nodes/create { :name "Peter" })
+        _    (relationships/create john adam :friend)
+        _    (relationships/create adam pete :friend)
+        xs1  (nodes/traverse (:id john) :relationships [{ :direction "out" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
+        ids1 (vec (map :id xs1))
+        xs2  (nodes/traverse (:id adam) :relationships [{ :direction "out" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
+        ids2 (vec (map :id xs2))]
+    (is (= [(:id adam) (:id pete)] ids1))
+    (is (= [(:id pete)] ids2))))
+
+
+(deftest test-traversing-nodes-using-all-but-start-node-return-filter-in-relationships-and-no-pagination
+  (let [john (nodes/create { :name "John" })
+        adam (nodes/create { :name "Alan" })
+        pete (nodes/create { :name "Peter" })
+        _    (relationships/create john adam :friend)
+        _    (relationships/create adam pete :friend)
+        xs   (nodes/traverse (:id john) :relationships [{ :direction "in" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
+        ids  (vec (map :id xs))]
+    (is (empty? ids))))
