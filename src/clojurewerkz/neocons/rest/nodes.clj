@@ -55,9 +55,13 @@
   [^Neo4JEndpoint endpoint ^String idx key value]
   (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
 
+(defn auto-index-location-for
+  [^Neo4JEndpoint endpoint]
+  (str (:uri endpoint) "index/auto/node/"))
+
 (defn auto-index-lookup-location-for
   [^Neo4JEndpoint endpoint key value]
-  (str (:uri endpoint) "index/auto/node/" (encode key) "/" (encode (str value))))
+  (str (auto-index-location-for endpoint) (encode key) "/" (encode (str value))))
 
 
 ;;
@@ -172,7 +176,11 @@
 
 
 (defn query
-  [^String idx ^String query]
-  (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
+  ([^String query]
+  (let [{ :keys [status body] } (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
         xs (json/read-json body true)]
     (map (fn [doc] (instantiate-node-from status doc)) xs)))
+  ([^String idx ^String query]
+  (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
+        xs (json/read-json body true)]
+    (map (fn [doc] (instantiate-node-from status doc)) xs))))
