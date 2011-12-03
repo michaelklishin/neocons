@@ -1,31 +1,21 @@
 (ns clojurewerkz.neocons.rest.nodes
-  (:import  [java.net URI URL]
-            [clojurewerkz.neocons.rest Neo4JEndpoint]
-            [clojure.lang Named])
-  (:require [clj-http.client               :as http]
-            [clojure.data.json             :as json]
-            [clojurewerkz.neocons.rest :as rest])
+  (:require [clj-http.client                   :as http]
+            [clojure.data.json                 :as json]
+            [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
+            [clojurewerkz.neocons.rest.records]
             [clojure.string :only [join]])
+  (:import  [java.net URI URL]
+            [clojurewerkz.neocons.rest Neo4JEndpoint]
+            [clojurewerkz.neocons.rest.records Node Relationship Index]
+            [clojure.lang Named])
   (:refer-clojure :exclude (get find)))
 
 ;;
 ;; Implementation
 ;;
 
-(defrecord Node
-    [id location-uri data relationships-uri create-relationship-uri])
-
-(defrecord Index
-    [^String name ^String template ^String provider ^String type])
-
-(defn- instantiate-node-from
-  ([^long status payload]
-     (let [id (extract-id (:self payload))]
-       (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
-  ([^long status payload ^long id]
-     (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
 
 (defn node-location-for
   [^Neo4JEndpoint endpoint ^long id]
@@ -64,8 +54,8 @@
   (str (auto-index-location-for endpoint) (encode key) "/" (encode (str value))))
 
 (defn node-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id rel-type]
-  (str (:node-uri endpoint) "/" id "/traverse/" rel-type))
+  [^Neo4JEndpoint endpoint ^long id]
+  (str (:node-uri endpoint) "/" id "/traverse/node"))
 
 
 
@@ -86,7 +76,7 @@
   [^long id]
   (let [{ :keys [status body] } (rest/GET (node-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
-    (instantiate-node-from status payload id)))
+    (instantiate-node-from payload id)))
 
 (defn delete
   [^long id]
@@ -147,7 +137,7 @@
   (let [body     (json/json-str { :key key :value value :uri (node-location-for rest/*endpoint* id) })
         { :keys [status body] } (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
         payload  (json/read-json body true)]
-    (instantiate-node-from status payload id)))
+    (instantiate-node-from payload id)))
 
 (defn delete-from-index
   ([^long id idx]
@@ -166,7 +156,7 @@
   (let [{ :keys [status body] } (rest/GET uri)
         payload (json/read-json body true)
         id      (extract-id uri)]
-    (instantiate-node-from status payload id)))
+    (instantiate-node-from payload id)))
 
 
 (defn find
@@ -184,11 +174,11 @@
   ([^String query]
      (let [{ :keys [status body] } (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
            xs (json/read-json body true)]
-       (map (fn [doc] (instantiate-node-from status doc)) xs)))
+       (map (fn [doc] (instantiate-node-from doc)) xs)))
   ([^String idx ^String query]
      (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
            xs (json/read-json body true)]
-       (map (fn [doc] (instantiate-node-from status doc)) xs))))
+       (map (fn [doc] (instantiate-node-from doc)) xs))))
 
 
 (defn traverse
@@ -205,7 +195,7 @@
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
                          }
-           { :keys [status body] } (rest/POST (node-traverse-location-for rest/*endpoint* id "node") :body (json/json-str request-body))
+           { :keys [status body] } (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
            xs (json/read-json body true)]
        (map (fn [doc]
-              (instantiate-node-from status doc)) xs))))
+              (instantiate-node-from doc)) xs))))

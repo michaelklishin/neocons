@@ -1,21 +1,19 @@
 (ns clojurewerkz.neocons.rest.relationships
   (:import  [java.net URI URL]
             [clojurewerkz.neocons.rest Neo4JEndpoint]
-            [clojurewerkz.neocons.rest.nodes Node])
-  (:require [clj-http.client               :as http]
-            [clojure.data.json             :as json]
-            [clojurewerkz.neocons.rest :as rest])
+            [clojurewerkz.neocons.rest.records Node Relationship])
+  (:require [clj-http.client                   :as http]
+            [clojure.data.json                 :as json]
+            [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
+            [clojurewerkz.neocons.rest.records]
             [clojure.string :only [join]])
   (:refer-clojure :exclude (get)))
 
 ;;
 ;; Implementation
 ;;
-
-(defrecord Relationship
-    [id location-uri start-uri end-uri type data])
 
 (defn- rel-location-for
   [^Neo4JEndpoint endpoint ^long id]
@@ -45,6 +43,10 @@
       (map (fn [rel]
              (Relationship. (extract-id (:self rel)) (:self rel) (:start rel) (:end rel) (:type rel) (:data rel))) payload))))
 
+(defn rel-traverse-location-for
+  [^Neo4JEndpoint endpoint ^long id]
+  (str (:node-uri endpoint) "/" id "/traverse/relationship"))
+
 
 ;;
 ;; API
@@ -67,7 +69,7 @@
         payload  (json/read-json body true)]
     (if (missing? status)
       nil
-      (Relationship. id (:self payload) (:start payload) (:end payload) (:type payload) (:data payload)))))
+      (instantiate-rel-from payload id))))
 
 
 (defn delete
@@ -109,3 +111,23 @@
   []
   (let [{ :keys [_ _  body] } (rest/GET (:relationship-types-uri rest/*endpoint*))]
     (json/read-json body true)))
+
+
+(defn traverse
+  ([id & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {
+                                                                                               order         "breadth_first"
+                                                                                               uniqueness    "node_global"
+                                                                                               prune-evaluator { :language "builtin" :name "none" }
+                                                                                               return-filter   { :language "builtin" :name "all"  }
+                                                                                               } }]
+     (let [request-body {
+                         :order           order
+                         :relationships   relationships
+                         :uniqueness      uniqueness
+                         :prune_evaluator prune-evaluator
+                         :return_filter   return-filter
+                         }
+           { :keys [status body] } (rest/POST (rel-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
+           xs (json/read-json body true)]
+       (map (fn [doc]
+              (instantiate-rel-from doc)) xs))))

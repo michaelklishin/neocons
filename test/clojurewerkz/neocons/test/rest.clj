@@ -344,6 +344,21 @@
     (is (= [(:id john)] ids2))))
 
 
+(deftest test-traversing-relationships-using-all-return-filter-all-relationships-and-no-pagination
+  (let [john (nodes/create { :name "John" })
+        adam (nodes/create { :name "Alan" })
+        pete (nodes/create { :name "Peter" })
+        rel1 (relationships/create john adam :friend)
+        rel2 (relationships/create john pete :friend)
+        rel3 (relationships/create adam pete :friend)
+        xs1  (relationships/traverse (:id john) :relationships [{ :direction "all" :type "friend" }])
+        ids1 (vec (map :id xs1))
+        xs2  (relationships/traverse (:id john) :relationships [{ :direction "all" :type "enemy" }])
+        ids2 (map :id xs2)]
+    (is (= [(:id rel1) (:id rel2)] ids1))
+    (is (empty? ids2))))
+
+
 (deftest test-traversing-nodes-using-all-but-start-node-return-filter-out-relationships-and-no-pagination
   (let [john (nodes/create { :name "John" })
         adam (nodes/create { :name "Alan" })
