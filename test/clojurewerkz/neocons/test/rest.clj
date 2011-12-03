@@ -2,6 +2,7 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
+            [clojurewerkz.neocons.rest.paths         :as paths]
             [slingshot.slingshot :as slingshot])
   (:import [slingshot Stone])
   (:use [clojure.test]))
@@ -383,3 +384,33 @@
         xs   (nodes/traverse (:id john) :relationships [{ :direction "in" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
         ids  (vec (map :id xs))]
     (is (empty? ids))))
+
+
+(deftest test-traversing-paths-using-all-return-filter-all-relationships-and-no-pagination
+  (let [john (nodes/create { :name "John" })
+        adam (nodes/create { :name "Alan" })
+        pete (nodes/create { :name "Peter" })
+        rel1 (relationships/create john adam :friend)
+        rel2 (relationships/create adam pete :friend)
+        xs1  (paths/traverse (:id john) :relationships [{ :direction "all" :type "friend" }])
+        xs2  (paths/traverse (:id john) :relationships [{ :direction "all" :type "enemy" }])]
+    (is (= 3 (count xs1)))
+    (is (= 1 (count xs2)))
+    (let [path1 (first xs1)
+          path2 (second xs1)
+          path3 (last xs1)]
+      (is (= 0 (:length path1)))
+      (is (= 1 (:length path2)))
+      (is (= 2 (:length path3)))
+      (is (= 1 (count (:nodes path1))))
+      (is (= 2 (count (:nodes path2))))
+      (is (= 3 (count (:nodes path3))))
+      (is (= 0 (count (:relationships path1))))
+      (is (= 1 (count (:relationships path2))))
+      (is (= 2 (count (:relationships path3))))
+      (is (= (:location-uri john) (:start path1)))
+      (is (= (:location-uri john) (:end   path1)))
+      (is (= (:location-uri john) (:start path2)))
+      (is (= (:location-uri adam) (:end   path2)))
+      (is (= (:location-uri john) (:start path3)))
+      (is (= (:location-uri pete) (:end   path3))))))

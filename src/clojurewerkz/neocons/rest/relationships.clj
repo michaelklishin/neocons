@@ -2,8 +2,7 @@
   (:import  [java.net URI URL]
             [clojurewerkz.neocons.rest Neo4JEndpoint]
             [clojurewerkz.neocons.rest.records Node Relationship])
-  (:require [clj-http.client                   :as http]
-            [clojure.data.json                 :as json]
+  (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
