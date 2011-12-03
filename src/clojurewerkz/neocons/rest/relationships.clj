@@ -37,11 +37,10 @@
 (defn- relationships-for
   [^Node node kind types]
   (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind types))
-        payload  (json/read-json body true)]
+        xs  (json/read-json body true)]
     (if (missing? status)
       nil
-      (map (fn [rel]
-             (Relationship. (extract-id (:self rel)) (:self rel) (:start rel) (:end rel) (:type rel) (:data rel))) payload))))
+      (map instantiate-rel-from xs))))
 
 (defn rel-traverse-location-for
   [^Neo4JEndpoint endpoint ^long id]

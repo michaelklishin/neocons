@@ -162,11 +162,12 @@
 
 (deftest test-listing-all-relationships-of-specific-kind
   (let [node   (nodes/create)
-        _      (relationships/create node (nodes/create) :likes)
-        _      (relationships/create node (nodes/create) :links)
-        _      (relationships/create node (nodes/create) :follows)
+        rel1   (relationships/create node (nodes/create) :likes)
+        rel2   (relationships/create node (nodes/create) :links)
+        rel3   (relationships/create node (nodes/create) :follows)
         result (relationships/all-for node :types [:follows :likes])]
-    (is (= 2 (count result)))))
+    (is (= 2 (count result)))
+    (is (= (sort [(:id rel1) (:id rel3)]) (vec (sort (map :id result)))))))
 
 (deftest test-listing-incoming-relationships-on-a-node-that-doesnt-have-any
   (let [node   (nodes/create)
