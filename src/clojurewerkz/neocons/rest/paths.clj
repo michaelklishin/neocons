@@ -73,7 +73,7 @@
            { :keys [status body] } (rest/POST (paths-location-for rest/*endpoint* from) :body (json/json-str request-body))
            xs (json/read-json body true)]
        (map (fn [doc]
-              (instantiate-path-from doc)) xs))))
+              (instantiate-path-from doc)) (json/read-json body true)))))
 
 
 (defn shortest-between
@@ -89,9 +89,22 @@
                          :max_depth     max-depth
                          :algorithm     "shortestPath"
                          }
-           { :keys [status body] } (rest/POST (path-location-for rest/*endpoint* from) :body (json/json-str request-body))
-           payload (json/read-json body true)]
-       (instantiate-path-from payload))))
+           { :keys [status body] } (rest/POST (path-location-for rest/*endpoint* from) :body (json/json-str request-body) :throw-exceptions false)]
+       (if (missing? status)
+         nil
+         (instantiate-path-from (json/read-json body true))))))
+
+(defn exists-between?
+  [from to &{ :keys [relationships max-depth prune-evaluator uniqueness] }]
+    (not (nil? (shortest-between from to :relationships relationships :max-depth max-depth :prune-evaluator prune-evaluator :uniqueness uniqueness))))
+
+
+(defprotocol PathPredicates
+  (included-in?     [node path] "Returns true if path includes given node")
+  (included-in?     [rel  path] "Returns true if path includes given relationship")
+  (node-in?         [node path] "Returns true if path includes given node")
+  (relationship-in? [rel  path] "Returns true if path includes given relationship"))
+
 
 (defprotocol PathPredicates
   (included-in?     [node path] "Returns true if path includes given node")
