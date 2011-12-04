@@ -194,6 +194,7 @@
                          :uniqueness      uniqueness
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
+                         :max_depth       max-depth
                          }
            { :keys [status body] } (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
            xs (json/read-json body true)]

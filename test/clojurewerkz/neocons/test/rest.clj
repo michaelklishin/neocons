@@ -449,8 +449,10 @@
         xs5   (paths/all-shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 7)
         path5 (first xs5)
         path6 (last  xs5)
-        path7 (paths/shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 7)]
+        path7 (paths/shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 7)
+        path8 (paths/shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 1)]
     (is (empty? xs2))
+    (is (nil? path8))
     (is (= 1 (count xs1)))
     (is (= 2 (count xs3)))
     (is (= 2 (count xs4)))
