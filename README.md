@@ -15,6 +15,7 @@ Neocons currently supports the following features (all via REST API, so [you can
  * Query node indexes for exact matches and using full text search queries
  * Query automatic node index
  * Traverse nodes, relationships and paths
+ * Find shortest path or all paths between nodes
 
 
 ## Usage
