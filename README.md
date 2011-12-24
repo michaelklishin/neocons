@@ -37,6 +37,21 @@ With Leiningen:
 New snapshots are released to [clojars.org](https://clojars.org/clojurewerkz/neocons) every few days.
 
 
+## Continuous Integration
+
+[![Continuous Integration status](https://secure.travis-ci.org/michaelklishin/neocons.png)](http://travis-ci.org/michaelklishin/neocons)
+
+
+CI is hosted by [travis-ci.org](http://travis-ci.org)
+
+
+
+## Supported Clojure versions
+
+Neocons is built from the ground up for Clojure 1.3 and up.
+
+
+
 ## License
 
 Copyright (C) 2011 Michael S. Klishin
