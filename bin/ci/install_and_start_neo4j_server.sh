@@ -9,3 +9,4 @@ gunzip $neo4_archive_location
 tar xf neo4j.tar
 cd neo4j-community-1.6.M02
 ./bin/neo4j start
+sleep 3
