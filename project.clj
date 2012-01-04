@@ -12,7 +12,7 @@
                  [org.clojure/data.json "0.1.2"]
                  ;; to use checkouts/momentum. MK.
                  [org.jboss.netty/netty "3.2.4.Final"]
-                 [clj-http              "0.2.6"]]
+                 [clj-http              "0.2.7"]]
   :dev-resources-path "test/resources"
   :warn-on-reflection true
   :test-selectors   {:default        (fn [v] (not (:time-consuming v)))
