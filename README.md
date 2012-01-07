@@ -45,15 +45,20 @@ New snapshots are released to [clojars.org](https://clojars.org/clojurewerkz/neo
 CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 
-
 ## Supported Clojure versions
 
 Neocons is built from the ground up for Clojure 1.3 and up.
 
 
+## Supported Neo4J Server versions
+
+Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.6.M02/cypher-query-lang.html) support, 1.6.M02 is the minimum recommended
+versions because Cypher is supported by the REST API directly without any plugins.
+
+
 
 ## License
 
-Copyright (C) 2011 Michael S. Klishin
+Copyright (C) 2011-2012 Michael S. Klishin
 
 Distributed under the Eclipse Public License, the same as Clojure.
