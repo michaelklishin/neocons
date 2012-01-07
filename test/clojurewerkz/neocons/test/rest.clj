@@ -507,10 +507,10 @@
         rel2  (relationships/create john joe :friend)
         rel3  (relationships/create sarah maria :friend)
         rel4  (relationships/create joe steve :friend)
-        response (cypher/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
-        row1  (map instantiate-node-from (first  (:data response)))
-        row2  (map instantiate-node-from (second (:data response)))]
-    (is (= ["john" "fof"] (:columns response)))
+        { :keys [data columns] } (cypher/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
+        row1  (map instantiate-node-from (first  data))
+        row2  (map instantiate-node-from (second data))]
+    (is (= ["john" "fof"] columns))
     (is (= (:id john)    (:id (first row1))))
     (is (= (:data john)  (:data (first row1))))
     (is (= (:id maria)   (:id (last row1))))
