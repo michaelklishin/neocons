@@ -13,6 +13,9 @@
 (defrecord Path
     [start end length nodes relationships])
 
+(defrecord CypherQueryResponse
+    [data columns])
+
 (defn instantiate-node-from
   ([payload]
      (let [id (extract-id (:self payload))]
@@ -30,3 +33,7 @@
 (defn instantiate-path-from
   ([payload]
      (Path. (:start payload) (:end payload) (:length payload) (:nodes payload) (:relationships payload))))
+
+(defn instantiate-cypher-query-response-from
+  [payload]
+  (CypherQueryResponse. (:data payload) (:columns payload)))

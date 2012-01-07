@@ -3,10 +3,13 @@
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
             [clojurewerkz.neocons.rest.paths         :as paths]
+            [clojurewerkz.neocons.rest.cypher        :as cypher]
             [slingshot.slingshot :as slingshot])
   (:import [slingshot Stone])
   (:use [clojure.test]
-        [clojure.set :only [subset?]]))
+        [clojure.set :only [subset?]]
+        [clojure.pprint :only [pprint]]
+        [clojurewerkz.neocons.rest.records :only [instantiate-node-from instantiate-rel-from instantiate-path-from]]))
 
 
 (neorest/connect! "http://localhost:7474/db/data/")
@@ -487,3 +490,33 @@
     (is (not (paths/relationship-in? rel4 path7)))
     (is (paths/exists-between? (:id john) (:id liz) :relationships [rt] :max-depth 7))
     (is (not (paths/exists-between? (:id beth) (:id bern) :relationships [rt] :max-depth 7)))))
+
+
+
+;;
+;; Cypher queries
+;;
+
+(deftest test-cypher-query-example1
+  (let [john  (nodes/create { :name "John" })
+        sarah (nodes/create { :name "Sarah" })
+        joe   (nodes/create { :name "Joe" })
+        maria (nodes/create { :name "Maria" })
+        steve (nodes/create { :name "Steve" })
+        rel1  (relationships/create john sarah :friend)
+        rel2  (relationships/create john joe :friend)
+        rel3  (relationships/create sarah maria :friend)
+        rel4  (relationships/create joe steve :friend)
+        { :keys [data columns] } (cypher/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
+        row1  (map instantiate-node-from (first  data))
+        row2  (map instantiate-node-from (second data))]
+    (is (= 2 (count data)))
+    (is (= ["john" "fof"] columns))
+    (is (= (:id john)    (:id (first row1))))
+    (is (= (:data john)  (:data (first row1))))
+    (is (= (:id maria)   (:id (last row1))))
+    (is (= (:data maria) (:data (last row1))))
+    (is (= (:id john)    (:id (first row2))))
+    (is (= (:data john)  (:data (first row2))))
+    (is (= (:id steve)   (:id (last row2))))
+    (is (= (:data steve) (:data (last row2))))))
