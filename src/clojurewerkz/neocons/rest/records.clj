@@ -13,6 +13,9 @@
 (defrecord Path
     [start end length nodes relationships])
 
+(defrecord CypherResponse
+    [data columns])
+
 (defn instantiate-node-from
   ([payload]
      (let [id (extract-id (:self payload))]
