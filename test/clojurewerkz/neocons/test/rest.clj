@@ -520,3 +520,18 @@
     (is (= (:data john)  (:data (first row2))))
     (is (= (:id steve)   (:id (last row2))))
     (is (= (:data steve) (:data (last row2))))))
+
+
+(deftest test-cypher-query-example2
+  (let [john  (nodes/create { :name "John" })
+        sarah (nodes/create { :name "Sarah" })
+        rel1  (relationships/create john sarah :friend)
+        { :keys [data columns] } (cypher/query "START x = node({sid}) MATCH path = (x--friend) RETURN path, friend.name" { :sid (:id john) })
+        row1  (map instantiate-path-from (first data))
+        path1 (first row1)]
+    (is (= 1 (count data)))
+    (is (= ["path" "friend.name"] columns))
+    (is (= 1 (:length path1)))
+    (is (= (:start path1) (:location-uri john)))
+    (is (= (:end   path1) (:location-uri sarah)))
+    (is (= (first (:relationships path1)) (:location-uri rel1)))))
