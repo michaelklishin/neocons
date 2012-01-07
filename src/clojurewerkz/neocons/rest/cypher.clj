@@ -28,4 +28,4 @@
      (let [{ :keys [status headers body] } (rest/POST (cypher-query-location-for rest/*endpoint*) :body (json/json-str { :query q :params params }))]
        (if (missing? status)
          nil
-         (json/read-json body true)))))
+         (instantiate-cypher-response-from (json/read-json body true))))))

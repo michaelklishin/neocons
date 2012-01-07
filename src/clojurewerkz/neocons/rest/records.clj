@@ -33,3 +33,7 @@
 (defn instantiate-path-from
   ([payload]
      (Path. (:start payload) (:end payload) (:length payload) (:nodes payload) (:relationships payload))))
+
+(defn instantiate-cypher-response-from
+  [payload]
+  (CypherResponse. (:data payload) (:columns payload)))
