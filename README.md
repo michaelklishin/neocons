@@ -17,6 +17,7 @@ Neocons currently supports the following features (all via REST API, so [you can
  * Traverse nodes, relationships and paths
  * Find shortest path or all paths between nodes
  * Predicates over paths, for example, if they include specific nodes/relationships
+ * [Cypher queries](http://docs.neo4j.org/chunked/1.6.M02/cypher-query-lang.html) (with Neo4J Server 1.6.M02 and later)
 
 
 ## Usage
