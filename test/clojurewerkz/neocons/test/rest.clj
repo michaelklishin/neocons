@@ -510,6 +510,7 @@
         { :keys [data columns] } (cypher/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
         row1  (map instantiate-node-from (first  data))
         row2  (map instantiate-node-from (second data))]
+    (is (= 2 (count data)))
     (is (= ["john" "fof"] columns))
     (is (= (:id john)    (:id (first row1))))
     (is (= (:data john)  (:data (first row1))))
