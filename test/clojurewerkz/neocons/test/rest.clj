@@ -5,7 +5,7 @@
             [clojurewerkz.neocons.rest.paths         :as paths]
             [clojurewerkz.neocons.rest.cypher        :as cypher]
             [slingshot.slingshot :as slingshot])
-  (:import [slingshot Stone])
+  (:import [slingshot ExceptionInfo])
   (:use [clojure.test]
         [clojure.set :only [subset?]]
         [clojure.pprint :only [pprint]]
@@ -149,7 +149,7 @@
     (is (= 204 status))))
 
 (deftest test-creating-and-deleting-a-non-existent-relationship
-  (is (thrown? slingshot.Stone
+  (is (thrown? slingshot.ExceptionInfo
                (relationships/delete 87238467666))))
 
 (deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
