@@ -10,7 +10,7 @@
                  }
   :dependencies [[org.clojure/clojure   "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-http              "0.2.7"]]
+                 [clj-http              "0.3.0"]]
   :dev-resources-path "test/resources"
   :warn-on-reflection true
   :test-selectors   {:default        (fn [v] (not (:time-consuming v)))

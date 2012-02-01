@@ -15,11 +15,11 @@
 
 (defn POST
   [^String uri &{ :keys [body] :as options }]
-  (http/post uri (merge options { :accept :json, :body body })))
+  (http/post uri (merge options { :accept :json :content-type :json :body body })))
 
 (defn PUT
   [^String uri &{ :keys [body] :as options }]
-  (http/put uri (merge options { :accept :json, :body body })))
+  (http/put uri (merge options { :accept :json :content-type :json :body body })))
 
 (defn DELETE
   [^String uri &{ :keys [body] :as options }]
