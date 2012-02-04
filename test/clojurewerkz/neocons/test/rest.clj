@@ -149,7 +149,9 @@
     (is (= 204 status))))
 
 (deftest test-creating-and-deleting-a-non-existent-relationship
-  (is (thrown? slingshot.ExceptionInfo
+  ;; this should be slingshot.ExceptionInfo on 1.3 but
+  ;; clojure.lang.ExceptionInfo on 1.4.0[-beta1]. This Slingshot shit is annoying. MK.
+  (is (thrown? Exception
                (relationships/delete 87238467666))))
 
 (deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
