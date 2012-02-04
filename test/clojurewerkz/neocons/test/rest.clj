@@ -152,7 +152,12 @@
   ;; this should be slingshot.ExceptionInfo on 1.3 but
   ;; clojure.lang.ExceptionInfo on 1.4.0[-beta1]. This Slingshot shit is annoying. MK.
   (is (thrown? Exception
-               (relationships/delete 87238467666))))
+               (relationships/delete 87238467666)))
+  (try
+    (relationships/delete 87238467666)
+    (catch Exception e
+      (let [d (.getData e)]
+        (is (= (-> d :object :status) 404))))))
 
 (deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
   (let [node   (nodes/create)
