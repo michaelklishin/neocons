@@ -1,6 +1,6 @@
 # Neocons, a Clojure client for the Neo4J REST API
 
-Neocons is an experimental idiomatic Clojure client for the Neo4J REST API.
+Neocons is a young idiomatic Clojure client for the Neo4J REST API.
 
 
 ## Supported Features
@@ -17,7 +17,7 @@ Neocons currently supports the following features (all via REST API, so [you can
  * Traverse nodes, relationships and paths
  * Find shortest path or all paths between nodes
  * Predicates over paths, for example, if they include specific nodes/relationships
- * [Cypher queries](http://docs.neo4j.org/chunked/1.6.M03/cypher-query-lang.html) (with Neo4J Server 1.6.M02 and later)
+ * [Cypher queries](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html) (with Neo4J Server 1.6 and later)
 
 
 ## Usage
@@ -53,7 +53,7 @@ Neocons is built from the ground up for Clojure 1.3 and up.
 
 ## Supported Neo4J Server versions
 
-Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.6.M03/cypher-query-lang.html) support, 1.6.M02 is the minimum recommended
+Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html) support, 1.6 is the minimum recommended
 versions because Cypher is supported by the REST API directly without any plugins.
 
 
