@@ -1,3 +1,5 @@
 language: clojure
 before_install:
   - ./bin/ci/install_and_start_neo4j_server.sh
+  - lein plugin install lein-multi 1.1.0
+script: lein multi test
