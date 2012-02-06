@@ -10,11 +10,11 @@
                  }
   :dependencies [[org.clojure/clojure   "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-http              "0.3.1-SNAPSHOT"]]
+                 [clj-http              "0.3.1"]]
   :multi-deps {
                "1.4" [[org.clojure/clojure "1.4.0-beta1"]]
                :all [[org.clojure/data.json "0.1.2"]
-                     [clj-http              "0.3.1-SNAPSHOT"]]
+                     [clj-http              "0.3.1"]]
                }  
   :dev-resources-path "test/resources"
   :warn-on-reflection true
