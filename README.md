@@ -65,7 +65,7 @@ Install [lein-multi](https://github.com/maravillas/lein-multi) with
 
 then run tests against Clojure 1.3.0 and 1.4.0[-beta1] using
 
-    lein multi test
+    lein multi javac, test
 
 Then create a branch and make your changes on it. Once you are done with your changes and all tests pass, submit
 a pull request on Github.
@@ -76,3 +76,18 @@ a pull request on Github.
 Copyright (C) 2011-2012 Michael S. Klishin
 
 Distributed under the Eclipse Public License, the same as Clojure.
+
+
+## FAQ
+
+### Will embedding be supported in the future?
+
+Because Neo4J is GPL software, linking against it will require your project to be open source. While there are
+perfectly valid use cases for this, Neocons was developed to be used in commercial projects and Neocons
+authors strongly prefer business-friendly licenses and Clojure community commitment to the Eclipse Public License v1.
+
+Neocons namespace structure leave the door open for future Neo4J Server features like the binary protocol but it
+is highly unlikely that it will ever cover embedding, should Neo4J license stay GPL forever.
+
+If you need a solid well-maintained EPLv1-licensed embeddable graph database for Clojure 1.3.0 and later, please
+use [Jiraph](https://github.com/flatland/jiraph).
