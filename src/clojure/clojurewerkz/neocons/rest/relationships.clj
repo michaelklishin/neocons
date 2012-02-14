@@ -117,9 +117,8 @@
   "Deletes all relationships for given node. Usually used before deleting the node,
    because Neo4J won't allow nodes with relationships to be deleted."
   ([^Node node]
-     (let [rel-ids (all-ids-for node)]
-       (doseq [id rel-ids]
-         (delete id)))))
+     (doseq [id (all-ids-for node)]
+       (delete id))))
 
 (defn all-types
   []
