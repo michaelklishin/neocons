@@ -3,7 +3,8 @@
             [clojurewerkz.neocons.rest Neo4JEndpoint]
             [clojurewerkz.neocons.rest.records Node Relationship])
   (:require [clojure.data.json                 :as json]
-            [clojurewerkz.neocons.rest         :as rest])
+            [clojurewerkz.neocons.rest         :as rest]
+            [clojurewerkz.neocons.rest.nodes   :as nodes])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojurewerkz.neocons.rest.records]
@@ -92,17 +93,33 @@
 
 
 (defn all-for
+  "Returns all relationships for given node."
   [^Node node &{ :keys [types] }]
   (relationships-for node :all types))
 
+(defn all-ids-for
+  "Returns ids of all relationships for given node."
+  [^Node node &{ :keys [types] }]
+  (map :id (all-for node :types types)))
+
 (defn incoming-for
+  "Returns incoming (inbound) relationships for given node."
   [^Node node &{ :keys [types] }]
   (relationships-for node :in types))
 
 (defn outgoing-for
+  "Returns outgoing (outbound) relationships for given node."
   [^Node node &{ :keys [types] }]
   (relationships-for node :out types))
 
+
+(defn purge
+  "Deletes all relationships for given node. Usually used before deleting the node,
+   because Neo4J won't allow nodes with relationships to be deleted."
+  ([^Node node]
+     (let [rel-ids (all-ids-for node)]
+       (doseq [id rel-ids]
+         (delete id)))))
 
 (defn all-types
   []
