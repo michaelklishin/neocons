@@ -15,7 +15,9 @@
                "1.4" [[org.clojure/clojure "1.4.0-beta1"]]
                :all [[org.clojure/data.json "0.1.2"]
                      [clj-http              "0.3.1"]]
-               }  
+               }
+  :source-path        "src/clojure"
+  :java-source-path   "src/java"  
   :dev-resources-path "test/resources"
   :warn-on-reflection true
   :test-selectors   {:default        (fn [v] (not (:time-consuming v)))
