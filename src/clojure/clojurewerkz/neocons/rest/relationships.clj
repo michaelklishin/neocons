@@ -112,12 +112,23 @@
   [^Node node &{ :keys [types] }]
   (relationships-for node :out types))
 
+(defn outgoing-ids-for
+  "Returns ids of outgoing (outbound) relationships for given node."
+  [^Node node &{ :keys [types] }]
+  (map :id (outgoing-for node :types types)))
 
-(defn purge
+
+(defn purge-all
   "Deletes all relationships for given node. Usually used before deleting the node,
    because Neo4J won't allow nodes with relationships to be deleted."
   ([^Node node]
      (doseq [id (all-ids-for node)]
+       (delete id))))
+
+(defn purge-outgoing
+  "Deletes all outgoing relationships for given node."
+  ([^Node node]
+     (doseq [id (outgoing-ids-for node)]
        (delete id))))
 
 (defn all-types

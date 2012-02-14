@@ -514,8 +514,19 @@
     ;; deletion of a node affects reachability of two other nodes. MK.
     (is (thrown? Exception
                  (nodes/delete (:id beth))))
-    (relationships/purge beth)
+    (relationships/purge-all beth)
     (nodes/delete (:id beth))
+    (is (not (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3)))))
+
+(deftest test-purging-of-all-outgoing-relationships
+  (let [john (nodes/create { :name "John" :age 28 :location "New York City, NY" })
+        beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
+        gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
+        rel1 (relationships/create john beth :knows)
+        rel5 (relationships/create beth gael :knows)
+        rt   { :type "knows" :direction "out" }]
+    (is (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3))
+    (relationships/purge-outgoing beth)
     (is (not (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3)))))
 
 
