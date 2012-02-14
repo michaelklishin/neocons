@@ -3,8 +3,7 @@
             [clojurewerkz.neocons.rest Neo4JEndpoint]
             [clojurewerkz.neocons.rest.records Node Relationship])
   (:require [clojure.data.json                 :as json]
-            [clojurewerkz.neocons.rest         :as rest]
-            [clojurewerkz.neocons.rest.nodes   :as nodes])
+            [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojurewerkz.neocons.rest.records]

@@ -511,6 +511,11 @@
         rel5 (relationships/create beth gael :knows)
         rt   { :type "knows" :direction "out" }]
     (is (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3))
+    (is (set (nodes/all-connected-out (:id john))) (:id beth))
+    (is (nodes/connected-out? (:id john) (:id beth)))
+    (is (not (nodes/connected-out? (:id john) (:id gael))))
+    (is (set (nodes/all-connected-out (:id beth))) (:id gael))
+    (is (nodes/connected-out? (:id beth) (:id gael)))
     ;; deletion of a node affects reachability of two other nodes. MK.
     (is (thrown? Exception
                  (nodes/delete (:id beth))))

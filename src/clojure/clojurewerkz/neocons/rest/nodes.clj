@@ -1,11 +1,13 @@
 (ns clojurewerkz.neocons.rest.nodes
-  (:require [clj-http.client                   :as http]
-            [clojure.data.json                 :as json]
-            [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojurewerkz.neocons.rest.records]
             [clojure.string :only [join]])
+  (:require [clj-http.client                         :as http]
+            [clojure.data.json                       :as json]
+            [clojurewerkz.neocons.rest               :as rest]
+            [clojurewerkz.neocons.rest.relationships :as relationships]
+            [clojurewerkz.neocons.rest.paths         :as paths])
   (:import  [java.net URI URL]
             [clojurewerkz.neocons.rest Neo4JEndpoint]
             [clojurewerkz.neocons.rest.records Node Relationship Index]
@@ -200,3 +202,18 @@
            xs (json/read-json body true)]
        (map (fn [doc]
               (instantiate-node-from doc)) xs))))
+
+
+(defn all-connected-out
+  "Returns all nodes given node has outgoing (outbound) relationships with"
+  [id &{ :keys [types] }]
+  (let [rels (relationships/outgoing-for (get id) :types types)
+        uris (set (map :end-uri rels))]
+    (map fetch-from uris)))
+
+(defn connected-out?
+  "Returns true if given node has outgoing (outbound) relationships with the other node"
+  [id other-id &{ :keys [types] }]
+  (let [rels (relationships/outgoing-for (get id) :types types)
+        uris (set (map :end-uri rels))]
+    (uris (node-location-for rest/*endpoint* other-id))))
