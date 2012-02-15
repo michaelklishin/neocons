@@ -3,7 +3,8 @@
             [clojurewerkz.neocons.rest Neo4JEndpoint]
             [clojurewerkz.neocons.rest.records Node Relationship])
   (:require [clojure.data.json                 :as json]
-            [clojurewerkz.neocons.rest         :as rest])
+            [clojurewerkz.neocons.rest         :as rest]
+            [clojurewerkz.neocons.rest.paths   :as paths])
   (:use     [clojurewerkz.neocons.rest.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojurewerkz.neocons.rest.records]
@@ -14,24 +15,12 @@
 ;; Implementation
 ;;
 
-(defn- rel-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:relationships-uri endpoint) "/" id))
-
 (defn- relationships-location-for
   [^Neo4JEndpoint endpoint ^Node node kind types]
   (let [query-params (if types
                        (str "/" (join "&" (map name types)))
                        "")]
     (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind) query-params)))
-
-(defn rel-properties-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:relationships-uri endpoint) "/" id "/properties"))
-
-(defn rel-property-location-for
-  [^Neo4JEndpoint endpoint ^long id prop]
-  (str (rel-properties-location-for endpoint id) "/" (name prop)))
 
 (defn- relationships-for
   [^Node node kind types]
@@ -40,10 +29,6 @@
     (if (missing? status)
       nil
       (map instantiate-rel-from xs))))
-
-(defn rel-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/traverse/relationship"))
 
 
 ;;
@@ -59,6 +44,16 @@
            payload  (json/read-json body true)]
        (instantiate-rel-from payload))))
 
+(declare outgoing-for)
+(defn maybe-create
+  ([^Node from ^Node to rel-type]
+     (maybe-create from to rel-type {}))
+  ([^Node from ^Node to rel-type data]
+     (if (paths/exists-between? (:id from) (:id to) :relationships [{ :type (name rel-type) :direction "out" }] :max-depth 1)
+       (let [rels (outgoing-for from :types [rel-type])
+             uri  (node-location-for rest/*endpoint* (:id to))]
+         (first (filter #(= (:end-uri %) uri) rels)))
+       (create from to rel-type data))))
 
 (defn get
   [^long id]

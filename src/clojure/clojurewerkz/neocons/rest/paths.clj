@@ -12,25 +12,6 @@
 ;; Implementation
 ;;
 
-(defn path-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/traverse/path"))
-
-(defn paths-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/paths"))
-
-(defn path-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/path"))
-
-(defn node-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id))
-
-(defn rel-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:relationships-uri endpoint) "/" id))
 
 
 ;;
@@ -89,7 +70,8 @@
                          :algorithm     "shortestPath"
                          }
            { :keys [status body] } (rest/POST (path-location-for rest/*endpoint* from) :body (json/json-str request-body) :throw-exceptions false)]
-       (if (missing? status)
+       (if (or (missing? status)
+               (server-error? status))
          nil
          (instantiate-path-from (json/read-json body true))))))
 

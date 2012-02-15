@@ -19,46 +19,6 @@
 ;;
 
 
-(defn node-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id))
-
-(defn node-properties-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/properties"))
-
-(defn node-property-location-for
-  [^Neo4JEndpoint endpoint ^long id prop]
-  (str (node-properties-location-for endpoint id) "/" (encode prop)))
-
-(defn node-index-location-for
-  [^Neo4JEndpoint endpoint idx]
-  (str (:node-index-uri endpoint) "/" (encode idx)))
-
-(defn node-in-index-location-for
-  ([^Neo4JEndpoint endpoint ^long id idx]
-     (str (:node-index-uri endpoint) "/" (encode idx) "/" id))
-  ([^Neo4JEndpoint endpoint ^long id idx key]
-     (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" id))
-  ([^Neo4JEndpoint endpoint id idx key value]
-     (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
-
-(defn index-lookup-location-for
-  [^Neo4JEndpoint endpoint ^String idx key value]
-  (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
-
-(defn auto-index-location-for
-  [^Neo4JEndpoint endpoint]
-  (str (:uri endpoint) "index/auto/node/"))
-
-(defn auto-index-lookup-location-for
-  [^Neo4JEndpoint endpoint key value]
-  (str (auto-index-location-for endpoint) (encode key) "/" (encode (str value))))
-
-(defn node-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/traverse/node"))
-
 
 
 ;;

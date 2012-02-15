@@ -131,6 +131,18 @@
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= (:type created-rel) (:type created-rel2)))))
 
+(deftest test-avoiding-creating-the-same-relationship-without-properties-twice
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel   (relationships/maybe-create from-node to-node :links)
+        created-rel2  (relationships/maybe-create from-node to-node :links)
+        fetched-rel   (relationships/get (:id created-rel))]
+    (is (= created-rel created-rel2))
+    (is (= (:id created-rel)   (:id fetched-rel)))
+    (is (= (:id created-rel)   (:id created-rel2)))
+    (is (= (:type created-rel) (:type fetched-rel)))
+    (is (= (:type created-rel) (:type created-rel2)))))
+
 (deftest test-creating-and-immediately-accessing-a-relationship-with-properties
   (let [data         { :one "uno" :two "due" }
         from-node    (nodes/create)
@@ -441,6 +453,7 @@
         beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
         bern (nodes/create { :name "Bernard"   :age 33 :location "Zürich" })
         gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
+        alex (nodes/create { :name "Alex"      :age 24 :location "Toronto, ON" })
         rel1 (relationships/create john liz  :knows)
         rel2 (relationships/create liz  beth :knows)
         rel3 (relationships/create liz  bern :knows)
@@ -460,7 +473,8 @@
         path5 (first xs5)
         path6 (last  xs5)
         path7 (paths/shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 7)
-        path8 (paths/shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 1)]
+        path8 (paths/shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 1)
+        path9 (paths/shortest-between (:id john) (:id alex) :relationships [rt] :max-depth 1)]
     (is (empty? xs2))
     (is (nil? path8))
     (is (= 1 (count xs1)))
@@ -496,7 +510,8 @@
     (is (not (paths/relationship-in? (:id rel4) path7)))
     (is (not (paths/relationship-in? rel4 path7)))
     (is (paths/exists-between? (:id john) (:id liz) :relationships [rt] :max-depth 7))
-    (is (not (paths/exists-between? (:id beth) (:id bern) :relationships [rt] :max-depth 7)))))
+    (is (not (paths/exists-between? (:id beth) (:id bern) :relationships [rt] :max-depth 7)))
+    (is (nil? path9))))
 
 
 ;;
