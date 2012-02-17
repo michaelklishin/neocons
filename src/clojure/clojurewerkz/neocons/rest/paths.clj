@@ -12,6 +12,7 @@
 ;; Implementation
 ;;
 
+;; ...
 
 
 ;;
@@ -25,6 +26,7 @@
                                                                                                prune-evaluator { :language "builtin" :name "none" }
                                                                                                return-filter   { :language "builtin" :name "all"  }
                                                                                                } }]
+     (check-not-nil! id "id must not be nil")
      (let [request-body {
                          :order           order
                          :relationships   relationships
@@ -45,6 +47,8 @@
                                                                                                     uniqueness    "none"
                                                                                                     return-filter   { :language "builtin" :name "all"  }
                                                                                                     } }]
+     (check-not-nil! from "from argument must not be nil")
+     (check-not-nil! to   "to argument must not be nil")
      (let [request-body {
                          :to              (node-location-for rest/*endpoint* to)
                          :relationships   relationships
@@ -63,6 +67,8 @@
                                                                                                     uniqueness    "none"
                                                                                                     return-filter   { :language "builtin" :name "all"  }
                                                                                                     } }]
+     (check-not-nil! from "from argument must not be nil")
+     (check-not-nil! to   "to argument must not be nil")
      (let [request-body {
                          :to            (node-location-for rest/*endpoint* to)
                          :relationships relationships
@@ -77,7 +83,9 @@
 
 (defn exists-between?
   [from to &{ :keys [relationships max-depth prune-evaluator uniqueness] }]
-    (not (nil? (shortest-between from to :relationships relationships :max-depth max-depth :prune-evaluator prune-evaluator :uniqueness uniqueness))))
+  (check-not-nil! from "from argument must not be nil")
+  (check-not-nil! to   "to argument must not be nil")
+  (not (nil? (shortest-between from to :relationships relationships :max-depth max-depth :prune-evaluator prune-evaluator :uniqueness uniqueness))))
 
 
 (defprotocol PathPredicates

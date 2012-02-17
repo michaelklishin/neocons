@@ -21,3 +21,8 @@
   (.toLowerCase (if (.endsWith (.toLowerCase s) (.toLowerCase prefix))
                   s
                   (str s prefix))))
+
+(definline check-not-nil!
+  [ref message]
+  `(when (nil? ~ref)
+     (throw (IllegalArgumentException. ~message))))
