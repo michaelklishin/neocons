@@ -23,6 +23,6 @@
                   (str s prefix))))
 
 (definline check-not-nil!
-  [ref message]
+  [ref ^String message]
   `(when (nil? ~ref)
      (throw (IllegalArgumentException. ~message))))
