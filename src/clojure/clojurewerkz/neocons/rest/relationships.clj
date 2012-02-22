@@ -63,7 +63,6 @@
       nil
       (instantiate-rel-from payload id))))
 
-
 (defn delete
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (rel-location-for rest/*endpoint* id))]
@@ -71,6 +70,15 @@
             (conflict? status))
       [nil status]
       [id  status])))
+
+(declare first-outgoing-between)
+(defn maybe-delete-outgoing
+  ([^long id]
+     (if-let [n (get id)]
+       (delete id)))
+  ([^Node from ^Node to rels]
+     (if-let [rel (first-outgoing-between from to rels)]
+       (delete (:id rel)))))
 
 
 (defn update
@@ -102,14 +110,28 @@
   (relationships-for node :in types))
 
 (defn outgoing-for
-  "Returns outgoing (outbound) relationships for given node."
+  "Returns all outgoing (outbound) relationships for given node."
   [^Node node &{ :keys [types] }]
   (relationships-for node :out types))
 
 (defn outgoing-ids-for
-  "Returns ids of outgoing (outbound) relationships for given node."
+  "Returns ids of all outgoing (outbound) relationships for given node."
   [^Node node &{ :keys [types] }]
   (map :id (outgoing-for node :types types)))
+
+(defn all-outgoing-between
+  "Returns all outgoing (outbound) relationships of given relationship types between two nodes"
+  ([^Node from ^Node to rels]
+     (if (paths/exists-between? (:id from) (:id to) :relationships rels :max-depth 1)
+       (let [rels (outgoing-for from :types rels)
+             uri  (node-location-for rest/*endpoint* (:id to))]
+         (filter #(= (:end-uri %) uri) rels))
+       [])))
+
+(defn first-outgoing-between
+  "Returns first outgoing (outbound) relationships of given relationship types between two nodes"
+  ([^Node from ^Node to types]
+     (first (all-outgoing-between from to types))))
 
 
 (defn purge-all

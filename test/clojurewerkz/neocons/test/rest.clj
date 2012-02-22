@@ -143,6 +143,20 @@
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= (:type created-rel) (:type created-rel2)))))
 
+(deftest test-avoiding-destroying-the-same-relationship-without-properties-twice
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel  (relationships/create from-node to-node :links)
+        rt           { :type "links" :direction "out" }]
+    (is (relationships/first-outgoing-between from-node to-node [:links]))
+    (is (nil? (relationships/first-outgoing-between from-node to-node [:loves])))
+    (is (= created-rel (relationships/first-outgoing-between from-node to-node [:links])))
+    (is (paths/exists-between? (:id from-node) (:id to-node) :relationships [rt] :max-depth 1))
+    (relationships/maybe-delete-outgoing from-node to-node [:links])
+    (is (nil? (relationships/first-outgoing-between from-node to-node [:links])))
+    (is (not (paths/exists-between? (:id from-node) (:id to-node) :relationships [rt] :max-depth 1)))
+    (relationships/maybe-delete-outgoing from-node to-node [:links])))
+
 (deftest test-creating-and-immediately-accessing-a-relationship-with-properties
   (let [data         { :one "uno" :two "due" }
         from-node    (nodes/create)
