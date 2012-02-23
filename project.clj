@@ -17,10 +17,11 @@
                      [clj-http              "0.3.1"]]
                }
   :source-path        "src/clojure"
-  :java-source-path   "src/java"  
+  :java-source-path   "src/java"
   :dev-resources-path "test/resources"
   :warn-on-reflection true
   :test-selectors   {:default        (fn [v] (not (:time-consuming v)))
                      :time-consuming (fn [v] (:time-consuming v))
                      :focus          (fn [v] (:focus v))
+                     :indexing       (fn [v] (:indexing v))
                      :all            (fn [_] true)})
