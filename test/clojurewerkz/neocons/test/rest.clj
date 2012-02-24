@@ -354,6 +354,15 @@
       (is (ids (:id node1)))
       (is (not (ids (:id node2)))))))
 
+(deftest ^{:indexing true} test-removing-a-node-removes-it-from-indexes
+  (let [node1 (nodes/create { :name "Wired" })
+        url1  "http://wired.com"
+        idx   (nodes/create-index "by-url")]
+    (nodes/delete-from-index (:id node1) (:name idx) "url")
+    (nodes/add-to-index (:id node1) (:name idx) "url" url1)
+    (nodes/delete (:id node1))
+    (let [ids (set (map :id (nodes/find (:name idx) :url url1)))]
+      (is (not (ids (:id node1)))))))
 
 (deftest ^{:indexing true} test-finding-nodes-using-full-text-search-queries-over-index
   (let [puma  (nodes/create { :name "Puma"  :hq-location "Herzogenaurach, Germany"})
@@ -366,6 +375,7 @@
     (let [ids (set (map :id (nodes/query (:name idx) "country:Germany")))]
       (is (ids (:id puma)))
       (is (not (ids (:id apple)))))))
+
 
 
 ;;
