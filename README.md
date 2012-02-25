@@ -33,13 +33,46 @@ Once the library matures, we will update this document.
 [Neocons has a mailing list](https://groups.google.com/group/clojure-neo4j). Feel free to join it and ask any questions you may have.
 
 
+## This is a Work In Progress
+
+Core Neocons APIs are stabilized but it is still a work in progress. Keep that in mind. 1.0 will be released in 2012
+together with documentation guides and dedicated website.
+
+
+
 ## Maven Artifacts
+
+### The Most Recent Release
 
 With Leiningen:
 
     [clojurewerkz/neocons "1.0.0-SNAPSHOT"]
 
-New snapshots are released to [clojars.org](https://clojars.org/clojurewerkz/neocons) every few days.
+With Maven:
+
+    <dependency>
+      <groupId>clojurewerkz</groupId>
+      <artifactId>neocons</artifactId>
+      <version>1.0.0-beta1</version>
+    </dependency>
+
+
+### Snapshots
+
+If you are comfortable with using snapshots, snapshot artifacts are [released to Clojars](https://clojars.org/clojurewerkz/neocons) every 24 hours.
+
+With Leiningen:
+
+    [clojurewerkz/neocons "1.0.0-SNAPSHOT"]
+
+
+With Maven:
+
+    <dependency>
+      <groupId>clojurewerkz</groupId>
+      <artifactId>neocons</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
 
 
 ## Continuous Integration
