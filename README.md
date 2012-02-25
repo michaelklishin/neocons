@@ -20,13 +20,17 @@ Neocons currently supports the following features (all via REST API, so [you can
  * [Cypher queries](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html) (with Neo4J Server 1.6 and later)
 
 
-## Usage
+## Documentation & Examples
 
 Neocons is a very young project and until 1.0 is released and documentation guides are written,
 it may be challenging to use for anyone except the author. For code examples, see our test
 suite.
 
 Once the library matures, we will update this document.
+
+## Mailing List
+
+[Neocons has a mailing list](https://groups.google.com/group/clojure-neo4j). Feel free to join it and ask any questions you may have.
 
 
 ## Maven Artifacts
@@ -55,6 +59,12 @@ Neocons is built from the ground up for Clojure 1.3 and up.
 
 Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html) support, 1.6 is the minimum recommended
 versions because Cypher is supported by the REST API directly without any plugins.
+
+
+## Neocons Is a ClojureWerkz Project
+
+Neocons is part of the group of libraries known as ClojureWerkz, together with
+[Monger](https://github.com/michaelklishin/monger), [Langohr](https://github.com/michaelklishin/langohr), [Elastisch](https://github.com/clojurewerkz/elastisch), [Quartzite](https://github.com/michaelklishin/quartzite) and several others.
 
 
 ## Development
