@@ -28,9 +28,11 @@ suite.
 
 Once the library matures, we will update this document.
 
-## Mailing List
+## Community
 
 [Neocons has a mailing list](https://groups.google.com/group/clojure-neo4j). Feel free to join it and ask any questions you may have.
+
+To subscribe for announcements of releases, important changes and so on, please follow [@ClojureWerkz](https://twitter.com/#!/clojurewerkz) on Twitter.
 
 
 ## This is a Work In Progress
