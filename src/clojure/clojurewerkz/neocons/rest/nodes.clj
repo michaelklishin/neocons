@@ -7,7 +7,8 @@
             [clojure.data.json                       :as json]
             [clojurewerkz.neocons.rest               :as rest]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.paths         :as paths])
+            [clojurewerkz.neocons.rest.paths         :as paths]
+            [clojurewerkz.neocons.rest.cypher        :as cypher])
   (:import  [java.net URI URL]
             [clojurewerkz.neocons.rest Neo4JEndpoint]
             [clojurewerkz.neocons.rest.records Node Relationship Index]
@@ -35,10 +36,20 @@
        (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload)))))
 
 (defn get
+  "Fetches a node by id"
   [^long id]
   (let [{ :keys [status body] } (rest/GET (node-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
     (instantiate-node-from payload id)))
+
+(defn multi-get
+  "Fetches multiple nodes by id.
+
+  This is a non-standard operation that requires Cypher support from Neo4J Server (versions 1.6.0 and later have it in the core)."
+  ([coll]
+     (let [{ :keys [data] } (cypher/query "START x = node({ids}) RETURN x" { :ids coll })]
+       (map (comp instantiate-node-from first) data))))
+
 
 (defn delete
   [^long id]

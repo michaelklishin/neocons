@@ -617,3 +617,25 @@
     (is (= (:start path1) (:location-uri john)))
     (is (= (:end   path1) (:location-uri sarah)))
     (is (= (first (:relationships path1)) (:location-uri rel1)))))
+
+
+(deftest ^{ :cypher true } test-cypher-query-example3
+  (let [john  (nodes/create { :name "John" })
+        sarah (nodes/create { :name "Sarah" })
+        rel1  (relationships/create john sarah :friend)
+        ids   (map :id [john sarah])
+        { :keys [data columns] } (cypher/query "START x = node({ids}) RETURN x.name" { :ids ids })]
+    (is (= ["John" "Sarah"] (vec (map first data))))))
+
+(deftest ^{ :cypher true } test-cypher-query-example4
+  (let [john  (nodes/create { :name "John" })
+        sarah (nodes/create { :name "Sarah" })
+        ids   (map :id [john sarah])
+        { :keys [data columns] } (cypher/query "START x = node({ids}) RETURN x" { :ids ids })]
+    (is (= ids (vec (map (comp :id instantiate-node-from first) data))))))
+
+(deftest ^{ :cypher true } test-cypher-query-example5
+  (let [john  (nodes/create { :name "John" })
+        sarah (nodes/create { :name "Sarah" })
+        ids   (vec (map :id [sarah john]))]
+    (is (= ids (vec (map :id (nodes/multi-get ids)))))))
