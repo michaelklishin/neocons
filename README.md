@@ -48,7 +48,7 @@ together with documentation guides and dedicated website.
 
 With Leiningen:
 
-    [clojurewerkz/neocons "1.0.0-SNAPSHOT"]
+    [clojurewerkz/neocons "1.0.0-beta1"]
 
 With Maven:
 
