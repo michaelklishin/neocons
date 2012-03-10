@@ -11,7 +11,7 @@
         [clojure.pprint :only [pprint]]
         [clojurewerkz.neocons.rest.records :only [instantiate-node-from instantiate-rel-from instantiate-path-from]]))
 
-
+(println (str "Using Clojure version " *clojure-version*))
 (neorest/connect! "http://localhost:7474/db/data/")
 
 
