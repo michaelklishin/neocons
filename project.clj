@@ -10,11 +10,11 @@
                  }
   :dependencies [[org.clojure/clojure   "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-http              "0.3.2"]]
+                 [clj-http              "0.3.3"]]
   :multi-deps {
-               "1.4" [[org.clojure/clojure "1.4.0-beta1"]]
+               "1.4" [[org.clojure/clojure "1.4.0-beta4"]]
                :all [[org.clojure/data.json "0.1.2"]
-                     [clj-http              "0.3.1"]]
+                     [clj-http              "0.3.3"]]
                }
   :source-path        "src/clojure"
   :java-source-path   "src/java"
