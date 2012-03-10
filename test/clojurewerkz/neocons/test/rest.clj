@@ -579,7 +579,7 @@
 ;; Cypher queries
 ;;
 
-(deftest test-cypher-query-example1
+(deftest ^{ :cypher true } test-cypher-query-example1
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         joe   (nodes/create { :name "Joe" })
@@ -604,7 +604,7 @@
     (is (= (:data steve) (:data (last row2))))))
 
 
-(deftest test-cypher-query-example2
+(deftest ^{ :cypher true } test-cypher-query-example2
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         rel1  (relationships/create john sarah :friend)

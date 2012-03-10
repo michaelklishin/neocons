@@ -24,4 +24,5 @@
                      :time-consuming (fn [v] (:time-consuming v))
                      :focus          (fn [v] (:focus v))
                      :indexing       (fn [v] (:indexing v))
+                     :cypher         (fn [v] (:cypher v))
                      :all            (fn [_] true)})
