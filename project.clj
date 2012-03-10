@@ -1,5 +1,7 @@
 (defproject clojurewerkz/neocons "1.0.0-SNAPSHOT"
+  :description "Neocons is an experimental idiomatic Clojure client for the Neo4J REST API"  
   :license {:name "Eclipse Public License"}
+  :min-lein-version "2.0.0"  
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
                  [clj-http "0.3.3"]]
@@ -24,7 +26,5 @@
                   :snapshots false,
                   :releases {:checksum :fail, :update :always}}}
   :java-source-paths ["src/java"]
-  :min-lein-version "2.0.0"
   :dev-resources-path "/Users/antares/Development/ClojureWerkz/neocons.git/test/resources"
-  :warn-on-reflection true
-  :description "Neocons is an experimental idiomatic Clojure client for the Neo4J REST API")
+  :warn-on-reflection true)
