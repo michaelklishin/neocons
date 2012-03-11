@@ -12,19 +12,11 @@
                    :cypher (fn [v] (:cypher v)),
                    :all (fn [_] true)}
   :source-paths ["src/clojure"]
-  :profiles {:all
-             {:dependencies
-              [[org.clojure/data.json "0.1.2"] [clj-http "0.3.3"]]},
-             :1.4
-             {:dependencies [[org.clojure/clojure "1.4.0-beta4"]]}}
-  :test-resources-path "/Users/antares/Development/ClojureWerkz/neocons.git/test/resources"
-  :repositories {"clojure-releases"
-                 "http://build.clojure.org/releases",
-                 "sonatype"
-                 {:url
-                  "http://oss.sonatype.org/content/repositories/releases",
+  :profiles {:all {:dependencies [[org.clojure/data.json "0.1.2"] [clj-http "0.3.3"]]},
+             :1.4 {:dependencies [[org.clojure/clojure "1.4.0-beta4"]]}}
+  :repositories {"clojure-releases" "http://build.clojure.org/releases",
+                 "sonatype" {:url "http://oss.sonatype.org/content/repositories/releases",
                   :snapshots false,
                   :releases {:checksum :fail, :update :always}}}
   :java-source-paths ["src/java"]
-  :dev-resources-path "/Users/antares/Development/ClojureWerkz/neocons.git/test/resources"
   :warn-on-reflection true)
