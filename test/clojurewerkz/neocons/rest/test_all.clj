@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.test.rest
+(ns clojurewerkz.neocons.rest.test-all
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
@@ -6,7 +6,7 @@
             [clojurewerkz.neocons.rest.cypher        :as cypher]
             [slingshot.slingshot :as slingshot])
   (:import [slingshot ExceptionInfo])
-  (:use [clojure.test]
+  (:use clojure.test
         [clojure.set :only [subset?]]
         [clojure.pprint :only [pprint]]
         [clojurewerkz.neocons.rest.records :only [instantiate-node-from instantiate-rel-from instantiate-path-from]]))

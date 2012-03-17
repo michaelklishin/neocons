@@ -1,6 +1,6 @@
-(ns clojurewerkz.neocons.test.helpers
-  (:use [clojure.test]
-        [clojurewerkz.neocons.rest.helpers]))
+(ns clojurewerkz.neocons.rest.test-helpers
+  (:use clojure.test
+        clojurewerkz.neocons.rest.helpers))
 
 (deftest test-id-extraction
   (is (= 1 (extract-id "http://localhost:7474/db/data/node/1")))
