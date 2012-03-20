@@ -2,7 +2,7 @@
   (:import  [java.net URI])
   (:require [clj-http.client   :as http]
             [clojure.data.json :as json])
-  (:use     [clojurewerkz.neocons.rest.statuses]
+  (:use     [clojurewerkz.support.http.statuses]
             [clojurewerkz.neocons.rest.helpers :only [maybe-append]]))
 
 ;;

@@ -4,7 +4,7 @@
             [clojurewerkz.neocons.rest.records Node Relationship Path])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest])
-  (:use     [clojurewerkz.neocons.rest.statuses]
+  (:use     [clojurewerkz.support.http.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojurewerkz.neocons.rest.records]))
 

@@ -1,5 +1,5 @@
 (ns clojurewerkz.neocons.rest.nodes
-  (:use     [clojurewerkz.neocons.rest.statuses]
+  (:use     [clojurewerkz.support.http.statuses]
             [clojurewerkz.neocons.rest.helpers]
             [clojurewerkz.neocons.rest.records]
             [clojure.string :only [join]])

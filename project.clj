@@ -4,7 +4,8 @@
   :min-lein-version "2.0.0"  
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-http "0.3.3"]]
+                 [clj-http "0.3.3"]
+                 [clojurewerkz/support "0.1.0-beta2"]]
   :test-selectors {:default (fn [v] (not (:time-consuming v))),
                    :time-consuming (fn [v] (:time-consuming v)),
                    :focus (fn [v] (:focus v)),
