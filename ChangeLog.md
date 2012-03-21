@@ -1,5 +1,10 @@
 ## Changes between Neocons 1.0.0-beta1 and 1.0.0-beta2
 
+### More Efficient nodes/connected-out
+
+`clojurewerkz.neocons.rest.nodes/connected-out` implementation is now based on `nodes/multi-get` and is much more efficient for nodes
+with many outgoing relationships.
+
 ### nodes/multi-get
 
 `clojurewerkz.neocons.rest.nodes/multi-get` function efficiently (in a single HTTP request) fetches multiple nodes by id.
