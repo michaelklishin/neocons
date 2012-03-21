@@ -179,8 +179,8 @@
   "Returns all nodes given node has outgoing (outbound) relationships with"
   [id &{ :keys [types] }]
   (let [rels (relationships/outgoing-for (get id) :types types)
-        uris (set (map :end-uri rels))]
-    (map fetch-from uris)))
+        ids  (set (map #(extract-id (:end-uri %)) rels))]
+    (multi-get ids)))
 
 (defn connected-out?
   "Returns true if given node has outgoing (outbound) relationships with the other node"
