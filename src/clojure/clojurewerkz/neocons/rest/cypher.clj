@@ -22,6 +22,7 @@
 ;;
 
 (defn tableize
+  "Turns Cypher query response into a table, like SQL queries in relational databases"
   ([response]
      (if-let [{:keys [columns data]} response]
        (tableize columns data)
@@ -30,6 +31,7 @@
      (map (fn [row] (zipmap columns row)) rows)))
 
 (defn query
+  "Performs a Cypher query, returning columns and rows separately (the way Neo4J REST API does)"
   ([^String q]
      (query q {}))
   ([^String q params]
@@ -37,3 +39,6 @@
        (if (missing? status)
          nil
          (instantiate-cypher-query-response-from (json/read-json body true))))))
+
+(def ^{:doc "Performs a Cypher query, returning result formatted as a table (using tableize)"}
+  tquery (comp tableize query))

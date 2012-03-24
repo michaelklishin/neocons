@@ -1,6 +1,6 @@
 ## Changes between Neocons 1.0.0-beta1 and 1.0.0-beta2
 
-### cypher/tableize
+### cypher/tableize and cypher/tquery
 
 New function `cypher/tableize` transforms Cypher query responses (that list columns and row sets separately) into tables,
 much like SQL queries do. The following test demonstrates how it works:
@@ -12,6 +12,9 @@ much like SQL queries do. The following test demonstrates how it works:
     (is (= [{"x.name" "John" "x.age" 27}
             {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize columns rows))))))
 ```
+
+`cypher/tquery` combines `cypher/query` and `cypher/tableize`: it executes Cypher queries and returns results
+formatted as table.
 
 ### More Efficient nodes/connected-out
 

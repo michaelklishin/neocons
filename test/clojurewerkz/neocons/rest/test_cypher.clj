@@ -64,7 +64,8 @@
         ids   (map :id [john sarah])
         { :keys [data columns] :as response } (cy/query "START x = node({ids}) RETURN x.name, x.age" { :ids ids })]
     (is (= ["John" "Sarah"] (vec (map first data))))
-    (is (= [{"x.name" "John" "x.age" 27} {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize response))))))
+    (is (= [{"x.name" "John"  "x.age" 27}
+            {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize response))))))
 
 (deftest ^{:cypher true} test-cypher-query-example4
   (let [john  (nodes/create { :name "John" })
@@ -79,9 +80,19 @@
         ids   (vec (map :id [sarah john]))]
     (is (= ids (vec (map :id (nodes/multi-get ids)))))))
 
+(deftest ^{:cypher true} test-cypher-tquery
+  (let [john  (nodes/create { :name "John"  :age 27 })
+        sarah (nodes/create { :name "Sarah" :age 28 })
+        rel1  (relationships/create john sarah :friend)
+        ids   (map :id [john sarah])]
+    (is (= [{"x.name" "John"  "x.age" 27}
+            {"x.name" "Sarah" "x.age" 28}]
+           (vec (cy/tquery "START x = node({ids}) RETURN x.name, x.age" { :ids ids }))))))
+
 
 (deftest ^{:cypher true} test-tableize
   (let [columns ["x.name" "x.age"]
         rows    [["John" 27] ["Sarah" 28]]]
-    (is (= [{"x.name" "John" "x.age" 27} {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize columns rows))))
+    (is (= [{"x.name" "John"  "x.age" 27}
+            {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize columns rows))))
     (is (empty? (cy/tableize nil)))))
