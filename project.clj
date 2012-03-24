@@ -6,12 +6,12 @@
                  [org.clojure/data.json "0.1.2"]
                  [clj-http "0.3.3"]
                  [clojurewerkz/support "0.1.0-beta2"]]
-  :test-selectors {:default (fn [v] (not (:time-consuming v))),
-                   :time-consuming (fn [v] (:time-consuming v)),
-                   :focus (fn [v] (:focus v)),
-                   :indexing (fn [v] (:indexing v)),
-                   :cypher (fn [v] (:cypher v)),
-                   :all (fn [_] true)}
+  :test-selectors {:default        (fn [v] (not (:time-consuming v)))
+                   :time-consuming (fn [v] (:time-consuming v))
+                   :focus          (fn [v] (:focus v))
+                   :indexing       (fn [v] (:indexing v))
+                   :cypher         (fn [v] (:cypher v))
+                   :all            (fn [_] true)}
   :source-paths ["src/clojure"]
   :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0-beta5"]]}}
   :aliases { "all" ["with-profile" "dev:dev,1.4"] }
