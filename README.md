@@ -104,7 +104,7 @@ Neocons is part of the group of libraries known as ClojureWerkz, together with
 
 ## Development
 
-Neocons uses [Leiningen 2](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md). Make sure you have it installed and then run tests against Clojure 1.3.0 and 1.4.0[-beta4] using
+Neocons uses [Leiningen 2](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md). Make sure you have it installed and then run tests against Clojure 1.3.0 and 1.4.0[-beta5] using
 
     lein2 all test
 

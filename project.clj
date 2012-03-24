@@ -13,7 +13,7 @@
                    :cypher (fn [v] (:cypher v)),
                    :all (fn [_] true)}
   :source-paths ["src/clojure"]
-  :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0-beta4"]]}}
+  :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0-beta5"]]}}
   :aliases { "all" ["with-profile" "dev:dev,1.4"] }
   :repositories {"clojure-releases" "http://build.clojure.org/releases",
                  "sonatype" {:url "http://oss.sonatype.org/content/repositories/releases",
