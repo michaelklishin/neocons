@@ -2,7 +2,7 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.cypher        :as cypher]
+            [clojurewerkz.neocons.rest.cypher        :as cy]
             [slingshot.slingshot :as slingshot])
   (:import [slingshot ExceptionInfo])
   (:use clojure.test
@@ -17,7 +17,7 @@
 ;; Cypher queries
 ;;
 
-(deftest ^{ :cypher true } test-cypher-query-example1
+(deftest ^{:cypher true} test-cypher-query-example1
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         joe   (nodes/create { :name "Joe" })
@@ -27,7 +27,7 @@
         rel2  (relationships/create john joe :friend)
         rel3  (relationships/create sarah maria :friend)
         rel4  (relationships/create joe steve :friend)
-        { :keys [data columns] } (cypher/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
+        { :keys [data columns] } (cy/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
         row1  (map instantiate-node-from (first  data))
         row2  (map instantiate-node-from (second data))]
     (is (= 2 (count data)))
@@ -42,11 +42,11 @@
     (is (= (:data steve) (:data (last row2))))))
 
 
-(deftest ^{ :cypher true } test-cypher-query-example2
+(deftest ^{:cypher true} test-cypher-query-example2
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         rel1  (relationships/create john sarah :friend)
-        { :keys [data columns] } (cypher/query "START x = node({sid}) MATCH path = (x--friend) RETURN path, friend.name" { :sid (:id john) })
+        { :keys [data columns] } (cy/query "START x = node({sid}) MATCH path = (x--friend) RETURN path, friend.name" { :sid (:id john) })
         row1  (map instantiate-path-from (first data))
         path1 (first row1)]
     (is (= 1 (count data)))
@@ -57,23 +57,31 @@
     (is (= (first (:relationships path1)) (:location-uri rel1)))))
 
 
-(deftest ^{ :cypher true } test-cypher-query-example3
-  (let [john  (nodes/create { :name "John" })
-        sarah (nodes/create { :name "Sarah" })
+(deftest ^{:cypher true} test-cypher-query-example3
+  (let [john  (nodes/create { :name "John"  :age 27 })
+        sarah (nodes/create { :name "Sarah" :age 28 })
         rel1  (relationships/create john sarah :friend)
         ids   (map :id [john sarah])
-        { :keys [data columns] } (cypher/query "START x = node({ids}) RETURN x.name" { :ids ids })]
-    (is (= ["John" "Sarah"] (vec (map first data))))))
+        { :keys [data columns] :as response } (cy/query "START x = node({ids}) RETURN x.name, x.age" { :ids ids })]
+    (is (= ["John" "Sarah"] (vec (map first data))))
+    (is (= [{"x.name" "John" "x.age" 27} {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize response))))))
 
-(deftest ^{ :cypher true } test-cypher-query-example4
+(deftest ^{:cypher true} test-cypher-query-example4
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         ids   (map :id [john sarah])
-        { :keys [data columns] } (cypher/query "START x = node({ids}) RETURN x" { :ids ids })]
+        { :keys [data columns] } (cy/query "START x = node({ids}) RETURN x" { :ids ids })]
     (is (= ids (vec (map (comp :id instantiate-node-from first) data))))))
 
-(deftest ^{ :cypher true } test-cypher-query-example5
+(deftest ^{:cypher true} test-cypher-query-example5
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         ids   (vec (map :id [sarah john]))]
     (is (= ids (vec (map :id (nodes/multi-get ids)))))))
+
+
+(deftest ^{:cypher true} test-tableize
+  (let [columns ["x.name" "x.age"]
+        rows    [["John" 27] ["Sarah" 28]]]
+    (is (= [{"x.name" "John" "x.age" 27} {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize columns rows))))
+    (is (empty? (cy/tableize nil)))))

@@ -21,6 +21,14 @@
 ;; API
 ;;
 
+(defn tableize
+  ([response]
+     (if-let [{:keys [columns data]} response]
+       (tableize columns data)
+       (list)))
+  ([columns rows]
+     (map (fn [row] (zipmap columns row)) rows)))
+
 (defn query
   ([^String q]
      (query q {}))

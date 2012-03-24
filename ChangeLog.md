@@ -1,5 +1,18 @@
 ## Changes between Neocons 1.0.0-beta1 and 1.0.0-beta2
 
+### cypher/tableize
+
+New function `cypher/tableize` transforms Cypher query responses (that list columns and row sets separately) into tables,
+much like SQL queries do. The following test demonstrates how it works:
+
+``` clojure
+(deftest ^{:cypher true} test-tableize
+  (let [columns ["x.name" "x.age"]
+        rows    [["John" 27] ["Sarah" 28]]]
+    (is (= [{"x.name" "John" "x.age" 27}
+            {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize columns rows))))))
+```
+
 ### More Efficient nodes/connected-out
 
 `clojurewerkz.neocons.rest.nodes/connected-out` implementation is now based on `nodes/multi-get` and is much more efficient for nodes
