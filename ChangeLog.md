@@ -1,5 +1,9 @@
 ## Changes between Neocons 1.0.0-beta1 and 1.0.0-beta2
 
+### clj-http upgraded to 0.3.4
+
+Neocons now uses clj-http 0.3.4.
+
 ### cypher/tableize and cypher/tquery
 
 New function `cypher/tableize` transforms Cypher query responses (that list columns and row sets separately) into tables,
