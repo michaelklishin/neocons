@@ -1,8 +1,16 @@
 ## Changes between Neocons 1.0.0-beta1 and 1.0.0-beta2
 
+### HTTP Authentication support
+
+Neocons now supports basic HTTP authentication. Credentials can be passed to `neocons.rest.connect` and
+`neocons.rest.connect!` functions as well as via `NEO4J_LOGIN` and `NEO4J_PASSWORD` environment variables
+(to be Heroku-friendly).
+
+
 ### clj-http upgraded to 0.3.4
 
 Neocons now uses clj-http 0.3.4.
+
 
 ### cypher/tableize and cypher/tquery
 
@@ -20,10 +28,12 @@ much like SQL queries do. The following test demonstrates how it works:
 `cypher/tquery` combines `cypher/query` and `cypher/tableize`: it executes Cypher queries and returns results
 formatted as table.
 
+
 ### More Efficient nodes/connected-out
 
 `clojurewerkz.neocons.rest.nodes/connected-out` implementation is now based on `nodes/multi-get` and is much more efficient for nodes
 with many outgoing relationships.
+
 
 ### nodes/multi-get
 
