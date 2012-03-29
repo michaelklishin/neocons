@@ -7,6 +7,13 @@ Neocons now supports basic HTTP authentication. Credentials can be passed to `ne
 (to be Heroku-friendly).
 
 
+### neocons.rest.connect and neocons.rest.connect! no longer accept java.net.URI instances
+
+`neocons.rest.connect` and `neocons.rest.connect!` no longer accept java.net.URI instances. Please use strings from now on.
+This makes implementation of HTTP authentication and Heroku add-on support much simpler at a price of this small
+undocumented feature.
+
+
 ### clj-http upgraded to 0.3.4
 
 Neocons now uses clj-http 0.3.4.
