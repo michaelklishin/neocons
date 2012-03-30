@@ -51,14 +51,14 @@ together with documentation guides and dedicated website.
 
 With Leiningen:
 
-    [clojurewerkz/neocons "1.0.0-beta1"]
+    [clojurewerkz/neocons "1.0.0-beta2"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>1.0.0-beta1</version>
+      <version>1.0.0-beta2</version>
     </dependency>
 
 
