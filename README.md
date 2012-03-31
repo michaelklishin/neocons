@@ -25,11 +25,11 @@ Neocons currently supports the following features (all via REST API, so [you can
 
 ## Documentation & Examples
 
-Neocons is a very young project and until 1.0 is released and documentation guides are written,
+Neocons is a young project and until 1.0 is released and documentation guides are written,
 it may be challenging to use for anyone except the author. For code examples, see our test
 suite.
 
-Once the library matures, we will update this document.
+Once documentation site is up, we will update this document.
 
 ## Community
 
