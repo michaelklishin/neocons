@@ -4,7 +4,7 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-http "0.3.4" :exclude [cheshire]]
+                 [clj-http "0.3.6" :exclude [cheshire]]
                  [clojurewerkz/support "0.1.0-beta2"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))))
