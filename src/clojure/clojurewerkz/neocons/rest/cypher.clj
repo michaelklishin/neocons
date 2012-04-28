@@ -1,5 +1,5 @@
 (ns clojurewerkz.neocons.rest.cypher
-  (:refer-clojure :except [empty?])
+  (:refer-clojure :exclude [empty?])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.support.http.statuses]
