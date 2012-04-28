@@ -7,12 +7,15 @@
                  [clj-http "0.3.6" :exclude [cheshire]]
                  [clojurewerkz/support "0.1.0-beta2"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
-                                                (not (:http-auth m))))
+                                                (not (:http-auth m))
+                                                (not (:edge-features m))))
                    :time-consuming :time-consuming
                    :focus          :focus
                    :indexing       :indexing
                    :cypher         :cypher
                    :http-auth      :http-auth
+                   ;; as in, bleeding edge Neo4J Server
+                   :edge-features  :edge-features
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
