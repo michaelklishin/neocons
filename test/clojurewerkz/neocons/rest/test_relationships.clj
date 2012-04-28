@@ -205,3 +205,39 @@
 (deftest test-deleting-a-property-on-non-existent-relationship
   (is (thrown? Exception
                (relationships/delete-property 8283787287 :a-non-existent-rel-property))))
+
+
+;;
+;; More sophisticated examples
+;;
+
+(deftest test-deletion-of-nodes-with-relationships
+  (let [john (nodes/create { :name "John" :age 28 :location "New York City, NY" })
+        beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
+        gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
+        rel1 (relationships/create john beth :knows)
+        rel5 (relationships/create beth gael :knows)
+        rt   { :type "knows" :direction "out" }]
+    (is (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3))
+    (is (set (nodes/all-connected-out (:id john))) (:id beth))
+    (is (nodes/connected-out? (:id john) (:id beth)))
+    (is (not (nodes/connected-out? (:id john) (:id gael))))
+    (is (set (nodes/all-connected-out (:id beth))) (:id gael))
+    (is (nodes/connected-out? (:id beth) (:id gael)))
+    ;; deletion of a node affects reachability of two other nodes. MK.
+    (is (thrown? Exception
+                 (nodes/delete (:id beth))))
+    (relationships/purge-all beth)
+    (nodes/delete (:id beth))
+    (is (not (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3)))))
+
+(deftest test-purging-of-all-outgoing-relationships
+  (let [john (nodes/create { :name "John" :age 28 :location "New York City, NY" })
+        beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
+        gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
+        rel1 (relationships/create john beth :knows)
+        rel5 (relationships/create beth gael :knows)
+        rt   { :type "knows" :direction "out" }]
+    (is (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3))
+    (relationships/purge-outgoing beth)
+    (is (not (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3)))))
