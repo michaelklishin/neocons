@@ -2,9 +2,7 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.cypher        :as cy]
-            [slingshot.slingshot :as slingshot])
-  (:import [slingshot ExceptionInfo])
+            [clojurewerkz.neocons.rest.cypher        :as cy])
   (:use clojure.test
         [clojure.set :only [subset?]]
         [clojure.pprint :only [pprint]]
