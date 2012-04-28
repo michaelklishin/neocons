@@ -1,11 +1,13 @@
 (ns clojurewerkz.neocons.rest.cypher
-  (:import  [java.net URI URL]
-            [clojurewerkz.neocons.rest Neo4JEndpoint])
+  (:refer-clojure :except [empty?])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest])
   (:use     [clojurewerkz.support.http.statuses]
             [clojurewerkz.neocons.rest.helpers]
-            [clojurewerkz.neocons.rest.records]))
+            [clojurewerkz.neocons.rest.records])
+  (:import  [java.net URI URL]
+            [clojurewerkz.neocons.rest Neo4JEndpoint]
+            [clojurewerkz.neocons.rest.records CypherQueryResponse]))
 
 ;;
 ;; Implementation
@@ -42,3 +44,10 @@
 
 (def ^{:doc "Performs a Cypher query, returning result formatted as a table (using tableize)"}
   tquery (comp tableize query))
+
+
+(defn empty?
+  "Returns true if provided Cypher response is empty (has no data columns), false otherwise.
+   Empty responses can be returned by queries but also commonly mutating Cypher (with Neo4J Server 1.8+)"
+  [^CypherQueryResponse response]
+  (clojure.core/empty? (:data response)))
