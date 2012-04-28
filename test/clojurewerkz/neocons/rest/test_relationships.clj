@@ -11,6 +11,11 @@
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
+(defn- ids-from
+  [xs]
+  (map :id xs))
+
+
 ;;
 ;; Working with relationships
 ;;
@@ -87,6 +92,18 @@
     (catch Exception e
       (let [d (.getData e)]
         (is (= (-> d :object :status) 404))))))
+
+(deftest test-creating-multiple-relationships-at-once
+  (let [from-node    (nodes/create)
+        to-node1     (nodes/create)
+        to-node2     (nodes/create)
+        to-node3     (nodes/create)
+        created-rels (relationships/create-many from-node [to-node1 to-node2 to-node3] :links)]
+    (is (= 3 (count created-rels)))
+    ;; give graph DB a moment to be updated, even on less powerful CI VMs. MK.
+    (Thread/sleep 150)
+    (is (= (sort (ids-from created-rels))
+           (sort (ids-from (relationships/outgoing-for from-node :types [:links])))))))
 
 (deftest test-listing-all-relationships-on-a-node-that-doesnt-have-any
   (let [node   (nodes/create)

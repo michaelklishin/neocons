@@ -36,6 +36,7 @@
 ;;
 
 (defn create
+  "Creates a relationship of given type between two nodes. "
   ([^Node from ^Node to rel-type]
      (create from to rel-type {}))
   ([^Node from ^Node to rel-type data]
@@ -44,8 +45,22 @@
            payload  (json/read-json body true)]
        (instantiate-rel-from payload))))
 
+(defn create-many
+  "Concurrently creates multiple relations of given type between the *from* node and several provded nodes.
+   All relationships will be of the same time. This function should be used when number of relationships
+   that need to be created is moderately high (dozens and more), otherwise it would be less efficient than
+   using clojure.core/map over the same sequence of nodes"
+  ([^Node from xs rel-type]
+     (pmap (fn [^Node n]
+             (create from n rel-type)) xs))
+  ([^Node from xs rel-type data]
+     (pmap (fn [^Node n]
+             (create from n rel-type data)) xs)))
+
+
 (declare outgoing-for)
 (defn maybe-create
+  "Creates a relationship of given type between two nodes, unless it already exists"
   ([^Node from ^Node to rel-type]
      (maybe-create from to rel-type {}))
   ([^Node from ^Node to rel-type data]
@@ -56,6 +71,7 @@
        (create from to rel-type data))))
 
 (defn get
+  "Fetches relationship by id"
   [^long id]
   (let [{ :keys [status headers body] } (rest/GET (rel-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
@@ -64,6 +80,7 @@
       (instantiate-rel-from payload id))))
 
 (defn delete
+  "Deletes relationship by id"
   [^long id]
   (let [{ :keys [status headers] } (rest/DELETE (rel-location-for rest/*endpoint* id))]
     (if (or (missing? status)
@@ -71,8 +88,16 @@
       [nil status]
       [id  status])))
 
+(defn maybe-delete
+  "Deletes relationship by id but only if it exists. Otherwise, does nothing and returns nil"
+  [^long id]
+  (if-let [n (get id)]
+    (delete id)))
+
 (declare first-outgoing-between)
 (defn maybe-delete-outgoing
+  "Deletes outgoing relationship of given type between two nodes but only if it exists.
+   Otherwise, does nothing and returns nil"
   ([^long id]
      (if-let [n (get id)]
        (delete id)))
@@ -82,12 +107,14 @@
 
 
 (defn update
+  "Updates relationship data by id"
   [^long id data]
   (rest/PUT (rel-properties-location-for rest/*endpoint* id) :body (json/json-str data))
   data)
 
 
 (defn delete-property
+  "Deletes a property from relationship with the given id"
   [^long id prop]
   (rest/DELETE (rel-property-location-for rest/*endpoint* id prop))
   nil)
@@ -95,22 +122,22 @@
 
 
 (defn all-for
-  "Returns all relationships for given node."
+  "Returns all relationships for given node"
   [^Node node &{ :keys [types] }]
   (relationships-for node :all types))
 
 (defn all-ids-for
-  "Returns ids of all relationships for given node."
+  "Returns ids of all relationships for the given node"
   [^Node node &{ :keys [types] }]
   (map :id (all-for node :types types)))
 
 (defn incoming-for
-  "Returns incoming (inbound) relationships for given node."
+  "Returns incoming (inbound) relationships for the given node"
   [^Node node &{ :keys [types] }]
   (relationships-for node :in types))
 
 (defn outgoing-for
-  "Returns all outgoing (outbound) relationships for given node."
+  "Returns all outgoing (outbound) relationships for the given node"
   [^Node node &{ :keys [types] }]
   (relationships-for node :out types))
 
@@ -148,27 +175,25 @@
        (delete id))))
 
 (defn all-types
+  "Returns all relationship types that exists in the entire database"
   []
   (let [{ :keys [_ _  body] } (rest/GET (:relationship-types-uri rest/*endpoint*))]
     (json/read-json body true)))
 
 
 (defn traverse
-  ([id & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {
-                                                                                               order         "breadth_first"
+  "Performs relationships traversal"
+  ([id & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {order         "breadth_first"
                                                                                                uniqueness    "node_global"
-                                                                                               prune-evaluator { :language "builtin" :name "none" }
-                                                                                               return-filter   { :language "builtin" :name "all"  }
-                                                                                               } }]
-     (let [request-body {
-                         :order           order
+                                                                                               prune-evaluator {:language "builtin" :name "none"}
+                                                                                               return-filter   {:language "builtin" :name "all"}}}]
+     (let [request-body {:order           order
                          :relationships   relationships
                          :uniqueness      uniqueness
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
-                         :max_depth       max-depth
-                         }
-           { :keys [status body] } (rest/POST (rel-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
+                         :max_depth       max-depth}
+           {:keys [status body]} (rest/POST (rel-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
            xs (json/read-json body true)]
        (map (fn [doc]
               (instantiate-rel-from doc)) xs))))

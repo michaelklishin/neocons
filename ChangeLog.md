@@ -1,5 +1,16 @@
 ## Changes between Neocons 1.0.0-beta2 and 1.0.0-beta3
 
+### rest.relationships/create-many, rest.relationships/maybe-delete
+
+`neocons.rest.relationships/create-many` is a new function that creates multiple relationships
+from one node to several other nodes. All relationships will be of the same type. Relationships
+are created concurrently using [clojure.core/pmap](http://clojuredocs.org/clojure_core/clojure.core/pmap). As a consequence, this function is supposed
+to be used when number of relationships created is in dozens, hundreds of thousands.
+
+`neocons.rest.relationships/maybe-delete` is a new function that deletes a relationship if that exists and does nothing
+otherwise.
+
+
 ### clj-http upgraded to 0.3.6
 
 Neocons now uses clj-http 0.3.6.

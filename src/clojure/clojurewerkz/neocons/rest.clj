@@ -52,11 +52,11 @@
 
 (defn connect
   "Connects to given Neo4J REST API endpoint and performs service discovery"
-  ([uri]
+  ([^String uri]
      (let [login    (env-var "NEO4J_LOGIN")
            password (env-var "NEO4J_PASSWORD")]
        (connect uri login password)))
-  ([uri login password]
+  ([^String uri login password]
      (let [{ :keys [status body] } (if (and login password)
                                      (GET uri :basic-auth [login password])
                                      (GET uri))]
