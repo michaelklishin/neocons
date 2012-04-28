@@ -163,13 +163,15 @@
 
 (defn purge-all
   "Deletes all relationships for given node. Usually used before deleting the node,
-   because Neo4J won't allow nodes with relationships to be deleted."
+   because Neo4J won't allow nodes with relationships to be deleted. Nodes are deleted sequentially
+   to avoid node locking problems with Neo4J Server before 1.8"
   ([^Node node]
      (doseq [id (all-ids-for node)]
        (delete id))))
 
 (defn purge-outgoing
-  "Deletes all outgoing relationships for given node."
+  "Deletes all outgoing relationships for given node. Nodes are deleted sequentially
+   to avoid node locking problems with Neo4J Server before 1.8"
   ([^Node node]
      (doseq [id (outgoing-ids-for node)]
        (delete id))))
