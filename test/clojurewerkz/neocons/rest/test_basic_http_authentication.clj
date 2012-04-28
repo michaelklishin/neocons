@@ -29,7 +29,6 @@
         (neorest/connect! "http://neocons:incorrec7-pazzwd@neo4j-proxy.local/db/data/")
         (catch Exception e
           (let [d (.getData e)]
-            (println d)
             (is (= (-> d :object :status) 401))))))
 
     (deftest ^{:http-auth true} test-connection-and-discovery-using-user-info-in-string-uri
