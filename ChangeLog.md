@@ -1,5 +1,11 @@
 ## Changes between Neocons 1.0.0-beta2 and 1.0.0-beta3
 
+### rest.cypher/empty?
+
+`neocons.rest.cypher/empty?` is a new function that can be used to tell empty Cypher responses from
+non-empty ones.
+
+
 ### rest.relationships/create-many, rest.relationships/maybe-delete
 
 `neocons.rest.relationships/create-many` is a new function that creates multiple relationships
