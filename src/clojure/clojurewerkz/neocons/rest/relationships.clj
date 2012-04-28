@@ -1,15 +1,15 @@
 (ns clojurewerkz.neocons.rest.relationships
   (:import  [java.net URI URL]
-            [clojurewerkz.neocons.rest Neo4JEndpoint]
+            clojurewerkz.neocons.rest.Neo4JEndpoint
             [clojurewerkz.neocons.rest.records Node Relationship])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.paths   :as paths])
-  (:use     [clojurewerkz.support.http.statuses]
-            [clojurewerkz.neocons.rest.helpers]
-            [clojurewerkz.neocons.rest.records]
+  (:use     clojurewerkz.support.http.statuses
+            clojurewerkz.neocons.rest.helpers
+            clojurewerkz.neocons.rest.records
             [clojure.string :only [join]])
-  (:refer-clojure :exclude (get)))
+  (:refer-clojure :exclude [get]))
 
 ;;
 ;; Implementation

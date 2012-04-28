@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest.nodes
-  (:use     [clojurewerkz.support.http.statuses]
-            [clojurewerkz.neocons.rest.helpers]
-            [clojurewerkz.neocons.rest.records]
+  (:use     clojurewerkz.support.http.statuses
+            clojurewerkz.neocons.rest.helpers
+            clojurewerkz.neocons.rest.records
             [clojure.string :only [join]])
   (:require [clj-http.client                         :as http]
             [clojure.data.json                       :as json]
@@ -10,9 +10,9 @@
             [clojurewerkz.neocons.rest.paths         :as paths]
             [clojurewerkz.neocons.rest.cypher        :as cypher])
   (:import  [java.net URI URL]
-            [clojurewerkz.neocons.rest Neo4JEndpoint]
+            clojurewerkz.neocons.rest.Neo4JEndpoint
             [clojurewerkz.neocons.rest.records Node Relationship Index]
-            [clojure.lang Named])
+            clojure.lang.Named)
   (:refer-clojure :exclude [get find]))
 
 ;;

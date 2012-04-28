@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.records
   (:use clojurewerkz.neocons.rest.helpers)
-  (:import [clojurewerkz.neocons.rest Neo4JEndpoint]))
+  (:import clojurewerkz.neocons.rest.Neo4JEndpoint))
 
 (defrecord Node
     [id location-uri data relationships-uri create-relationship-uri])

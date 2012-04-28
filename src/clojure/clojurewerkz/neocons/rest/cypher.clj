@@ -2,12 +2,12 @@
   (:refer-clojure :exclude [empty?])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest])
-  (:use     [clojurewerkz.support.http.statuses]
-            [clojurewerkz.neocons.rest.helpers]
-            [clojurewerkz.neocons.rest.records])
+  (:use     clojurewerkz.support.http.statuses
+            clojurewerkz.neocons.rest.helpers
+            clojurewerkz.neocons.rest.records)
   (:import  [java.net URI URL]
-            [clojurewerkz.neocons.rest Neo4JEndpoint]
-            [clojurewerkz.neocons.rest.records CypherQueryResponse]))
+            clojurewerkz.neocons.rest.Neo4JEndpoint
+            clojurewerkz.neocons.rest.records.CypherQueryResponse))
 
 ;;
 ;; Implementation
