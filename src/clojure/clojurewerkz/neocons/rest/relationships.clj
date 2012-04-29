@@ -67,7 +67,7 @@
      (if (paths/exists-between? (:id from) (:id to) :relationships [{ :type (name rel-type) :direction "out" }] :max-depth 1)
        (let [rels (outgoing-for from :types [rel-type])
              uri  (node-location-for rest/*endpoint* (:id to))]
-         (first (filter #(= (:end-uri %) uri) rels)))
+         (first (filter #(= (:end %) uri) rels)))
        (create from to rel-type data))))
 
 (defn get
@@ -120,6 +120,17 @@
   nil)
 
 
+(defn starts-with?
+  "Returns true if provided relationship starts with the node with the provided id,
+   false otherwise"
+  [rel ^long id]
+  (= (extract-id (:start rel)) id))
+
+(defn ends-with?
+  "Returns true if provided relationship ends with the node with the provided id,
+   false otherwise"
+  [rel ^long id]
+  (= (extract-id (:end rel)) id))
 
 (defn all-for
   "Returns all relationships for given node"
@@ -152,7 +163,7 @@
      (if (paths/exists-between? (:id from) (:id to) :relationships rels :max-depth 1)
        (let [rels (outgoing-for from :types rels)
              uri  (node-location-for rest/*endpoint* (:id to))]
-         (filter #(= (:end-uri %) uri) rels))
+         (filter #(= (:end %) uri) rels))
        [])))
 
 (defn first-outgoing-between
