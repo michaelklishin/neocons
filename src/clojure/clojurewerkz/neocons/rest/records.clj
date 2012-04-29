@@ -6,7 +6,7 @@
     [id location-uri data relationships-uri create-relationship-uri])
 
 (defrecord Relationship
-    [id location-uri start-uri end-uri type data])
+    [id location-uri start end type data])
 
 (defrecord Index
     [^String name ^String template ^String provider ^String type])
