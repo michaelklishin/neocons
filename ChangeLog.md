@@ -1,5 +1,20 @@
 ## Changes between Neocons 1.0.0-beta2 and 1.0.0-beta3
 
+### Relationship record fields renamed
+
+Two `Relationship` record fields were renamed to match REST API responses better:
+
+ * `:start-uri` is now `:start`
+ * `:end-uri` is now `:end`
+
+
+### rest.relationships/starts-with?, rest.relationships/ends-with?
+
+`neocons.rest.relationships/starts-with?` and `neocons.rest.relationships/ends-with?` predicates check whether
+given relationships starts (or ends, respectively) with a node with the given id. This is often useful
+for automated testing of logic that creates relationships.
+
+
 ### rest.cypher/empty?
 
 `neocons.rest.cypher/empty?` is a new function that can be used to tell empty Cypher responses from
@@ -20,6 +35,7 @@ otherwise.
 ### clj-http upgraded to 0.3.6
 
 Neocons now uses clj-http 0.3.6.
+
 
 
 ## Changes between Neocons 1.0.0-beta1 and 1.0.0-beta2
