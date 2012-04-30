@@ -88,21 +88,21 @@
 (defn instantiate-node-from
   ([payload]
      (let [id (extract-id (:self payload))]
-       (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
+       (map->Node (merge {:id id} payload))))
   ([payload ^long id]
-     (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
+     (map->Node (merge {:id id} payload))))
 
 (defn instantiate-rel-from
   ([payload]
      (let [id (extract-id (:self payload))]
-       (Relationship. id (:self payload) (:start payload) (:end payload) (:type payload) (:data payload))))
+       (map->Relationship (merge {:id id} payload))))
   ([payload ^long id]
-     (Relationship. id (:self payload) (:start payload) (:end payload) (:type payload) (:data payload))))
+     (map->Relationship (merge {:id id} payload))))
 
 (defn instantiate-path-from
-  ([payload]
-     (Path. (:start payload) (:end payload) (:length payload) (:nodes payload) (:relationships payload))))
+  [payload]
+  (map->Path payload))
 
 (defn instantiate-cypher-query-response-from
   [payload]
-  (CypherQueryResponse. (:data payload) (:columns payload)))
+  (map->CypherQueryResponse payload))

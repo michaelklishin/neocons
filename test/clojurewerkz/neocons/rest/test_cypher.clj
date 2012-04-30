@@ -1,7 +1,8 @@
 (ns clojurewerkz.neocons.rest.test-cypher
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.relationships :as relationships]
+            [clojurewerkz.neocons.rest.relationships :as rel]
+            [clojurewerkz.neocons.rest.paths         :as paths]
             [clojurewerkz.neocons.rest.cypher        :as cy])
   (:use clojure.test
         [clojure.set :only [subset?]]
@@ -16,16 +17,16 @@
 ;;
 
 (deftest ^{:cypher true} test-cypher-query-example1
-  (let [john  (nodes/create { :name "John" })
-        sarah (nodes/create { :name "Sarah" })
-        joe   (nodes/create { :name "Joe" })
-        maria (nodes/create { :name "Maria" })
-        steve (nodes/create { :name "Steve" })
-        rel1  (relationships/create john sarah :friend)
-        rel2  (relationships/create john joe :friend)
-        rel3  (relationships/create sarah maria :friend)
-        rel4  (relationships/create joe steve :friend)
-        { :keys [data columns] } (cy/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" { :sid (:id john) })
+  (let [john  (nodes/create {:name "John"})
+        sarah (nodes/create {:name "Sarah"})
+        joe   (nodes/create {:name "Joe"})
+        maria (nodes/create {:name "Maria"})
+        steve (nodes/create {:name "Steve"})
+        rel1  (rel/create john sarah :friend)
+        rel2  (rel/create john joe :friend)
+        rel3  (rel/create sarah maria :friend)
+        rel4  (rel/create joe steve :friend)
+        {:keys [data columns]} (cy/query "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" {:sid (:id john)})
         row1  (map instantiate-node-from (first  data))
         row2  (map instantiate-node-from (second data))]
     (is (= 2 (count data)))
@@ -41,24 +42,20 @@
 
 
 (deftest ^{:cypher true} test-cypher-query-example2
-  (let [john  (nodes/create { :name "John" })
-        sarah (nodes/create { :name "Sarah" })
-        rel1  (relationships/create john sarah :friend)
-        { :keys [data columns] } (cy/query "START x = node({sid}) MATCH path = (x--friend) RETURN path, friend.name" { :sid (:id john) })
-        row1  (map instantiate-path-from (first data))
-        path1 (first row1)]
-    (is (= 1 (count data)))
-    (is (= ["path" "friend.name"] columns))
-    (is (= 1 (:length path1)))
-    (is (= (:start path1) (:location-uri john)))
-    (is (= (:end   path1) (:location-uri sarah)))
-    (is (= (first (:relationships path1)) (:location-uri rel1)))))
+  (let [john  (nodes/create {:name "John"})
+        sarah (nodes/create {:name "Sarah"})
+        rel1  (rel/create john sarah :friend)
+        [row1] (cy/tquery "START x = node({sid}) MATCH path = (x--friend) RETURN path, friend.name" {:sid (:id john)})
+        path   (instantiate-path-from (get row1 "path"))]
+    (is (paths/included-in? john path))
+    (is (paths/included-in? sarah path))
+    (is (= "Sarah" (get row1 "friend.name")))))
 
 
 (deftest ^{:cypher true} test-cypher-query-example3
   (let [john  (nodes/create { :name "John"  :age 27 })
         sarah (nodes/create { :name "Sarah" :age 28 })
-        rel1  (relationships/create john sarah :friend)
+        rel1  (rel/create john sarah :friend)
         ids   (map :id [john sarah])
         { :keys [data columns] :as response } (cy/query "START x = node({ids}) RETURN x.name, x.age" { :ids ids })]
     (is (= ["John" "Sarah"] (vec (map first data))))
@@ -81,7 +78,7 @@
 (deftest ^{:cypher true} test-cypher-tquery
   (let [john  (nodes/create { :name "John"  :age 27 })
         sarah (nodes/create { :name "Sarah" :age 28 })
-        rel1  (relationships/create john sarah :friend)
+        rel1  (rel/create john sarah :friend)
         ids   (map :id [john sarah])]
     (is (= [{"x.name" "John"  "x.age" 27}
             {"x.name" "Sarah" "x.age" 28}]
