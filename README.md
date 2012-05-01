@@ -101,7 +101,7 @@ versions because Cypher is supported by the REST API directly without any plugin
 
 ## Neocons Is a ClojureWerkz Project
 
-Neocons is part of the group of libraries known as ClojureWerkz, together with
+Neocons is part of the group of libraries known as [ClojureWerkz](http://clojurewerkz.org), together with
 [Monger](https://github.com/michaelklishin/monger), [Langohr](https://github.com/michaelklishin/langohr), [Elastisch](https://github.com/clojurewerkz/elastisch), [Quartzite](https://github.com/michaelklishin/quartzite) and several others.
 
 
