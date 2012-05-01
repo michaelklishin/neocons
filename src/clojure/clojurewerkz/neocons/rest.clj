@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest
-  (:import  [java.net URI])
+  (:import  java.net.URI)
   (:require [clj-http.client   :as http]
             [clojure.data.json :as json])
-  (:use     [clojurewerkz.support.http.statuses]
+  (:use     clojurewerkz.support.http.statuses
             [clojurewerkz.neocons.rest.helpers :only [maybe-append]]))
 
 ;;
@@ -17,24 +17,24 @@
   http-authentication-options {})
 
 (defn GET
-  [^String uri & { :as options }]
+  [^String uri & {:as options}]
   (io!
-   (http/get uri (merge http-authentication-options options { :accept :json }))))
+   (http/get uri (merge http-authentication-options options {:accept :json}))))
 
 (defn POST
-  [^String uri &{ :keys [body] :as options }]
+  [^String uri &{:keys [body] :as options}]
   (io!
-   (http/post uri (merge http-authentication-options options { :accept :json :content-type :json :body body }))))
+   (http/post uri (merge http-authentication-options options {:accept :json :content-type :json :body body}))))
 
 (defn PUT
-  [^String uri &{ :keys [body] :as options }]
+  [^String uri &{:keys [body] :as options}]
   (io!
-   (http/put uri (merge http-authentication-options options { :accept :json :content-type :json :body body }))))
+   (http/put uri (merge http-authentication-options options {:accept :json :content-type :json :body body}))))
 
 (defn DELETE
-  [^String uri &{ :keys [body] :as options }]
+  [^String uri &{:keys [body] :as options}]
   (io!
-   (http/delete uri (merge http-authentication-options options { :accept :json }))))
+   (http/delete uri (merge http-authentication-options options {:accept :json}))))
 
 
 
@@ -42,7 +42,7 @@
 (defrecord Neo4JEndpoint
     [version node-uri relationships-uri node-index-uri relationship-index-uri relationship-types-uri batch-uri extensions-info-uri extensions reference-node-uri uri])
 
-(def ^{ :dynamic true } *endpoint*)
+(def ^{:dynamic true} *endpoint*)
 
 ;;
 ;; API

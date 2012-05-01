@@ -30,7 +30,7 @@
   ([]
      (create {}))
   ([data]
-     (let [{ :keys [status headers body] } (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
+     (let [{:keys [status headers body]} (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
            payload  (json/read-json body true)
            location (:self payload)]
        (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload)))))
@@ -38,7 +38,7 @@
 (defn get
   "Fetches a node by id"
   [^long id]
-  (let [{ :keys [status body] } (rest/GET (node-location-for rest/*endpoint* id))
+  (let [{:keys [status body]} (rest/GET (node-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
     (instantiate-node-from payload id)))
 
@@ -47,13 +47,13 @@
 
   This is a non-standard operation that requires Cypher support from Neo4J Server (versions 1.6.0 and later have it in the core)."
   ([coll]
-     (let [{ :keys [data] } (cypher/query "START x = node({ids}) RETURN x" { :ids coll })]
+     (let [{:keys [data]} (cypher/query "START x = node({ids}) RETURN x" {:ids coll})]
        (map (comp instantiate-node-from first) data))))
 
 
 (defn delete
   [^long id]
-  (let [{ :keys [status headers] } (rest/DELETE (node-location-for rest/*endpoint* id))]
+  (let [{:keys [status headers]} (rest/DELETE (node-location-for rest/*endpoint* id))]
     [id status]))
 
 (defn set-property
@@ -82,23 +82,24 @@
 
 (defn create-index
   ([s]
-     (let [{ :keys [body] } (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str { :name (name s) }))
+     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) "lucene" "exact")))
   ([s configuration]
-     (let [{ :keys [body] }(rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge { :name (name s) } configuration)))
+     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge {:name (name s)} configuration)))
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 (defn delete-index
   [s]
-  (let [{ :keys [status]} (rest/DELETE (node-index-location-for rest/*endpoint* s))]
+  (let [{:keys [status]} (rest/DELETE (node-index-location-for rest/*endpoint* s))]
     [s status]))
 
 
 (defn all-indexes
+  "Returns all node indices"
   []
-  (let [{ :keys [status body] } (rest/GET (:node-index-uri rest/*endpoint*))]
+  (let [{:keys [status body]} (rest/GET (:node-index-uri rest/*endpoint*))]
     (if (= 204 (long status))
       []
       (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
@@ -106,46 +107,51 @@
 
 
 (defn add-to-index
+  "Adds the given node from index"  
   [^long id idx key value]
   (let [body     (json/json-str { :key key :value value :uri (node-location-for rest/*endpoint* id) })
-        { :keys [status body] } (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
+        {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
         payload  (json/read-json body true)]
     (instantiate-node-from payload id)))
 
 (defn delete-from-index
+  "Deletes the given node from index"
   ([^long id idx]
-     (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
+     (let [{:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
        [id status]))
   ([^long id idx key]
-     (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key))]
+     (let [{:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key))]
        [id status]))
   ([^long id idx key value]
-     (let [{ :keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
+     (let [{:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
        [id status])))
 
 
 (defn fetch-from
+  "Fetches"
   [^String uri]
-  (let [{ :keys [status body] } (rest/GET uri)
+  (let [{:keys [status body]} (rest/GET uri)
         payload (json/read-json body true)
         id      (extract-id uri)]
     (instantiate-node-from payload id)))
 
 
 (defn find
+  "Finds nodes using automatic node index"
   ([^String key value]
-     (let [{ :keys [status body] } (rest/GET (auto-index-lookup-location-for rest/*endpoint* key value))
+     (let [{:keys [status body]} (rest/GET (auto-index-lookup-location-for rest/*endpoint* key value))
            xs (json/read-json body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs)))
   ([^String idx key value]
-     (let [{ :keys [status body] } (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
+     (let [{:keys [status body]} (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
            xs (json/read-json body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs))))
 
 
 (defn query
+  "Finds nodes by index"
   ([^String query]
-     (let [{ :keys [status body] } (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
+     (let [{:keys [status body]} (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
            xs (json/read-json body true)]
        (map (fn [doc] (instantiate-node-from doc)) xs)))
   ([^String idx ^String query]
@@ -155,21 +161,20 @@
 
 
 (defn traverse
-  ([id & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {
-                                                                                               order         "breadth_first"
-                                                                                               uniqueness    "node_global"
-                                                                                               prune-evaluator { :language "builtin" :name "none" }
-                                                                                               return-filter   { :language "builtin" :name "all"  }
-                                                                                               } }]
-     (let [request-body {
-                         :order           order
+  "Performs node traversal"
+  ([id & {:keys [order relationships
+                 uniqueness prune-evaluator
+                 return-filter max-depth] :or {order         "breadth_first"
+                                               uniqueness    "node_global"
+                                               prune-evaluator {:language "builtin" :name "none"}
+                                               return-filter   {:language "builtin" :name "all"}}}]
+     (let [request-body {:order           order
                          :relationships   relationships
                          :uniqueness      uniqueness
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
-                         :max_depth       max-depth
-                         }
-           { :keys [status body] } (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
+                         :max_depth       max-depth}
+           {:keys [status body]} (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
            xs (json/read-json body true)]
        (map (fn [doc]
               (instantiate-node-from doc)) xs))))
@@ -177,14 +182,14 @@
 
 (defn all-connected-out
   "Returns all nodes given node has outgoing (outbound) relationships with"
-  [id &{ :keys [types] }]
+  [id &{:keys [types]}]
   (let [rels (relationships/outgoing-for (get id) :types types)
         ids  (set (map #(extract-id (:end %)) rels))]
     (multi-get ids)))
 
 (defn connected-out?
   "Returns true if given node has outgoing (outbound) relationships with the other node"
-  [id other-id &{ :keys [types] }]
+  [id other-id &{:keys [types]}]
   (let [rels (relationships/outgoing-for (get id) :types types)
         uris (set (map :end rels))]
     (uris (node-location-for rest/*endpoint* other-id))))
