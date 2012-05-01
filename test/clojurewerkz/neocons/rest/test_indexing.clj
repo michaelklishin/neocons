@@ -1,8 +1,6 @@
 (ns clojurewerkz.neocons.rest.test-indexing
   (:require [clojurewerkz.neocons.rest               :as neorest]
-            [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [slingshot.slingshot :as slingshot])
-  (:import [slingshot ExceptionInfo])
+            [clojurewerkz.neocons.rest.nodes         :as nodes])
   (:use clojure.test))
 
 (neorest/connect! "http://localhost:7474/db/data/")
@@ -17,7 +15,7 @@
 
 (deftest ^{:indexing true} test-create-a-new-node-index-with-explicit-configuration
   (let [name "node-index-2"
-        conf { :type "fulltext" :provider "lucene" }]
+        conf {:type "fulltext" :provider "lucene"}]
     (nodes/create-index name conf)))
 
 (deftest ^{:indexing true} test-listing-node-indexes
@@ -37,32 +35,32 @@
 (deftest ^{:indexing true} test-adding-a-node-to-index
   (let [idx  (nodes/create-index "uris")
         uri  "http://arstechnica.com"
-        home (nodes/create { :uri uri })]
+        home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
 
 (deftest ^{:indexing true} test-removing-a-node-from-index
   (let [idx  (nodes/create-index "uris")
         uri  "http://arstechnica.com"
-        home (nodes/create { :uri uri })]
+        home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
     (nodes/delete-from-index (:id home) (:name idx))))
 
 (deftest ^{:indexing true} test-removing-a-node-and-key-from-index
   (let [idx  (nodes/create-index "uris, urls and so on")
         uri  "http://arstechnica.com"
-        home (nodes/create { :uri uri })]
+        home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
     (nodes/delete-from-index (:id home) (:name idx) "uri")))
 
 (deftest ^{:indexing true} test-removing-a-node-key-and-value-from-index
   (let [idx  (nodes/create-index "locations")
-        home (nodes/create { :lat 20.0 })]
+        home (nodes/create {:lat 20.0})]
     (nodes/add-to-index (:id home) (:name idx) "lat" 20.0)
     (nodes/delete-from-index (:id home) (:name idx) "lat" 20.0)))
 
 (deftest ^{:indexing true} test-finding-nodes-using-an-index
-  (let [node1 (nodes/create { :name "Wired" })
-        node2 (nodes/create { :name "Craigslist" })
+  (let [node1 (nodes/create {:name "Wired"})
+        node2 (nodes/create {:name "Craigslist"})
         url1  "http://wired.com"
         url2  "http://craigslist.org"
         idx   (nodes/create-index "by-url")]
@@ -75,7 +73,7 @@
       (is (not (ids (:id node2)))))))
 
 (deftest ^{:indexing true} test-removing-a-node-removes-it-from-indexes
-  (let [node1 (nodes/create { :name "Wired" })
+  (let [node1 (nodes/create {:name "Wired"})
         url1  "http://wired.com"
         idx   (nodes/create-index "by-url")]
     (nodes/delete-from-index (:id node1) (:name idx) "url")
@@ -85,8 +83,8 @@
       (is (not (ids (:id node1)))))))
 
 (deftest ^{:indexing true} test-finding-nodes-using-full-text-search-queries-over-index
-  (let [puma  (nodes/create { :name "Puma"  :hq-location "Herzogenaurach, Germany"})
-        apple (nodes/create { :name "Apple" :hq-location "Cupertino, CA, USA"})
+  (let [puma  (nodes/create {:name "Puma"  :hq-location "Herzogenaurach, Germany"})
+        apple (nodes/create {:name "Apple" :hq-location "Cupertino, CA, USA"})
         idx   (nodes/create-index "companies")]
     (nodes/delete-from-index (:id puma)  (:name idx))
     (nodes/delete-from-index (:id apple) (:name idx))

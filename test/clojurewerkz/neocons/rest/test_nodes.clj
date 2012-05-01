@@ -1,8 +1,6 @@
 (ns clojurewerkz.neocons.rest.test-nodes
-  (:require [clojurewerkz.neocons.rest               :as neorest]
-            [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [slingshot.slingshot :as slingshot])
-  (:import [slingshot ExceptionInfo])
+  (:require [clojurewerkz.neocons.rest       :as neorest]
+            [clojurewerkz.neocons.rest.nodes :as nodes])
   (:use clojure.test
         [clojurewerkz.neocons.rest.records :only [instantiate-node-from]]))
 
@@ -19,7 +17,7 @@
     (is (= (:id created-node) (:id fetched-node)))))
 
 (deftest test-creating-and-immediately-accessing-a-node-with-properties
-  (let [data         { :key "value" }
+  (let [data         {:key "value"}
         created-node (nodes/create data)
         fetched-node (nodes/get (:id created-node))]
     (is (= (:id created-node) (:id fetched-node)))
@@ -32,7 +30,7 @@
 
 
 (deftest test-creating-and-deleting-a-node-with-properties
-  (let [data         { :key "value" }
+  (let [data         {:key "value"}
         created-node (nodes/create data)
         [deleted-id status] (nodes/delete (:id created-node))]
     (is (= 204 status))
@@ -44,7 +42,7 @@
 
 
 (deftest test-creating-and-getting-properties-of-one-node
-  (let [data         { :key "value" }
+  (let [data         {:key "value"}
         created-node (nodes/create data)
         fetched-data (nodes/get-properties (:id created-node))]
     (is (= data fetched-data))))
@@ -56,7 +54,7 @@
 
 
 (deftest test-updating-a-single-node-property
-  (let [node         (nodes/create { :age 26 })
+  (let [node         (nodes/create {:age 26})
         fetched-node (nodes/get (:id node))
         new-value    (nodes/set-property (:id node) :age 27)
         updated-node (nodes/get (:id fetched-node))]
@@ -64,18 +62,17 @@
 
 
 (deftest test-updating-node-properties
-  (let [node         (nodes/create { :age 26 })
+  (let [node         (nodes/create {:age 26})
         fetched-node (nodes/get (:id node))
-        new-data    (nodes/update (:id node) { :age 27 :gender "male" })
+        new-data    (nodes/update (:id node) {:age 27 :gender "male"})
         updated-node (nodes/get (:id fetched-node))]
     (is (= new-data (-> updated-node :data)))))
 
 
 (deftest test-deleting-all-properties-from-a-node
-  (let [data         { :key "value" }
+  (let [data         {:key "value"}
         created-node (nodes/create data)
         fetched-data (nodes/get-properties (:id created-node))]
     (is (= data fetched-data))
     (nodes/delete-properties (:id created-node))
     (is (= {} (nodes/get-properties (:id created-node))))))
-

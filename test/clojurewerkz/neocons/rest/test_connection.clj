@@ -1,7 +1,5 @@
 (ns clojurewerkz.neocons.rest.test-connection
-  (:require [clojurewerkz.neocons.rest :as neorest]
-            [slingshot.slingshot :as slingshot])
-  (:import [slingshot ExceptionInfo])
+  (:require [clojurewerkz.neocons.rest :as neorest])
   (:use clojure.test))
 
 (println (str "Using Clojure version " *clojure-version*))

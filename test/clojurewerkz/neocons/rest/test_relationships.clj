@@ -2,9 +2,7 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.paths         :as paths]            
-            [slingshot.slingshot :as slingshot])
-  (:import [slingshot ExceptionInfo])
+            [clojurewerkz.neocons.rest.paths         :as paths]            )
   (:use clojure.test
         [clojure.set :only [subset?]]
         [clojurewerkz.neocons.rest.records :only [instantiate-node-from instantiate-rel-from]]))
@@ -14,7 +12,6 @@
 (defn- ids-from
   [xs]
   (map :id xs))
-
 
 ;;
 ;; Working with relationships
@@ -55,7 +52,7 @@
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
         created-rel  (relationships/create from-node to-node :links)
-        rt           { :type "links" :direction "out" }]
+        rt           {:type "links" :direction "out"}]
     (is (relationships/first-outgoing-between from-node to-node [:links]))
     (is (nil? (relationships/first-outgoing-between from-node to-node [:loves])))
     (is (= created-rel (relationships/first-outgoing-between from-node to-node [:links])))
@@ -66,7 +63,7 @@
     (relationships/maybe-delete-outgoing from-node to-node [:links])))
 
 (deftest test-creating-and-immediately-accessing-a-relationship-with-properties
-  (let [data         { :one "uno" :two "due" }
+  (let [data         {:one "uno" :two "due"}
         from-node    (nodes/create)
         to-node      (nodes/create)
         created-rel  (relationships/create from-node to-node :links data)
@@ -84,7 +81,7 @@
 
 (deftest test-creating-and-deleting-a-non-existent-relationship
   ;; this should be slingshot.ExceptionInfo on 1.3 but
-  ;; clojure.lang.ExceptionInfo on 1.4.0[-beta1]. This Slingshot shit is annoying. MK.
+  ;; clojure.lang.ExceptionInfo on 1.4.0+. This Slingshot shit is annoying. MK.
   (is (thrown? Exception
                (relationships/delete 87238467666)))
   (try
@@ -170,11 +167,11 @@
 
 
 (deftest test-updating-relationship-properties
-  (let [data         { :one "uno" :two "due" }
+  (let [data         {:one "uno" :two "due"}
         from-node    (nodes/create)
         to-node      (nodes/create)
         created-rel  (relationships/create from-node to-node :links data)
-        new-data     (relationships/update (:id created-rel) { :one "eine" :two "deux" })
+        new-data     (relationships/update (:id created-rel) {:one "eine" :two "deux"})
         fetched-rel  (relationships/get (:id created-rel))]
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))
@@ -182,21 +179,21 @@
 
 
 (deftest test-deleting-a-specific-relationship-property
-  (let [data         { :cost "high" :legendary true }
-        from-node    (nodes/create { :name "Romeo" })
-        to-node      (nodes/create { :name "Juliet" })
+  (let [data         {:cost "high" :legendary true}
+        from-node    (nodes/create {:name "Romeo"})
+        to-node      (nodes/create {:name "Juliet"})
         created-rel  (relationships/create from-node to-node :loves data)
         _            (relationships/delete-property (:id created-rel) :cost)
         fetched-rel  (relationships/get (:id created-rel))]
     (is (= (:id created-rel) (:id fetched-rel)))
     (is (= (:type created-rel) (:type fetched-rel)))
-    (is (= { :legendary true } (:data fetched-rel)))))
+    (is (= {:legendary true} (:data fetched-rel)))))
 
 
 (deftest test-deleting-a-non-existent-relationship-property
-  (let [data         { :cost "high" :legendary true }
-        from-node    (nodes/create { :name "Romeo" })
-        to-node      (nodes/create { :name "Juliet" })
+  (let [data         {:cost "high" :legendary true}
+        from-node    (nodes/create {:name "Romeo"})
+        to-node      (nodes/create {:name "Juliet"})
         created-rel  (relationships/create from-node to-node :loves data)]
     (is (thrown? Exception
                  (relationships/delete-property (:id created-rel) :a-non-existent-rel-property)))))
@@ -212,12 +209,12 @@
 ;;
 
 (deftest test-deletion-of-nodes-with-relationships
-  (let [john (nodes/create { :name "John" :age 28 :location "New York City, NY" })
-        beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
-        gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
+  (let [john (nodes/create {:name "John" :age 28 :location "New York City, NY"})
+        beth (nodes/create {:name "Elizabeth" :age 30 :location "Chicago, IL"})
+        gael (nodes/create {:name "Gaël"      :age 31 :location "Montpellier"})
         rel1 (relationships/create john beth :knows)
         rel5 (relationships/create beth gael :knows)
-        rt   { :type "knows" :direction "out" }]
+        rt   {:type "knows" :direction "out"}]
     (is (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3))
     (is (set (nodes/all-connected-out (:id john))) (:id beth))
     (is (nodes/connected-out? (:id john) (:id beth)))
@@ -232,12 +229,12 @@
     (is (not (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3)))))
 
 (deftest test-purging-of-all-outgoing-relationships
-  (let [john (nodes/create { :name "John" :age 28 :location "New York City, NY" })
-        beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
-        gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
+  (let [john (nodes/create {:name "John" :age 28 :location "New York City, NY"})
+        beth (nodes/create {:name "Elizabeth" :age 30 :location "Chicago, IL"})
+        gael (nodes/create {:name "Gaël"      :age 31 :location "Montpellier"})
         rel1 (relationships/create john beth :knows)
         rel5 (relationships/create beth gael :knows)
-        rt   { :type "knows" :direction "out" }]
+        rt   {:type "knows" :direction "out"}]
     (is (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3))
     (relationships/purge-outgoing beth)
     (is (not (paths/exists-between? (:id john) (:id gael) :relationships [rt] :max-depth 3)))))

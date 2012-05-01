@@ -2,10 +2,7 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.paths         :as paths]
-            [clojurewerkz.neocons.rest.cypher        :as cypher]
-            [slingshot.slingshot :as slingshot])
-  (:import [slingshot ExceptionInfo])
+            [clojurewerkz.neocons.rest.paths         :as paths])
   (:use clojure.test
         [clojure.set :only [subset?]]
         [clojure.pprint :only [pprint]]
@@ -18,68 +15,68 @@
 ;;
 
 (deftest test-traversing-nodes-using-all-return-filter-all-relationships-and-no-pagination
-  (let [john (nodes/create { :name "John" })
-        adam (nodes/create { :name "Alan" })
-        pete (nodes/create { :name "Peter" })
+  (let [john (nodes/create {:name "John"})
+        adam (nodes/create {:name "Alan"})
+        pete (nodes/create {:name "Peter"})
         _    (relationships/create john adam :friend)
         _    (relationships/create john pete :friend)
         _    (relationships/create adam pete :friend)
-        xs1  (nodes/traverse (:id john) :relationships [{ :direction "all" :type "friend" }])
+        xs1  (nodes/traverse (:id john) :relationships [{:direction "all" :type "friend"}])
         ids1 (vec (map :id xs1))
-        xs2  (nodes/traverse (:id john) :relationships [{ :direction "all" :type "enemy" }])
+        xs2  (nodes/traverse (:id john) :relationships [{:direction "all" :type "enemy"}])
         ids2 (map :id xs2)]
     (is (= [(:id john) (:id adam) (:id pete)] ids1))
     (is (= [(:id john)] ids2))))
 
 
 (deftest test-traversing-relationships-using-all-return-filter-all-relationships-and-no-pagination
-  (let [john (nodes/create { :name "John" })
-        adam (nodes/create { :name "Alan" })
-        pete (nodes/create { :name "Peter" })
+  (let [john (nodes/create {:name "John"})
+        adam (nodes/create {:name "Alan"})
+        pete (nodes/create {:name "Peter"})
         rel1 (relationships/create john adam :friend)
         rel2 (relationships/create john pete :friend)
         rel3 (relationships/create adam pete :friend)
-        xs1  (relationships/traverse (:id john) :relationships [{ :direction "all" :type "friend" }])
+        xs1  (relationships/traverse (:id john) :relationships [{:direction "all" :type "friend"}])
         ids1 (vec (map :id xs1))
-        xs2  (relationships/traverse (:id john) :relationships [{ :direction "all" :type "enemy" }])
+        xs2  (relationships/traverse (:id john) :relationships [{:direction "all" :type "enemy"}])
         ids2 (map :id xs2)]
     (is (= [(:id rel1) (:id rel2)] ids1))
     (is (empty? ids2))))
 
 
 (deftest test-traversing-nodes-using-all-but-start-node-return-filter-out-relationships-and-no-pagination
-  (let [john (nodes/create { :name "John" })
-        adam (nodes/create { :name "Alan" })
-        pete (nodes/create { :name "Peter" })
+  (let [john (nodes/create {:name "John"})
+        adam (nodes/create {:name "Alan"})
+        pete (nodes/create {:name "Peter"})
         _    (relationships/create john adam :friend)
         _    (relationships/create adam pete :friend)
-        xs1  (nodes/traverse (:id john) :relationships [{ :direction "out" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
+        xs1  (nodes/traverse (:id john) :relationships [{:direction "out" :type "friend"}] :return-filter {:language "builtin" :name "all_but_start_node"})
         ids1 (vec (map :id xs1))
-        xs2  (nodes/traverse (:id adam) :relationships [{ :direction "out" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
+        xs2  (nodes/traverse (:id adam) :relationships [{:direction "out" :type "friend"}] :return-filter {:language "builtin" :name "all_but_start_node"})
         ids2 (vec (map :id xs2))]
     (is (= [(:id adam) (:id pete)] ids1))
     (is (= [(:id pete)] ids2))))
 
 
 (deftest test-traversing-nodes-using-all-but-start-node-return-filter-in-relationships-and-no-pagination
-  (let [john (nodes/create { :name "John" })
-        adam (nodes/create { :name "Alan" })
-        pete (nodes/create { :name "Peter" })
+  (let [john (nodes/create {:name "John"})
+        adam (nodes/create {:name "Alan"})
+        pete (nodes/create {:name "Peter"})
         _    (relationships/create john adam :friend)
         _    (relationships/create adam pete :friend)
-        xs   (nodes/traverse (:id john) :relationships [{ :direction "in" :type "friend" }] :return-filter { :language "builtin" :name "all_but_start_node" })
+        xs   (nodes/traverse (:id john) :relationships [{:direction "in" :type "friend"}] :return-filter {:language "builtin" :name "all_but_start_node"})
         ids  (vec (map :id xs))]
     (is (empty? ids))))
 
 
 (deftest test-traversing-paths-using-all-return-filter-all-relationships-and-no-pagination
-  (let [john (nodes/create { :name "John" })
-        adam (nodes/create { :name "Alan" })
-        pete (nodes/create { :name "Peter" })
+  (let [john (nodes/create {:name "John"})
+        adam (nodes/create {:name "Alan"})
+        pete (nodes/create {:name "Peter"})
         rel1 (relationships/create john adam :friend)
         rel2 (relationships/create adam pete :friend)
-        xs1  (paths/traverse (:id john) :relationships [{ :direction "all" :type "friend" }])
-        xs2  (paths/traverse (:id john) :relationships [{ :direction "all" :type "enemy" }])]
+        xs1  (paths/traverse (:id john) :relationships [{:direction "all" :type "friend"}])
+        xs2  (paths/traverse (:id john) :relationships [{:direction "all" :type "enemy"}])]
     (is (= 3 (count xs1)))
     (is (= 1 (count xs2)))
     (let [path1 (first xs1)
@@ -107,12 +104,12 @@
 ;;
 
 (deftest test-shortest-path-algorithm-1
-  (let [john (nodes/create { :name "John" :age 28 :location "New York City, NY" })
-        liz  (nodes/create { :name "Liz"  :age 27 :location "Buffalo, NY" })
-        beth (nodes/create { :name "Elizabeth" :age 30 :location "Chicago, IL" })
-        bern (nodes/create { :name "Bernard"   :age 33 :location "Zürich" })
-        gael (nodes/create { :name "Gaël"      :age 31 :location "Montpellier" })
-        alex (nodes/create { :name "Alex"      :age 24 :location "Toronto, ON" })
+  (let [john (nodes/create {:name "John" :age 28 :location "New York City, NY"})
+        liz  (nodes/create {:name "Liz"  :age 27 :location "Buffalo, NY"})
+        beth (nodes/create {:name "Elizabeth" :age 30 :location "Chicago, IL"})
+        bern (nodes/create {:name "Bernard"   :age 33 :location "Zürich"})
+        gael (nodes/create {:name "Gaël"      :age 31 :location "Montpellier"})
+        alex (nodes/create {:name "Alex"      :age 24 :location "Toronto, ON"})
         rel1 (relationships/create john liz  :knows)
         rel2 (relationships/create liz  beth :knows)
         rel3 (relationships/create liz  bern :knows)
@@ -120,7 +117,7 @@
         rel5 (relationships/create gael beth :knows)
         rel6 (relationships/create beth gael :knows)
         rel7 (relationships/create john gael :knows)
-        rt   { :type "knows" :direction "out" }
+        rt   {:type "knows" :direction "out"}
         xs1   (paths/all-shortest-between (:id john) (:id liz)  :relationships [rt] :max-depth 1)
         path1 (first xs1)
         xs2   (paths/all-shortest-between (:id john) (:id beth) :relationships [rt] :max-depth 1)
