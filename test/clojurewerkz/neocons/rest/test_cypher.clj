@@ -16,6 +16,11 @@
 ;; Cypher queries
 ;;
 
+(defn- same-node?
+  [a b]
+  (and (= (:id a) (:id b))
+       (= (:data a) (:data b))))
+
 (deftest ^{:cypher true} test-cypher-query-example1
   (let [john  (nodes/create {:name "John"})
         sarah (nodes/create {:name "Sarah"})
@@ -31,14 +36,10 @@
         row2  (map instantiate-node-from (second data))]
     (is (= 2 (count data)))
     (is (= ["john" "fof"] columns))
-    (is (= (:id john)    (:id (first row1))))
-    (is (= (:data john)  (:data (first row1))))
-    (is (= (:id maria)   (:id (last row1))))
-    (is (= (:data maria) (:data (last row1))))
-    (is (= (:id john)    (:id (first row2))))
-    (is (= (:data john)  (:data (first row2))))
-    (is (= (:id steve)   (:id (last row2))))
-    (is (= (:data steve) (:data (last row2))))))
+    (is (same-node? john (first row1)))
+    (is (same-node? maria (last row1)))
+    (is (same-node? john (first row2)))
+    (is (same-node? steve (last row2)))))
 
 
 (deftest ^{:cypher true} test-cypher-query-example2
@@ -57,16 +58,15 @@
         sarah (nodes/create { :name "Sarah" :age 28 })
         rel1  (rel/create john sarah :friend)
         ids   (map :id [john sarah])
-        { :keys [data columns] :as response } (cy/query "START x = node({ids}) RETURN x.name, x.age" { :ids ids })]
-    (is (= ["John" "Sarah"] (vec (map first data))))
+        response (cy/tquery "START x = node({ids}) RETURN x.name, x.age" { :ids ids })]
     (is (= [{"x.name" "John"  "x.age" 27}
-            {"x.name" "Sarah" "x.age" 28}] (vec (cy/tableize response))))))
+            {"x.name" "Sarah" "x.age" 28}] response))))
 
 (deftest ^{:cypher true} test-cypher-query-example4
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         ids   (map :id [john sarah])
-        { :keys [data columns] } (cy/query "START x = node({ids}) RETURN x" { :ids ids })]
+        {:keys [data columns]} (cy/query "START x = node({ids}) RETURN x" {:ids ids})]
     (is (= ids (vec (map (comp :id instantiate-node-from first) data))))))
 
 (deftest ^{:cypher true} test-cypher-query-example5
