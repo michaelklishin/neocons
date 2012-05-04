@@ -58,3 +58,13 @@
     (is (missing? john))
     (is (exists? beth))
     (is (exists? gael))))
+
+
+;; this needs Neo4J 1.8 snapshot past 1.8-M01
+(deftest ^{:cypher true :edge-features true} test-creating-a-bunch-of-nodes-via-mutating-cypher
+  (let [urls     ["http://clojurewerkz.org/"
+                  "http://clojurewerkz.org/articles/about.html"
+                  "http://clojurewerkz.org/articles/community.html"]
+        response (cy/tquery "CREATE n = {xs} RETURN n", {:xs (map #(hash-map :url %) urls)})
+        returned-urls (map #(-> (get % "n") :data :url) response)]
+    (is (= urls returned-urls))))
