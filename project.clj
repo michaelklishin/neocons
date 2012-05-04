@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.2"]
                  [clj-http "0.3.6" :exclude [cheshire]]
-                 [clojurewerkz/support "0.2.0"]]
+                 [clojurewerkz/support "0.3.0"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))))
@@ -16,6 +16,8 @@
                    :http-auth      :http-auth
                    ;; as in, bleeding edge Neo4J Server
                    :edge-features  :edge-features
+                   ;; assorted examples (extra integration tests)
+                   :examples       :examples
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}

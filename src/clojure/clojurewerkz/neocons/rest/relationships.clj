@@ -64,7 +64,7 @@
   ([^Node from ^Node to rel-type]
      (maybe-create from to rel-type {}))
   ([^Node from ^Node to rel-type data]
-     (if (paths/exists-between? (:id from) (:id to) :relationships [{ :type (name rel-type) :direction "out" }] :max-depth 1)
+     (if (paths/exists-between? (:id from) (:id to) :relationships [{:type (name rel-type) :direction "out"}] :max-depth 1)
        (let [rels (outgoing-for from :types [rel-type])
              uri  (node-location-for rest/*endpoint* (:id to))]
          (first (filter #(= (:end %) uri) rels)))
@@ -73,7 +73,7 @@
 (defn get
   "Fetches relationship by id"
   [^long id]
-  (let [{ :keys [status headers body] } (rest/GET (rel-location-for rest/*endpoint* id))
+  (let [{:keys [status headers body]} (rest/GET (rel-location-for rest/*endpoint* id))
         payload  (json/read-json body true)]
     (if (missing? status)
       nil
@@ -82,7 +82,7 @@
 (defn delete
   "Deletes relationship by id"
   [^long id]
-  (let [{ :keys [status headers] } (rest/DELETE (rel-location-for rest/*endpoint* id))]
+  (let [{:keys [status headers]} (rest/DELETE (rel-location-for rest/*endpoint* id))]
     (if (or (missing? status)
             (conflict? status))
       [nil status]
@@ -92,6 +92,13 @@
   "Deletes relationship by id but only if it exists. Otherwise, does nothing and returns nil"
   [^long id]
   (if-let [n (get id)]
+    (delete id)))
+
+(defn delete-many
+  "Deletes multiple relationships by id."
+  [ids]
+  (comment Once 1.8 is out, we should migrate this to mutating Cypher to avoid doing N requests)
+  (doseq [id ids]
     (delete id)))
 
 (declare first-outgoing-between)
@@ -132,6 +139,11 @@
   [rel ^long id]
   (= (extract-id (:end rel)) id))
 
+
+;;
+;; Node Operations
+;;
+
 (defn all-for
   "Returns all relationships for given node"
   [^Node node &{ :keys [types] }]
@@ -154,7 +166,7 @@
 
 (defn outgoing-ids-for
   "Returns ids of all outgoing (outbound) relationships for given node."
-  [^Node node &{ :keys [types] }]
+  [^Node node &{:keys [types]}]
   (map :id (outgoing-for node :types types)))
 
 (defn all-outgoing-between
@@ -177,15 +189,27 @@
    because Neo4J won't allow nodes with relationships to be deleted. Nodes are deleted sequentially
    to avoid node locking problems with Neo4J Server before 1.8"
   ([^Node node]
-     (doseq [id (all-ids-for node)]
-       (delete id))))
+     (delete-many (all-ids-for node))))
 
 (defn purge-outgoing
   "Deletes all outgoing relationships for given node. Nodes are deleted sequentially
    to avoid node locking problems with Neo4J Server before 1.8"
   ([^Node node]
-     (doseq [id (outgoing-ids-for node)]
-       (delete id))))
+     (delete-many (outgoing-ids-for node)))
+  ([^Node node &{:keys [types]}]
+     (delete-many (outgoing-ids-for node :types types))))
+
+(defn replace-outgoing
+  "Deletes outgoing relationships of the node `from` with given type, then creates
+   new relationships of the same type with `xs` nodes"
+  ([^Node from xs rel-type]
+     (purge-outgoing from :types [rel-type])
+     (create-many from xs rel-type)))
+
+
+;;
+;; Rarely used
+;;
 
 (defn all-types
   "Returns all relationship types that exists in the entire database"

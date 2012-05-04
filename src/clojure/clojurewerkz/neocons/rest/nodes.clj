@@ -27,6 +27,7 @@
 ;;
 
 (defn create
+  "Creates and returns a node with given properties. 0-arity creates a node without properties."
   ([]
      (create {}))
   ([data]
@@ -42,30 +43,6 @@
         payload  (json/read-json body true)]
     (instantiate-node-from payload id)))
 
-(defn multi-get
-  "Fetches multiple nodes by id.
-
-  This is a non-standard operation that requires Cypher support from Neo4J Server (versions 1.6.0 and later have it in the core)."
-  ([coll]
-     (let [{:keys [data]} (cypher/query "START x = node({ids}) RETURN x" {:ids coll})]
-       (map (comp instantiate-node-from first) data))))
-
-
-(defn delete
-  [^long id]
-  (let [{:keys [status headers]} (rest/DELETE (node-location-for rest/*endpoint* id))]
-    [id status]))
-
-(defn set-property
-  [^long id prop value]
-  (rest/PUT (node-property-location-for rest/*endpoint* id prop) :body (json/json-str value))
-  value)
-
-(defn update
-  [^long id data]
-  (rest/PUT (node-properties-location-for rest/*endpoint* id) :body (json/json-str data))
-  data)
-
 (defn get-properties
   [^long id]
   (let [{ :keys [status headers body] } (rest/GET (node-properties-location-for rest/*endpoint* id))]
@@ -74,24 +51,85 @@
       204 {}
       (throw (Exception. (str "Unexpected response from the server: " status ", expected 200 or 204"))))))
 
+(defn get-many
+  "Fetches multiple nodes by id.
+
+  This is a non-standard operation that requires Cypher support from Neo4J Server (versions 1.6.0 and later have it in the core)."
+  ([coll]
+     (let [{:keys [data]} (cypher/query "START x = node({ids}) RETURN x" {:ids coll})]
+       (map (comp instantiate-node-from first) data))))
+
+(defn ^{:deprecated true} multi-get
+  "Fetches multiple nodes by id. Deprecated, please use get-many instead."
+  [coll]
+  (apply get-many coll))
+
+(defprotocol MutatingOperations
+  (delete       [node] "Deletes a node. The node must have no relationships")
+  (destroy      [node] "Deletes a node and all of its relationships")
+  (update       [node data] "Updates a node's data (properties)")
+  (set-property [node prop value] "Sets a single property on the given node"))
+
+(extend-protocol MutatingOperations
+  Node
+  (delete [^Node node]
+    (delete (:id node)))
+  (destroy [^Node node]
+    (relationships/purge-all node)
+    (delete (:id node)))
+  (update [^Node node data]
+    (update (:id node) data))
+  (set-property [^Node node prop value]
+    (set-property (:id node) prop value))
+
+  Long
+  (delete [^long id]
+    (let [{:keys [status headers]} (rest/DELETE (node-location-for rest/*endpoint* id))]
+      [id status]))
+  (destroy [^long id]
+    ;; a little hack. Relationships purging implementation only needs
+    ;; id to be set on Node so we don't have to fetch the entire set of properties. MK.
+    (relationships/purge-all (Node. id nil nil nil nil))
+    (delete id))
+  (update [^long id data]
+    (rest/PUT (node-properties-location-for rest/*endpoint* id) :body (json/json-str data))
+    data)
+  (set-property [^long id prop value]
+    (rest/PUT (node-property-location-for rest/*endpoint* id prop) :body (json/json-str value))
+    value))
+
+(defn delete-many
+  "Deletes multiple nodes"
+  [xs]
+  (comment Once 1.8 is out, we should migrate this to mutating Cypher to avoid doing N requests)
+  (doseq [x xs]
+    (delete x)))
+
+(defn destroy-many
+  "Destroys multiple nodes and all of their relationships"
+  [xs]
+  (comment Once 1.8 is out, we should migrate this to mutating Cypher to avoid doing N requests)
+  (doseq [x xs]
+    (destroy x)))
+
 (defn delete-properties
   [^long id]
-  (let [{ :keys [status headers] }(rest/PUT (node-properties-location-for rest/*endpoint* id))]
+  (let [{:keys [status headers]} (rest/PUT (node-properties-location-for rest/*endpoint* id))]
     [id status]))
 
 
 (defn create-index
-  ([s]
+  ([^String s]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) "lucene" "exact")))
-  ([s configuration]
+  ([^String s configuration]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge {:name (name s)} configuration)))
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 (defn delete-index
-  [s]
+  [^String s]
   (let [{:keys [status]} (rest/DELETE (node-index-location-for rest/*endpoint* s))]
     [s status]))
 
@@ -128,7 +166,7 @@
 
 
 (defn fetch-from
-  "Fetches"
+  "Fetches a node from given URI. Exactly like clojurewerkz.neocons.rest.nodes/get but takes a URI instead of an id."
   [^String uri]
   (let [{:keys [status body]} (rest/GET uri)
         payload (json/read-json body true)
@@ -185,7 +223,7 @@
   [id &{:keys [types]}]
   (let [rels (relationships/outgoing-for (get id) :types types)
         ids  (set (map #(extract-id (:end %)) rels))]
-    (multi-get ids)))
+    (get-many ids)))
 
 (defn connected-out?
   "Returns true if given node has outgoing (outbound) relationships with the other node"

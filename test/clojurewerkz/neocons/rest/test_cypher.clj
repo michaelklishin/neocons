@@ -73,7 +73,7 @@
   (let [john  (nodes/create { :name "John" })
         sarah (nodes/create { :name "Sarah" })
         ids   (vec (map :id [sarah john]))]
-    (is (= ids (vec (map :id (nodes/multi-get ids)))))))
+    (is (= ids (vec (map :id (nodes/get-many ids)))))))
 
 (deftest ^{:cypher true} test-cypher-tquery
   (let [john  (nodes/create { :name "John"  :age 27 })
