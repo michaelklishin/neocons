@@ -45,7 +45,7 @@
 
 (defn get-properties
   [^long id]
-  (let [{ :keys [status headers body] } (rest/GET (node-properties-location-for rest/*endpoint* id))]
+  (let [{:keys [status headers body]} (rest/GET (node-properties-location-for rest/*endpoint* id))]
     (case (long status)
       200 (json/read-json body true)
       204 {}
@@ -147,7 +147,7 @@
 (defn add-to-index
   "Adds the given node from index"  
   [^long id idx key value]
-  (let [body     (json/json-str { :key key :value value :uri (node-location-for rest/*endpoint* id) })
+  (let [body     (json/json-str {:key key :value value :uri (node-location-for rest/*endpoint* id)})
         {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
         payload  (json/read-json body true)]
     (instantiate-node-from payload id)))
@@ -187,13 +187,13 @@
 
 
 (defn query
-  "Finds nodes by index"
+  "Finds nodes using full text search query"
   ([^String query]
-     (let [{:keys [status body]} (rest/GET (auto-index-location-for rest/*endpoint*) :query-params { "query" query })
+     (let [{:keys [status body]} (rest/GET (auto-index-location-for rest/*endpoint*) :query-params {"query" query})
            xs (json/read-json body true)]
        (map (fn [doc] (instantiate-node-from doc)) xs)))
   ([^String idx ^String query]
-     (let [{ :keys [status body] } (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params { "query" query })
+     (let [{:keys [status body]} (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params {"query" query})
            xs (json/read-json body true)]
        (map (fn [doc] (instantiate-node-from doc)) xs))))
 
