@@ -1,4 +1,5 @@
 (ns clojurewerkz.neocons.rest.records
+  (:require clojurewerkz.neocons.rest)
   (:use clojurewerkz.neocons.rest.helpers)
   (:import clojurewerkz.neocons.rest.Neo4JEndpoint))
 
