@@ -204,7 +204,8 @@
   [^String idx key value]
   (let [{:keys [status body]} (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
         [node] (json/read-json body true)]
-    (fetch-from (:indexed node))))
+    (when node
+      (fetch-from (:indexed node)))))
 
 
 (defn query

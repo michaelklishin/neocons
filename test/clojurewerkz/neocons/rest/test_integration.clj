@@ -42,4 +42,5 @@
            (:id (nn/find-one "by-url" :url "http://clojurewerkz.org/"))))
     (is (= (:id community)
            (:id (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html"))))
+    (is (nil? (nn/find-one "by-url" :url "http://example99.com")))
     (nn/delete-index "by-url")))
