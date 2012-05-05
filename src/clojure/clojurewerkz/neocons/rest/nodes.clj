@@ -26,6 +26,7 @@
 ;; API
 ;;
 
+(declare add-to-index)
 (defn create
   "Creates and returns a node with given properties. 0-arity creates a node without properties."
   ([]
@@ -34,7 +35,12 @@
      (let [{:keys [status headers body]} (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
            payload  (json/read-json body true)
            location (:self payload)]
-       (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload)))))
+       (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload))))
+  ([data indexes]
+     (let [node (create data)]
+       (doseq [[idx [k v]] indexes]
+         (add-to-index node idx k v))
+       node)))
 
 (defn get
   "Fetches a node by id"
@@ -122,6 +128,7 @@
   ([^String s]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
            payload (json/read-json body true)]
+       (println payload)
        (Index. (name s) (:template payload) "lucene" "exact")))
   ([^String s configuration]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge {:name (name s)} configuration)))
@@ -144,13 +151,21 @@
            (json/read-json body true)))))
 
 
-(defn add-to-index
-  "Adds the given node from index"  
-  [^long id idx key value]
-  (let [body     (json/json-str {:key key :value value :uri (node-location-for rest/*endpoint* id)})
-        {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body body)
-        payload  (json/read-json body true)]
-    (instantiate-node-from payload id)))
+(defprotocol Indexable
+  (add-to-index    [node index key value] "Adds the given node to the index"))
+
+(extend-protocol Indexable
+  Node
+  (add-to-index [^Node node idx key value]
+    (add-to-index (:id node) idx key value))
+
+  Long
+  (add-to-index [^long id idx key value]
+    (let [req-body              (json/json-str {:key key :value value :uri (node-location-for rest/*endpoint* id)})
+          {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body req-body)
+          payload  (json/read-json body true)]
+      (instantiate-node-from payload id))))
+
 
 (defn delete-from-index
   "Deletes the given node from index"
@@ -175,7 +190,7 @@
 
 
 (defn find
-  "Finds nodes using automatic node index"
+  "Finds nodes using the index"
   ([^String key value]
      (let [{:keys [status body]} (rest/GET (auto-index-lookup-location-for rest/*endpoint* key value))
            xs (json/read-json body true)]
@@ -184,6 +199,13 @@
      (let [{:keys [status body]} (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
            xs (json/read-json body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs))))
+
+(defn find-one
+  "Finds a single node using the index"
+  [^String idx key value]
+  (let [{:keys [status body]} (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
+        [node] (json/read-json body true)]
+    (fetch-from (:indexed node))))
 
 
 (defn query

@@ -1,5 +1,11 @@
 ## Changes between Neocons 1.0.0-beta2 and 1.0.0-beta3
 
+### clojurewerkz.neocons.rest.nodes/find-one
+
+`clojurewerkz.neocons.rest.nodes/find-one` finds a single node in an index. Supposed to be used with
+unique indexes.
+
+
 ### clojurewerkz.neocons.rest.relationships/replace-outgoing
 
 `clojurewerkz.neocons.rest.relationships/replace-outgoing` deletes outgoing relationships of a certain

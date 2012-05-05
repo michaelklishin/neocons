@@ -31,3 +31,15 @@
     (is (not (np/exists-between? (:id homepage) (:id community) :relationships [rt])))
     (is (not (np/exists-between? (:id homepage) (:id about)     :relationships [rt])))
     (nn/destroy-many [homepage community about projects])))
+
+(deftest ^{:examples true} test-example2
+  (nn/create-index "by-url" {:type "exact"})
+  (let [homepage  (nn/create {:url "http://clojurewerkz.org/"})
+        community (nn/create {:url "http://clojurewerkz.org/articles/community.html"}
+                             {"by-url" [:url "http://clojurewerkz.org/articles/community.html"]})]
+    (nn/add-to-index homepage "by-url" :url "http://clojurewerkz.org/")
+    (is (= (:id homepage)
+           (:id (nn/find-one "by-url" :url "http://clojurewerkz.org/"))))
+    (is (= (:id community)
+           (:id (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html"))))
+    (nn/delete-index "by-url")))
