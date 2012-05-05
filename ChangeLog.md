@@ -1,3 +1,8 @@
+## Changes between Neocons 1.0.0-beta3 and 1.0.0-rc1
+
+No changes yet.
+
+
 ## Changes between Neocons 1.0.0-beta2 and 1.0.0-beta3
 
 ### clojurewerkz.neocons.rest.nodes/find-one
