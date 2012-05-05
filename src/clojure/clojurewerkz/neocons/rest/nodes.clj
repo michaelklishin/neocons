@@ -128,7 +128,6 @@
   ([^String s]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
            payload (json/read-json body true)]
-       (println payload)
        (Index. (name s) (:template payload) "lucene" "exact")))
   ([^String s configuration]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge {:name (name s)} configuration)))
