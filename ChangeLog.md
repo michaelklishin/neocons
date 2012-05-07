@@ -1,6 +1,8 @@
 ## Changes between Neocons 1.0.0-beta3 and 1.0.0-rc1
 
-No changes yet.
+### clj-http upgraded to 0.4.0
+
+Neocons now uses clj-http 0.4.0.
 
 
 ## Changes between Neocons 1.0.0-beta2 and 1.0.0-beta3
