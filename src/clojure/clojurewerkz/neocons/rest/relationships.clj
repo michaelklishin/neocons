@@ -22,6 +22,10 @@
                        "")]
     (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind) query-params)))
 
+(defn- create-relationship-location-for
+  [^Neo4JEndpoint endpoint ^Node node]
+  (str (:node-uri endpoint) "/" (:id node) "/relationships/"))
+
 (defn- relationships-for
   [^Node node kind types]
   (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind types))
@@ -40,16 +44,21 @@
   ([^Node from ^Node to rel-type]
      (create from to rel-type {}))
   ([^Node from ^Node to rel-type data]
-     (let [{ :keys [status headers body] } (rest/POST (:create-relationship-uri from)
-                                                      :body (json/json-str { :to (:location-uri to) :type rel-type :data data }))
+     ;; these (or ...)s here are necessary because Neo4J REST API returns nodes in different format when fetched via nodes/get
+     ;; and found via index. We have to account for that. MK.
+     (let [{:keys [status headers body]} (rest/POST (or (:create-relationship-uri from)
+                                                        (create-relationship-location-for rest/*endpoint* from))
+                                                    :body (json/json-str {:to (or (:location-uri to)
+                                                                                  (node-location-for rest/*endpoint* (:id to))) :type rel-type :data data}))
            payload  (json/read-json body true)]
        (instantiate-rel-from payload))))
 
 (defn create-many
   "Concurrently creates multiple relations of given type between the *from* node and several provded nodes.
-   All relationships will be of the same time. This function should be used when number of relationships
-   that need to be created is moderately high (dozens and more), otherwise it would be less efficient than
-   using clojure.core/map over the same sequence of nodes"
+   All relationships will be of the same type.
+
+   This function should be used when number of relationships that need to be created is moderately high (dozens and more),
+   otherwise it would be less efficient than using clojure.core/map over the same sequence of nodes"
   ([^Node from xs rel-type]
      (pmap (fn [^Node n]
              (create from n rel-type)) xs))

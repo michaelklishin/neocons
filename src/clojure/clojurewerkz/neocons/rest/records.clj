@@ -89,16 +89,16 @@
 (defn instantiate-node-from
   ([payload]
      (let [id (extract-id (:self payload))]
-       (map->Node (merge {:id id} payload))))
+       (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
   ([payload ^long id]
-     (map->Node (merge {:id id} payload))))
+     (Node. id (:self payload) (:data payload) (:all_relationships payload) (:create_relationship payload))))
 
 (defn instantiate-rel-from
   ([payload]
      (let [id (extract-id (:self payload))]
-       (map->Relationship (merge {:id id} payload))))
+       (Relationship. id (:self payload) (:start payload) (:end payload) (:type payload) (:data payload))))
   ([payload ^long id]
-     (map->Relationship (merge {:id id} payload))))
+     (Relationship. id (:self payload) (:start payload) (:end payload) (:type payload) (:data payload))))
 
 (defn instantiate-path-from
   [payload]

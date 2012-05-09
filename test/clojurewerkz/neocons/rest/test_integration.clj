@@ -36,11 +36,17 @@
   (nn/create-index "by-url" {:type "exact"})
   (let [homepage  (nn/create {:url "http://clojurewerkz.org/"})
         community (nn/create {:url "http://clojurewerkz.org/articles/community.html"}
-                             {"by-url" [:url "http://clojurewerkz.org/articles/community.html"]})]
-    (nn/add-to-index homepage "by-url" :url "http://clojurewerkz.org/")
+                             {"by-url" [:url "http://clojurewerkz.org/articles/community.html"]})
+        _             (nn/add-to-index homepage "by-url" :url "http://clojurewerkz.org/")
+        homepage-alt  (nn/find-one "by-url" :url "http://clojurewerkz.org/")
+        community-alt (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html")]
     (is (= (:id homepage)
-           (:id (nn/find-one "by-url" :url "http://clojurewerkz.org/"))))
+           (:id homepage-alt)))
     (is (= (:id community)
-           (:id (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html"))))
+           (:id community-alt)))
     (is (nil? (nn/find-one "by-url" :url "http://example99.com")))
-    (nn/delete-index "by-url")))
+    ;; Neo4J REST API returns nodes in different format via index and regular GET. Make sure we handle
+    ;; both cases.
+    (nr/create homepage-alt community-alt :links)
+    (nn/delete-index "by-url")
+    (nn/destroy-many [community-alt homepage-alt])))
