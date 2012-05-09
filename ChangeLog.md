@@ -1,4 +1,9 @@
-## Changes between Neocons 1.0.0-beta3 and 1.0.0-rc1
+## Changes between Neocons 1.0.0-beta4 and 1.0.0-rc1
+
+No changes yet.
+
+
+## Changes between Neocons 1.0.0-beta3 and 1.0.0-beta4
 
 ### More robust relationships/create
 
