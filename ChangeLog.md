@@ -1,5 +1,12 @@
 ## Changes between Neocons 1.0.0-beta3 and 1.0.0-rc1
 
+### More robust relationships/create
+
+`clojurewerkz.neocons.rest.relationships/create` is now more robust and handles cases when given nodes
+may only have `:id` set on them. This may happen in part a regression and in part because of edge cases
+in the REST API in our own code.
+
+
 ### clj-http upgraded to 0.4.0
 
 Neocons now uses clj-http 0.4.0.
