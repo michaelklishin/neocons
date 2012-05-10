@@ -34,14 +34,17 @@
 
 (deftest ^{:examples true} test-example2
   (nn/create-index "by-url" {:type "exact"})
-  (let [homepage  (nn/create {:url "http://clojurewerkz.org/"})
+  (nn/create-index "roots"  {:type "exact"})
+  (let [homepage  (nn/create {:url "http://clojurewerkz.org/"} {"roots" ["root" true]})
         community (nn/create {:url "http://clojurewerkz.org/articles/community.html"}
                              {"by-url" [:url "http://clojurewerkz.org/articles/community.html"]})
         _             (nn/add-to-index homepage "by-url" :url "http://clojurewerkz.org/")
         homepage-alt  (nn/find-one "by-url" :url "http://clojurewerkz.org/")
+        root-alt      (nn/find-one "roots" :root true)
         community-alt (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html")]
     (is (= (:id homepage)
-           (:id homepage-alt)))
+           (:id homepage-alt)
+           (:id root-alt)))
     (is (= (:id community)
            (:id community-alt)))
     (is (nil? (nn/find-one "by-url" :url "http://example99.com")))
@@ -49,4 +52,5 @@
     ;; both cases.
     (nr/create homepage-alt community-alt :links)
     (nn/delete-index "by-url")
+    (nn/delete-index "roots")
     (nn/destroy-many [community-alt homepage-alt])))
