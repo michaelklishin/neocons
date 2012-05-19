@@ -72,6 +72,14 @@
       (is (ids (:id node1)))
       (is (not (ids (:id node2)))))))
 
+(deftest ^{:indexing true} test-finding-a-node-with-url-unsafe-key-to-index
+  (let [idx  (nodes/create-index "uris")
+        uri  "http://arstechnica.com/search/?query=Diablo+III"
+        home (nodes/create {:uri uri})]
+    (nodes/add-to-index (:id home) (:name idx) "uri" uri)
+    (nodes/find-one (:name idx) :uri uri)
+    (nodes/delete-from-index (:id home) (:name idx))))
+
 (deftest ^{:indexing true} test-removing-a-node-removes-it-from-indexes
   (let [node1 (nodes/create {:name "Wired"})
         url1  "http://wired.com"
