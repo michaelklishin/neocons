@@ -6,4 +6,5 @@ script: lein2 all test
 jdk:
   - openjdk6
   - openjdk7
-  - oraclejdk7
+  # until Leiningen 2 Preview 5 HTTPS connection issues are resolved
+  # - oraclejdk7
