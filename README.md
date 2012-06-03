@@ -1,6 +1,6 @@
 # Neocons, a Clojure client for the Neo4J REST API
 
-Neocons is a young idiomatic [Clojure client for the Neo4J REST API](http://clojureneo4j.info).
+Neocons is a feature rich idiomatic [Clojure client for the Neo4J REST API](http://clojureneo4j.info).
 
 
 ## Supported Features
