@@ -17,13 +17,15 @@ Neocons currently supports the following features (all via REST API, so [you can
  * Traverse nodes, relationships and paths
  * Find shortest path or all paths between nodes
  * Predicates over paths, for example, if they include specific nodes/relationships
- * [Cypher queries](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html) (with Neo4J Server 1.6 and later)
+ * [Cypher queries](http://docs.neo4j.org/chunked/1.7/cypher-query-lang.html) (with Neo4J Server 1.6 and later)
  * Basic HTTP authentication, including [Heroku Neo4J add-on](https://devcenter.heroku.com/articles/neo4j) compatibility
- * Efficient multi-get via [Cypher queries](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html)
+ * Efficient multi-get via [Cypher queries](http://docs.neo4j.org/chunked/1.7/cypher-query-lang.html)
  * Convenience functions for working with relationships and paths
 
 
 ## Documentation & Examples
+
+To get started and see what using Neocons feels like, please use our [Getting started with Clojure and Neo4J Server](http://clojureneo4j.info/articles/getting_started.html) guide.
 
 Neocons is fairly rapidly approaching 1.0 and [documentation guides](http://clojureneo4j.info) work has recently (June 2012) started.
 For more examples, see our test suite.
@@ -49,32 +51,14 @@ together with documentation guides and dedicated website.
 
 With Leiningen:
 
-    [clojurewerkz/neocons "1.0.0-beta4"]
+    [clojurewerkz/neocons "1.0.0-rc1"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>1.0.0-beta4</version>
-    </dependency>
-
-
-### Snapshots
-
-If you are comfortable with using snapshots, snapshot artifacts are [released to Clojars](https://clojars.org/clojurewerkz/neocons) every 24 hours.
-
-With Leiningen:
-
-    [clojurewerkz/neocons "1.0.0-SNAPSHOT"]
-
-
-With Maven:
-
-    <dependency>
-      <groupId>clojurewerkz</groupId>
-      <artifactId>neocons</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0-rc1</version>
     </dependency>
 
 
@@ -93,8 +77,10 @@ Neocons is built from the ground up for Clojure 1.3 and up.
 
 ## Supported Neo4J Server versions
 
-Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.6/cypher-query-lang.html) support, 1.6 is the minimum recommended
-versions because Cypher is supported by the REST API directly without any plugins.
+Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.7/cypher-query-lang.html) support, 1.6 is the minimum recommended
+versions because Cypher is supported by the REST API directly without any plugins. Some features (in Cypher in particular)
+may be specific to later version. We recommend using the most recent stable release. Neocons is actively tested against bleeding
+edge Neo4J Server snapshots and we try to support important new features before stable server releases come out.
 
 
 ## Neocons Is a ClojureWerkz Project
