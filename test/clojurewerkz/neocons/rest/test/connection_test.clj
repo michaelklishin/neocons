@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-connection
+(ns clojurewerkz.neocons.rest.test.connection-test
   (:require [clojurewerkz.neocons.rest :as neorest])
   (:use clojure.test))
 

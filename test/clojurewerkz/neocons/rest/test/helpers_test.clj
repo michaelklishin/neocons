@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-helpers
+(ns clojurewerkz.neocons.rest.test.helpers-test
   (:use clojure.test
         clojurewerkz.neocons.rest.helpers))
 

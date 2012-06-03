@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-nodes
+(ns clojurewerkz.neocons.rest.test.nodes-test
   (:require [clojurewerkz.neocons.rest       :as neorest]
             [clojurewerkz.neocons.rest.nodes :as nodes])
   (:use clojure.test

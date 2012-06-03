@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-traversal
+(ns clojurewerkz.neocons.rest.test.traversal-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]

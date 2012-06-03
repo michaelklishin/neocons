@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-integration
+(ns clojurewerkz.neocons.rest.test.integration-test
   (:require [clojurewerkz.neocons.rest :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nn]
             [clojurewerkz.neocons.rest.relationships :as nr]

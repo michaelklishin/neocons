@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-basic-http-authentication
+(ns clojurewerkz.neocons.rest.test.basic-http-authentication-test
   (:require [clojurewerkz.neocons.rest :as neorest]
             [clojurewerkz.neocons.rest.nodes :as nodes]
             [slingshot.slingshot :as slingshot])

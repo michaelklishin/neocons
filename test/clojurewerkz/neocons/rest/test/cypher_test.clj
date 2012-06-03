@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-cypher
+(ns clojurewerkz.neocons.rest.test.cypher-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as rel]

@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-indexing
+(ns clojurewerkz.neocons.rest.test.indexing-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes])
   (:use clojure.test))

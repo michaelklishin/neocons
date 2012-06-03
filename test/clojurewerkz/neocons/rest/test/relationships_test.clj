@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.test-relationships
+(ns clojurewerkz.neocons.rest.test.relationships-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
