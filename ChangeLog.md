@@ -1,6 +1,14 @@
-## Changes between Neocons 1.0.0-beta4 and 1.0.0-rc1
+## Changes between Neocons 1.0.0-rc1 and 1.0.0-rc2
 
 No changes yet.
+
+
+
+## Changes between Neocons 1.0.0-beta4 and 1.0.0-rc1
+
+### Documentation guides
+
+We started working on documentation guides for Neocons at [clojureneo4j.info](http://clojureneo4j.info)
 
 
 ## Changes between Neocons 1.0.0-beta3 and 1.0.0-beta4
