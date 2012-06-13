@@ -38,10 +38,12 @@ For more examples, see our test suite.
 To subscribe for announcements of releases, important changes and so on, please follow [@ClojureWerkz](https://twitter.com/#!/clojurewerkz) on Twitter.
 
 
-## This is a Work In Progress
+## Project Maturity
 
-Core Neocons APIs are stabilized but it is still a work in progress. Keep that in mind. 1.0 will be released in 2012
-together with documentation guides and dedicated website.
+## Project Maturity
+
+Neocons is not a young project: it will be 1 year old in a few months, with active production use from week 1. It is now at 1.0.0-rc1,
+all API parts are set in stone and 1.0 will be released as soon as all documentation guides are in good shape.
 
 
 
