@@ -38,6 +38,10 @@
   [^Neo4JEndpoint endpoint idx]
   (str (:node-index-uri endpoint) "/" (encode idx)))
 
+(defn rel-index-location-for
+  [^Neo4JEndpoint endpoint idx]
+  (str (:relationship-index-uri endpoint) "/" (encode idx)))
+
 (defn node-in-index-location-for
   ([^Neo4JEndpoint endpoint ^long id idx]
      (str (:node-index-uri endpoint) "/" (encode idx) "/" id))
@@ -46,17 +50,39 @@
   ([^Neo4JEndpoint endpoint id idx key value]
      (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
 
-(defn index-lookup-location-for
+(defn rel-in-index-location-for
+  ([^Neo4JEndpoint endpoint ^long id idx]
+     (str (:relationship-index-uri endpoint) "/" (encode idx) "/" id))
+  ([^Neo4JEndpoint endpoint ^long id idx key]
+     (str (:relationship-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" id))
+  ([^Neo4JEndpoint endpoint id idx key value]
+     (str (:relationship-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
+
+(defn node-index-lookup-location-for
   [^Neo4JEndpoint endpoint ^String idx key value]
   (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
 
-(defn auto-index-location-for
+(defn auto-node-index-location-for
   [^Neo4JEndpoint endpoint]
   (str (:uri endpoint) "index/auto/node/"))
 
-(defn auto-index-lookup-location-for
+(defn auto-node-index-lookup-location-for
   [^Neo4JEndpoint endpoint key value]
-  (str (auto-index-location-for endpoint) (encode key) "/" (encode (str value))))
+  (str (auto-node-index-location-for endpoint) (encode key) "/" (encode (str value))))
+
+
+(defn rel-index-lookup-location-for
+  [^Neo4JEndpoint endpoint ^String idx key value]
+  (str (:relationship-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
+
+(defn auto-rel-index-location-for
+  [^Neo4JEndpoint endpoint]
+  (str (:uri endpoint) "index/auto/relationship/"))
+
+(defn auto-rel-index-lookup-location-for
+  [^Neo4JEndpoint endpoint key value]
+  (str (auto-rel-index-location-for endpoint) (encode key) "/" (encode (str value))))
+
 
 (defn node-traverse-location-for
   [^Neo4JEndpoint endpoint ^long id]

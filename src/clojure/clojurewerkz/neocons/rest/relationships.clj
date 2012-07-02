@@ -166,6 +166,93 @@
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 
+(defn delete-index
+  "Deletes a relationship index"
+  [^String s]
+  (let [{:keys [status]} (rest/DELETE (rel-index-location-for rest/*endpoint* s))]
+    [s status]))
+
+
+(defn all-indexes
+  "Returns all relationship indices"
+  []
+  (let [{:keys [status body]} (rest/GET (:relationship-index-uri rest/*endpoint*))]
+    (if (= 204 (long status))
+      []
+      (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
+           (json/read-json body true)))))
+
+
+(defprotocol Indexable
+  (add-to-index    [rel index key value] "Adds the given relationship to the index"))
+
+(extend-protocol Indexable
+  Relationship
+  (add-to-index [^Rel rel idx key value]
+    (add-to-index (:id rel) idx key value))
+
+  Long
+  (add-to-index [^long id idx key value]
+    (let [req-body              (json/json-str {:key key :value value :uri (rel-location-for rest/*endpoint* id)})
+          {:keys [status body]} (rest/POST (rel-index-location-for rest/*endpoint* idx) :body req-body)
+          payload  (json/read-json body true)]
+      (instantiate-rel-from payload id))))
+
+
+(defn delete-from-index
+  "Deletes the given rel from index"
+  ([^long id idx]
+     (let [{:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx))]
+       [id status]))
+  ([^long id idx key]
+     (let [{:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx key))]
+       [id status]))
+  ([^long id idx key value]
+     (let [{:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx key value))]
+       [id status])))
+
+
+(defn fetch-from
+  "Fetches a relationships from given URI. Exactly like clojurewerkz.neocons.rest.relationships/get but takes a URI instead of an id."
+  [^String uri]
+  (let [{:keys [status body]} (rest/GET uri)
+        payload (json/read-json body true)
+        id      (extract-id uri)]
+    (instantiate-rel-from payload id)))
+
+
+(defn find
+  "Finds relationships using the index"
+  ([^String key value]
+     (let [{:keys [status body]} (rest/GET (auto-rel-index-lookup-location-for rest/*endpoint* key value))
+           xs (json/read-json body true)]
+       (map (fn [doc] (fetch-from (:indexed doc))) xs)))
+  ([^String idx key value]
+     (let [{:keys [status body]} (rest/GET (rel-index-lookup-location-for rest/*endpoint* idx key value))
+           xs (json/read-json body true)]
+       (map (fn [doc] (fetch-from (:indexed doc))) xs))))
+
+(defn find-one
+  "Finds a single relationship using the index"
+  [^String idx key value]
+  (let [{:keys [status body]} (rest/GET (rel-index-lookup-location-for rest/*endpoint* idx key value))
+        [rel] (json/read-json body true)]
+    (when rel
+      (fetch-from (:indexed rel)))))
+
+
+(defn query
+  "Finds relationships using full text search query"
+  ([^String query]
+     (let [{:keys [status body]} (rest/GET (auto-rel-index-location-for rest/*endpoint*) :query-params {"query" query})
+           xs (json/read-json body true)]
+       (map (fn [doc] (instantiate-rel-from doc)) xs)))
+  ([^String idx ^String query]
+     (let [{:keys [status body]} (rest/GET (rel-index-location-for rest/*endpoint* idx) :query-params {"query" query})
+           xs (json/read-json body true)]
+       (map (fn [doc] (instantiate-rel-from doc)) xs))))
+
+
 ;;
 ;; Node Operations
 ;;

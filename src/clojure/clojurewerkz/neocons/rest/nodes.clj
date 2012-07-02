@@ -193,18 +193,18 @@
 (defn find
   "Finds nodes using the index"
   ([^String key value]
-     (let [{:keys [status body]} (rest/GET (auto-index-lookup-location-for rest/*endpoint* key value))
+     (let [{:keys [status body]} (rest/GET (auto-node-index-lookup-location-for rest/*endpoint* key value))
            xs (json/read-json body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs)))
   ([^String idx key value]
-     (let [{:keys [status body]} (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
+     (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
            xs (json/read-json body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs))))
 
 (defn find-one
   "Finds a single node using the index"
   [^String idx key value]
-  (let [{:keys [status body]} (rest/GET (index-lookup-location-for rest/*endpoint* idx key value))
+  (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
         [node] (json/read-json body true)]
     (when node
       (fetch-from (:indexed node)))))
@@ -213,7 +213,7 @@
 (defn query
   "Finds nodes using full text search query"
   ([^String query]
-     (let [{:keys [status body]} (rest/GET (auto-index-location-for rest/*endpoint*) :query-params {"query" query})
+     (let [{:keys [status body]} (rest/GET (auto-node-index-location-for rest/*endpoint*) :query-params {"query" query})
            xs (json/read-json body true)]
        (map (fn [doc] (instantiate-node-from doc)) xs)))
   ([^String idx ^String query]

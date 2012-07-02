@@ -35,11 +35,24 @@
     (is (some (fn [i]
                 (= name (:name i))) list))))
 
+(deftest ^{:indexing true} test-listing-rel-indexes
+  (let [name "rel-index-3"
+        idx  (rels/create-index name)
+        list (rels/all-indexes)]
+    (is (some (fn [i]
+                (= name (:name i))) list))))
+
 (deftest ^{:indexing true} test-creating-and-immediately-deleting-a-node-index
   (let [name "node-index-4-default-configuration"
         idx  (nodes/create-index name)]
     (is (= name (:name idx)))
     (nodes/delete-index name)))
+
+(deftest ^{:indexing true} test-creating-and-immediately-deleting-a-rel-index
+  (let [name "rel-index-4-default-configuration"
+        idx  (rels/create-index name)]
+    (is (= name (:name idx)))
+    (rels/delete-index name)))
 
 
 (deftest ^{:indexing true} test-adding-a-node-to-index
@@ -48,6 +61,15 @@
         home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
 
+(deftest ^{:indexing true} test-adding-a-rel-to-index
+  (let [idx   (rels/create-index "uris")
+        uri1  "http://arstechnica.com"
+        page1 (nodes/create {:uri uri1})
+        uri2  "http://apple.com/ipad"
+        page2 (nodes/create {:uri uri2})
+        rel   (rels/create page1 page2 :links)]
+    (rels/add-to-index (:id rel) (:name idx) "active" "true")))
+
 (deftest ^{:indexing true} test-removing-a-node-from-index
   (let [idx  (nodes/create-index "uris")
         uri  "http://arstechnica.com"
@@ -55,12 +77,32 @@
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
     (nodes/delete-from-index (:id home) (:name idx))))
 
+(deftest ^{:indexing true} test-removing-a-rel-from-index
+  (let [idx   (rels/create-index "uris")
+        uri1  "http://arstechnica.com"
+        page1 (nodes/create {:uri uri1})
+        uri2  "http://apple.com/ipad"
+        page2 (nodes/create {:uri uri2})
+        rel   (rels/create page1 page2 :links)]
+    (rels/add-to-index (:id rel) (:name idx) "active" "true")
+    (rels/delete-from-index (:id rel) (:name idx))))
+
 (deftest ^{:indexing true} test-removing-a-node-and-key-from-index
   (let [idx  (nodes/create-index "uris, urls and so on")
         uri  "http://arstechnica.com"
         home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
     (nodes/delete-from-index (:id home) (:name idx) "uri")))
+
+(deftest ^{:indexing true} test-removing-a-rel-and-key-from-index
+  (let [idx   (rels/create-index "uris")
+        uri1  "http://arstechnica.com"
+        page1 (nodes/create {:uri uri1})
+        uri2  "http://apple.com/ipad"
+        page2 (nodes/create {:uri uri2})
+        rel   (rels/create page1 page2 :links)]
+    (rels/add-to-index (:id rel) (:name idx) "active" "true")
+    (rels/delete-from-index (:id rel) (:name idx) "active")))
 
 (deftest ^{:indexing true} test-removing-a-node-key-and-value-from-index
   (let [idx  (nodes/create-index "locations")
@@ -81,6 +123,17 @@
     (let [ids (set (map :id (nodes/find (:name idx) :url url1)))]
       (is (ids (:id node1)))
       (is (not (ids (:id node2)))))))
+
+(deftest ^{:indexing true} test-finding-rels-using-an-index
+  (let [node1 (nodes/create {:name "Wired" :url "http://wired.com"})
+        url   "http://craigslist.org"
+        node2 (nodes/create {:name "Craigslist" :url url})
+        idx   (rels/create-index "by-target-url")
+        rel   (rels/create node1 node2 :links {:url url})]
+    (rels/delete-from-index (:id rel) (:name idx) "target-url")
+    (rels/add-to-index (:id rel) (:name idx) "target-url" url)
+    (let [ids (set (map :id (rels/find (:name idx) :target-url url)))]
+      (is (ids (:id rel))))))
 
 (deftest ^{:indexing true} test-finding-a-node-with-url-unsafe-key-to-index
   (let [idx  (nodes/create-index "uris")

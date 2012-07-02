@@ -1,6 +1,11 @@
 ## Changes between Neocons 1.0.0-rc1 and 1.0.0-rc2
 
-No changes yet.
+### Support for indexes over relationships
+
+This include `clojurewerkz.neocons.rest.relationships.create-index`, `clojurewerkz.neocons.rest.relationships.add-to-index`
+and other functions that are `clojurewerkz.neocons.rest.nodes` counterparts but for relationships.
+
+Thanks to Neo4J Server's consistent REST API, indexes support for relationships is almost identical to that on nodes.
 
 
 
