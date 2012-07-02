@@ -1,7 +1,5 @@
 (ns clojurewerkz.neocons.rest.relationships
-  (:import  [java.net URI URL]
-            clojurewerkz.neocons.rest.Neo4JEndpoint
-            [clojurewerkz.neocons.rest.records Node Relationship])
+  (:refer-clojure :exclude [get])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.paths   :as paths])
@@ -9,7 +7,9 @@
             clojurewerkz.neocons.rest.helpers
             clojurewerkz.neocons.rest.records
             [clojure.string :only [join]])
-  (:refer-clojure :exclude [get]))
+  (:import  [java.net URI URL]
+            clojurewerkz.neocons.rest.Neo4JEndpoint
+            [clojurewerkz.neocons.rest.records Node Relationship Index]))
 
 ;;
 ;; Implementation
@@ -147,6 +147,23 @@
    false otherwise"
   [rel ^long id]
   (= (extract-id (:end rel)) id))
+
+
+
+;;
+;; Indexing
+;;
+
+(defn create-index
+  "Creates a new relationship index. Indexes are used for fast lookups by a property or full text search query."
+  ([^String s]
+     (let [{:keys [body]} (rest/POST (:relationship-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
+           payload (json/read-json body true)]
+       (Index. (name s) (:template payload) "lucene" "exact")))
+  ([^String s configuration]
+     (let [{:keys [body]} (rest/POST (:relationship-index-uri rest/*endpoint*) :body (json/json-str (merge {:name (name s)} configuration)))
+           payload (json/read-json body true)]
+       (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 
 ;;

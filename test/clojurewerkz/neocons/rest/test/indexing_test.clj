@@ -1,6 +1,7 @@
 (ns clojurewerkz.neocons.rest.test.indexing-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
-            [clojurewerkz.neocons.rest.nodes         :as nodes])
+            [clojurewerkz.neocons.rest.nodes         :as nodes]
+            [clojurewerkz.neocons.rest.relationships :as rels])
   (:use clojure.test))
 
 (neorest/connect! "http://localhost:7474/db/data/")
@@ -13,10 +14,19 @@
   (let [name "node-index-1-default-configuration"]
     (nodes/create-index name)))
 
+(deftest ^{:indexing true} test-create-a-new-rel-index-with-default-configuration
+  (let [name "rel-index-1-default-configuration"]
+    (rels/create-index name)))
+
 (deftest ^{:indexing true} test-create-a-new-node-index-with-explicit-configuration
   (let [name "node-index-2"
         conf {:type "fulltext" :provider "lucene"}]
     (nodes/create-index name conf)))
+
+(deftest ^{:indexing true} test-create-a-new-rel-index-with-explicit-configuration
+  (let [name "rel-index-2"
+        conf {:type "fulltext" :provider "lucene"}]
+    (rels/create-index name conf)))
 
 (deftest ^{:indexing true} test-listing-node-indexes
   (let [name "node-index-3"

@@ -125,6 +125,7 @@
 
 
 (defn create-index
+  "Creates a new node index. Indexes are used for fast lookups by a property or full text search query."
   ([^String s]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
            payload (json/read-json body true)]
@@ -135,6 +136,7 @@
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 (defn delete-index
+  "Deletes a node index"
   [^String s]
   (let [{:keys [status]} (rest/DELETE (node-index-location-for rest/*endpoint* s))]
     [s status]))
