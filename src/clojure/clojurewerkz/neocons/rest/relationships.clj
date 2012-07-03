@@ -1,5 +1,5 @@
 (ns clojurewerkz.neocons.rest.relationships
-  (:refer-clojure :exclude [get])
+  (:refer-clojure :exclude [get find])
   (:require [clojure.data.json                 :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.paths   :as paths])
