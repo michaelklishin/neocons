@@ -164,3 +164,16 @@
     (let [ids (set (map :id (nodes/query (:name idx) "country:Germany")))]
       (is (ids (:id puma)))
       (is (not (ids (:id apple)))))))
+
+
+(deftest ^{:indexing true :focus true} test-finding-nodes-using-full-text-search-queries-over-index-example2
+  (let [neocons (nodes/create {:name "Neocons"  :description "Neocons is an idiomatic Clojure client for the Neo4J Server REST interface"})
+        monger  (nodes/create {:name "Monger" :description "Monger is a Clojure MongoDB driver for a more civilized age"})
+        idx   (nodes/create-index "companies" {:type :fulltext :analyzer "org.apache.lucene.analysis.standard.StandardAnalyzer"})]
+    (nodes/delete-from-index (:id neocons)  (:name idx))
+    (nodes/delete-from-index (:id monger) (:name idx))
+    (nodes/add-to-index (:id neocons) (:name idx) "description" "Neocons is an idiomatic Clojure client for the Neo4J Server REST interface")
+    (nodes/add-to-index (:id monger)  (:name idx) "description" "Monger is a Clojure MongoDB driver for a more civilized age")
+    (let [ids (set (map :id (nodes/query (:name idx) "description:*civilized*")))]
+      (is (ids (:id monger)))
+      (is (not (ids (:id neocons)))))))
