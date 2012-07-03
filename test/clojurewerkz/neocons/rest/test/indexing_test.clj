@@ -166,7 +166,7 @@
       (is (not (ids (:id apple)))))))
 
 
-(deftest ^{:indexing true :focus true} test-finding-nodes-using-full-text-search-queries-over-index-example2
+(deftest ^{:indexing true} test-finding-nodes-using-full-text-search-queries-over-index-example2
   (let [neocons (nodes/create {:name "Neocons"  :description "Neocons is an idiomatic Clojure client for the Neo4J Server REST interface"})
         monger  (nodes/create {:name "Monger" :description "Monger is a Clojure MongoDB driver for a more civilized age"})
         idx   (nodes/create-index "companies" {:type :fulltext :analyzer "org.apache.lucene.analysis.standard.StandardAnalyzer"})]
