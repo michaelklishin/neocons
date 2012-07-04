@@ -9,12 +9,16 @@ It returns a lazy sequence of results, which both makes it more memory efficient
 with `clojure.core/doall` in some cases.
 
 
-### Unique indexes
+### Unique indexes and graph entities
 
 `clojurewerkz.neocons.rest.nodes/create-index` now accepts a new configuration option: `:unique`, which makes
 the index unique (that allows/guarantees only one entry per key).
 
 `clojurewerkz.neocons.rest.relationships/create-index` works the same way.
+
+`clojurewerkz.neocons.rest.nodes/add-to-index` and 
+`clojurewerkz.neocons.rest.relationships/add-to-index` now take an additional (optional) argument that, when set to true,
+will add the entity to the index [as unique](http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html)
 
 
 ## Changes between Neocons 1.0.0-rc1 and 1.0.0-rc2
