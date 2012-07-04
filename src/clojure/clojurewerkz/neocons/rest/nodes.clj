@@ -2,7 +2,8 @@
   (:use     clojurewerkz.support.http.statuses
             clojurewerkz.neocons.rest.helpers
             clojurewerkz.neocons.rest.records
-            [clojure.string :only [join]])
+            [clojure.string :only [join]]
+            [clojurewerkz.neocons.rest.conversion :only [to-id]])
   (:require [clj-http.client                         :as http]
             [clojure.data.json                       :as json]
             [clojurewerkz.neocons.rest               :as rest]
@@ -170,32 +171,33 @@
            (json/read-json body true)))))
 
 
-(defprotocol Indexable
-  (add-to-index    [node index key value] "Adds the given node to the index"))
-
-(extend-protocol Indexable
-  Node
-  (add-to-index [^Node node idx key value]
-    (add-to-index (:id node) idx key value))
-
-  Long
-  (add-to-index [^long id idx key value]
-    (let [req-body              (json/json-str {:key key :value value :uri (node-location-for rest/*endpoint* id)})
-          {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body req-body)
+(defn add-to-index
+  "Adds the given node to the index"
+  ([node idx key value]
+     (add-to-index node idx key value false))
+  ([node idx key value unique?]
+     (let [id                    (to-id node)
+           req-body              (json/json-str {:key key :value value :uri (node-location-for rest/*endpoint* (to-id node))})
+           {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body req-body :query-string (if unique?
+                                                                                                                        {"unique" "true"}
+                                                                                                                        {}))
           payload  (json/read-json body true)]
       (instantiate-node-from payload id))))
 
 
 (defn delete-from-index
   "Deletes the given node from index"
-  ([^long id idx]
-     (let [{:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
+  ([node idx]
+     (let [id               (to-id node)
+           {:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
        [id status]))
-  ([^long id idx key]
-     (let [{:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key))]
+  ([node idx key]
+     (let [id               (to-id node)
+           {:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key))]
        [id status]))
-  ([^long id idx key value]
-     (let [{:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
+  ([node idx key value]
+     (let [id               (to-id node)
+           {:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
        [id status])))
 
 

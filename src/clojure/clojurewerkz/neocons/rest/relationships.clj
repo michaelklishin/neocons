@@ -6,7 +6,8 @@
   (:use     clojurewerkz.support.http.statuses
             clojurewerkz.neocons.rest.helpers
             clojurewerkz.neocons.rest.records
-            [clojure.string :only [join]])
+            [clojure.string :only [join]]
+            [clojurewerkz.neocons.rest.conversion :only [to-id]])
   (:import  [java.net URI URL]
             clojurewerkz.neocons.rest.Neo4JEndpoint
             [clojurewerkz.neocons.rest.records Node Relationship Index]))
@@ -187,32 +188,33 @@
            (json/read-json body true)))))
 
 
-(defprotocol Indexable
-  (add-to-index    [rel index key value] "Adds the given relationship to the index"))
-
-(extend-protocol Indexable
-  Relationship
-  (add-to-index [^Rel rel idx key value]
-    (add-to-index (:id rel) idx key value))
-
-  Long
-  (add-to-index [^long id idx key value]
-    (let [req-body              (json/json-str {:key key :value value :uri (rel-location-for rest/*endpoint* id)})
-          {:keys [status body]} (rest/POST (rel-index-location-for rest/*endpoint* idx) :body req-body)
+(defn add-to-index
+  "Adds the given rel to the index"
+  ([rel idx key value]
+     (add-to-index rel idx key value false))
+  ([rel idx key value unique?]
+     (let [id                    (to-id rel)
+           req-body              (json/json-str {:key key :value value :uri (rel-location-for rest/*endpoint* (to-id rel))})
+           {:keys [status body]} (rest/POST (rel-index-location-for rest/*endpoint* idx) :body req-body :query-string (if unique?
+                                                                                                                        {"unique" "true"}
+                                                                                                                        {}))
           payload  (json/read-json body true)]
       (instantiate-rel-from payload id))))
 
 
 (defn delete-from-index
   "Deletes the given rel from index"
-  ([^long id idx]
-     (let [{:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx))]
+  ([rel idx]
+     (let [id               (to-id rel)
+           {:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx))]
        [id status]))
-  ([^long id idx key]
-     (let [{:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx key))]
+  ([rel idx key]
+     (let [id               (to-id rel)
+           {:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx key))]
        [id status]))
-  ([^long id idx key value]
-     (let [{:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx key value))]
+  ([rel idx key value]
+     (let [id               (to-id rel)
+           {:keys [status]} (rest/DELETE (rel-in-index-location-for rest/*endpoint* id idx key value))]
        [id status])))
 
 

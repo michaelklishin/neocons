@@ -71,6 +71,13 @@
         home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
 
+(deftest ^{:indexing true} test-adding-a-node-to-index-as-unique
+  (let [idx  (nodes/create-index "uris")
+        uri  "http://arstechnica.com"
+        home (nodes/create {:uri uri})]
+    (nodes/add-to-index home (:name idx) "uri" uri true)
+    (nodes/add-to-index home (:name idx) "uri" uri true)))
+
 (deftest ^{:indexing true} test-adding-a-rel-to-index
   (let [idx   (rels/create-index "uris")
         uri1  "http://arstechnica.com"
@@ -79,6 +86,15 @@
         page2 (nodes/create {:uri uri2})
         rel   (rels/create page1 page2 :links)]
     (rels/add-to-index (:id rel) (:name idx) "active" "true")))
+
+(deftest ^{:indexing true} test-adding-a-rel-to-index-as-unique
+  (let [idx   (rels/create-index "uris")
+        uri1  "http://arstechnica.com"
+        page1 (nodes/create {:uri uri1})
+        uri2  "http://apple.com/ipad"
+        page2 (nodes/create {:uri uri2})
+        rel   (rels/create page1 page2 :links)]
+    (rels/add-to-index rel (:name idx) "active" "true" true)))
 
 (deftest ^{:indexing true} test-removing-a-node-from-index
   (let [idx  (nodes/create-index "uris")
