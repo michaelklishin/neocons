@@ -131,7 +131,11 @@
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) "lucene" "exact")))
   ([^String s configuration]
-     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str (merge {:name (name s)} configuration)))
+     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*)
+                                     :query-string (if (:unique configuration)
+                                                     {"unique" "true"}
+                                                     {})
+                                     :body (json/json-str (merge {:name (name s)} (dissoc configuration :unique))))
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 

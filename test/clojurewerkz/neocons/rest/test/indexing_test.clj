@@ -23,9 +23,19 @@
         conf {:type "fulltext" :provider "lucene"}]
     (nodes/create-index name conf)))
 
+(deftest ^{:indexing true} test-create-a-new-unique-node-index-with-explicit-configuration
+  (let [name "node-index-2b"
+        conf {:unique true}]
+    (nodes/create-index name conf)))
+
 (deftest ^{:indexing true} test-create-a-new-rel-index-with-explicit-configuration
   (let [name "rel-index-2"
         conf {:type "fulltext" :provider "lucene"}]
+    (rels/create-index name conf)))
+
+(deftest ^{:indexing true} test-create-a-new-unique-rel-index-with-explicit-configuration
+  (let [name "rel-index-2b"
+        conf {:unique true}]
     (rels/create-index name conf)))
 
 (deftest ^{:indexing true} test-listing-node-indexes
