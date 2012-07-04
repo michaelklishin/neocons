@@ -1,14 +1,18 @@
 ## Changes between Neocons 1.0.0-rc2 and 1.0.0-rc3
 
-No changes yet.
+### Unique indexes
 
+`clojurewerkz.neocons.rest.nodes/add-to-index` now accepts a new configuration option: `:unique`, which makes
+the index unique (that allows/guarantees only one entry per key).
+
+`clojurewerkz.neocons.rest.relationships/add-to-index` works the same way.
 
 
 ## Changes between Neocons 1.0.0-rc1 and 1.0.0-rc2
 
 ### Support for indexes over relationships
 
-This include `clojurewerkz.neocons.rest.relationships.create-index`, `clojurewerkz.neocons.rest.relationships.add-to-index`
+This include `clojurewerkz.neocons.rest.relationships/create-index`, `clojurewerkz.neocons.rest.relationships/add-to-index`
 and other functions that are `clojurewerkz.neocons.rest.nodes` counterparts but for relationships.
 
 Thanks to Neo4J Server's consistent REST API, indexes support for relationships is almost identical to that on nodes.
