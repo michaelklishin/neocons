@@ -42,6 +42,20 @@
          (add-to-index node idx k v))
        node)))
 
+(defn create-batch
+  "Does an efficient batch insert of multiple nodes. Use it if you need to insert tens of hundreds of thousands
+   of nodes.
+
+   This function returns a lazy sequence of results, so you may need to force it using clojure.core/doall"
+  [xs]
+  (let [batched (doall (reduce (fn [acc x]
+                          (conj acc {:body   x
+                                     :to     "/node"
+                                     :method "POST"})) [] xs))
+        {:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/json-str batched))
+        payload                       (map :body (json/read-json body true))]
+    (map instantiate-node-from payload)))
+
 (defn get
   "Fetches a node by id"
   [^long id]

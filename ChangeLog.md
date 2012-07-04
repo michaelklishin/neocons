@@ -1,11 +1,20 @@
 ## Changes between Neocons 1.0.0-rc2 and 1.0.0-rc3
 
+### Batch creation of nodes
+
+A new function, `clojurewerkz.neocons.rest.nodes/create-batch`, can be used to efficiently insert a large number of nodes
+at the same time (up to hundreds of thousands or millions).
+
+It returns a lazy sequence of results, which both makes it more memory efficient and may require forcing the evaluation
+with `clojure.core/doall` in some cases.
+
+
 ### Unique indexes
 
-`clojurewerkz.neocons.rest.nodes/add-to-index` now accepts a new configuration option: `:unique`, which makes
+`clojurewerkz.neocons.rest.nodes/create-index` now accepts a new configuration option: `:unique`, which makes
 the index unique (that allows/guarantees only one entry per key).
 
-`clojurewerkz.neocons.rest.relationships/add-to-index` works the same way.
+`clojurewerkz.neocons.rest.relationships/create-index` works the same way.
 
 
 ## Changes between Neocons 1.0.0-rc1 and 1.0.0-rc2

@@ -18,6 +18,7 @@
                    :edge-features  :edge-features
                    ;; assorted examples (extra integration tests)
                    :examples       :examples
+                   :batching       :batching
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
