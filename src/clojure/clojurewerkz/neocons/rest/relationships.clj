@@ -17,15 +17,15 @@
 ;;
 
 (defn- relationships-location-for
-  [^Neo4JEndpoint endpoint ^Node node kind types]
+  [^Neo4JEndpoint endpoint node kind types]
   (let [query-params (if types
                        (str "/" (join "&" (map name types)))
                        "")]
-    (str (:node-uri endpoint) "/" (:id node) "/relationships/" (name kind) query-params)))
+    (str (:node-uri endpoint) "/" (to-id node) "/relationships/" (name kind) query-params)))
 
 (defn- create-relationship-location-for
-  [^Neo4JEndpoint endpoint ^Node node]
-  (str (:node-uri endpoint) "/" (:id node) "/relationships/"))
+  [^Neo4JEndpoint endpoint node]
+  (str (:node-uri endpoint) "/" (to-id node) "/relationships/"))
 
 (defn- relationships-for
   [^Node node kind types]
@@ -50,7 +50,7 @@
      (let [{:keys [status headers body]} (rest/POST (or (:create-relationship-uri from)
                                                         (create-relationship-location-for rest/*endpoint* from))
                                                     :body (json/json-str {:to (or (:location-uri to)
-                                                                                  (node-location-for rest/*endpoint* (:id to))) :type rel-type :data data}))
+                                                                                  (node-location-for rest/*endpoint* (to-id to))) :type rel-type :data data}))
            payload  (json/read-json body true)]
        (instantiate-rel-from payload))))
 
@@ -71,10 +71,10 @@
 (declare outgoing-for)
 (defn maybe-create
   "Creates a relationship of given type between two nodes, unless it already exists"
-  ([^Node from ^Node to rel-type]
+  ([from to rel-type]
      (maybe-create from to rel-type {}))
-  ([^Node from ^Node to rel-type data]
-     (if (paths/exists-between? (:id from) (:id to) :relationships [{:type (name rel-type) :direction "out"}] :max-depth 1)
+  ([from to rel-type data]
+     (if (paths/exists-between? (to-id from) (to-id to) :relationships [{:type (name rel-type) :direction "out"}] :max-depth 1)
        (let [rels (outgoing-for from :types [rel-type])
              uri  (node-location-for rest/*endpoint* (:id to))]
          (first (filter #(= (:end %) uri) rels)))
@@ -91,12 +91,12 @@
 
 (defn delete
   "Deletes relationship by id"
-  [^long id]
-  (let [{:keys [status headers]} (rest/DELETE (rel-location-for rest/*endpoint* id))]
+  [rel]
+  (let [{:keys [status headers]} (rest/DELETE (rel-location-for rest/*endpoint* (to-id rel)))]
     (if (or (missing? status)
             (conflict? status))
       [nil status]
-      [id  status])))
+      [(to-id rel)  status])))
 
 (defn maybe-delete
   "Deletes relationship by id but only if it exists. Otherwise, does nothing and returns nil"
@@ -118,15 +118,15 @@
   ([^long id]
      (if-let [n (get id)]
        (delete id)))
-  ([^Node from ^Node to rels]
+  ([from to rels]
      (if-let [rel (first-outgoing-between from to rels)]
-       (delete (:id rel)))))
+       (delete (to-id rel)))))
 
 
 (defn update
   "Updates relationship data by id"
-  [^long id data]
-  (rest/PUT (rel-properties-location-for rest/*endpoint* id) :body (json/json-str data))
+  [rel data]
+  (rest/PUT (rel-properties-location-for rest/*endpoint* rel) :body (json/json-str data))
   data)
 
 

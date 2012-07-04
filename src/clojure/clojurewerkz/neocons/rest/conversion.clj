@@ -1,5 +1,4 @@
-(ns clojurewerkz.neocons.rest.conversion
-  (:require clojurewerkz.neocons.rest.records))
+(ns clojurewerkz.neocons.rest.conversion)
 
 (defprotocol Identifier
   (^Long to-id [input] "Coerces the input to an id that Neo4J can use to identify nodes, relationships and so on"))

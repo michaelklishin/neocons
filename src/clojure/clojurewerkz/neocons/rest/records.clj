@@ -1,6 +1,7 @@
 (ns clojurewerkz.neocons.rest.records
   (:require clojurewerkz.neocons.rest)
-  (:use clojurewerkz.neocons.rest.helpers)
+  (:use clojurewerkz.neocons.rest.helpers
+        [clojurewerkz.neocons.rest.conversion :only [to-id]])
   (:import clojurewerkz.neocons.rest.Neo4JEndpoint))
 
 (defrecord Node
@@ -85,32 +86,32 @@
 
 
 (defn node-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/traverse/node"))
+  [^Neo4JEndpoint endpoint rel]
+  (str (:node-uri endpoint) "/" (to-id rel) "/traverse/node"))
 
 (defn path-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/traverse/path"))
+  [^Neo4JEndpoint endpoint rel]
+  (str (:node-uri endpoint) "/" (to-id rel) "/traverse/path"))
 
 (defn paths-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/paths"))
+  [^Neo4JEndpoint endpoint rel]
+  (str (:node-uri endpoint) "/" (to-id rel) "/paths"))
 
 (defn path-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/path"))
+  [^Neo4JEndpoint endpoint rel]
+  (str (:node-uri endpoint) "/" (to-id rel) "/path"))
 
 (defn rel-properties-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:relationships-uri endpoint) "/" id "/properties"))
+  [^Neo4JEndpoint endpoint rel]
+  (str (:relationships-uri endpoint) "/" (to-id rel) "/properties"))
 
 (defn rel-property-location-for
-  [^Neo4JEndpoint endpoint ^long id prop]
-  (str (rel-properties-location-for endpoint id) "/" (name prop)))
+  [^Neo4JEndpoint endpoint rel prop]
+  (str (rel-properties-location-for endpoint (to-id rel)) "/" (name prop)))
 
 (defn rel-traverse-location-for
-  [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/traverse/relationship"))
+  [^Neo4JEndpoint endpoint rel]
+  (str (:node-uri endpoint) "/" (to-id rel) "/traverse/relationship"))
 
 (defn instantiate-node-from
   ([payload]
