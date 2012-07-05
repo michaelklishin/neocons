@@ -1,5 +1,32 @@
 ## Changes between Neocons 1.0.0-rc2 and 1.0.0-rc3
 
+### Generic batch operation support
+
+`clojurewerkz.neocons.rest.batch/perform` allows for executing any sequence of operations in batch using [Neo4J REST API for batch operations](http://docs.neo4j.org/chunked/milestone/rest-api-batch-ops.html):
+
+``` clojure
+(let [ops [{:method "POST"
+                     :to     "/node"
+                     :body   {}
+                     :id     0}
+                    {:method "POST"
+                     :to     "/node"
+                     :body   {}
+                     :id     1}
+                    {:method "POST",
+                     :to     "{0}/relationships",
+                     :body   {:to   "{1}"
+                              :data {}
+                              :type "knows"}
+                     :id     2}]
+               res (doall (b/perform ops))]
+           (println res))
+```
+
+This is a relatively low level function. It is reasonable to expect an easier to use way of executing batch operations
+in future versions of Neocons.
+
+
 ### Batch creation of nodes
 
 A new function, `clojurewerkz.neocons.rest.nodes/create-batch`, can be used to efficiently insert a large number of nodes

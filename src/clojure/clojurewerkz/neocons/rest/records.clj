@@ -134,3 +134,16 @@
 (defn instantiate-cypher-query-response-from
   [payload]
   (map->CypherQueryResponse payload))
+
+
+(defn instantiate-record-from
+  "Instantiates a record from the given payload, detecting what kind of Neo4J entity (a node, a relationship,
+   a path) this payload represents"
+  [payload]
+  (let [f (cond (:create_relationship payload)   instantiate-node-from
+                (and (:type payload)
+                     (:data payload))            instantiate-rel-from
+                     (and (:start payload)
+                          (:end payload)
+                          (not (:type payload))) instantiate-path-from)]
+    (f payload)))
