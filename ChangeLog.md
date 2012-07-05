@@ -5,6 +5,12 @@
 `clojurewerkz.neocons.rest.batch/perform` allows for executing any sequence of operations in batch using [Neo4J REST API for batch operations](http://docs.neo4j.org/chunked/milestone/rest-api-batch-ops.html):
 
 ``` clojure
+(ns clojurewerkz.neocons.examples
+  (:require [clojurewerkz.neocons.rest               :as neorest]
+            [clojurewerkz.neocons.rest.batch         :as b]))
+
+(neorest/connect! "http://localhost:7474/db/data/")
+
 (let [ops [{:method "POST"
                      :to     "/node"
                      :body   {}
