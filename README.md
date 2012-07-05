@@ -40,7 +40,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: it is more than 6 months old, with active production use from week 1. It is now at 1.0.0-rc2,
+Neocons is not a young project: it is more than 6 months old, with active production use from week 1. It is now at 1.0.0-rcs,
 all API parts are set in stone and 1.0 will be released as soon as all documentation guides are in good shape.
 
 
@@ -51,14 +51,14 @@ all API parts are set in stone and 1.0 will be released as soon as all documenta
 
 With Leiningen:
 
-    [clojurewerkz/neocons "1.0.0-rc2"]
+    [clojurewerkz/neocons "1.0.0-rc3"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>1.0.0-rc2</version>
+      <version>1.0.0-rc3</version>
     </dependency>
 
 
