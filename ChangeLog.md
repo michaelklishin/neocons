@@ -1,3 +1,14 @@
+Changes between Neocons 1.0.0-rc3 and 1.0.0
+
+### Better support for unique graph entities
+
+`clojurewerkz.neocons.rest.nodes/create-unique-in-index` and `clojurewerkz.neocons.rest.relationships/create-unique-in-index` are
+two functions that create a node (relationship) and add it to an index while ensuring entry uniqueness atomically.
+
+
+Contributed by Lin Zhemin.
+
+
 ## Changes between Neocons 1.0.0-rc2 and 1.0.0-rc3
 
 ### Generic batch operation support
