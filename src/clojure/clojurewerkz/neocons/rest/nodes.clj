@@ -44,8 +44,12 @@
        node)))
 
 (defn create-unique-in-index
-  "Creates and returns a node with given properties and index.
-  Cf. http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html (19.8.1)"
+  "Atomically creates and returns a node with the given properties and adds it to an index while ensuring key uniqueness
+   in that index. This is the same as first creating a node using the `clojurewerkz.neocons.rest.nodes/create` function
+   and indexing it with the 4-arity of `clojurewerkz.neocons.rest.nodes/add-to-index` but performed atomically and requires
+   only a single request.
+
+   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html section (19.8.1)"
   [idx k v data]
   (let [req-body    (json/json-str {:key k :value v :properties data})
         uri         (str (:node-index-uri rest/*endpoint*) "/" (encode idx) "?unique")

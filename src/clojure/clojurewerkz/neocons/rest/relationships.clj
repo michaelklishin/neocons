@@ -55,8 +55,13 @@
        (instantiate-rel-from payload))))
 
 (defn create-unique-in-index
-  "Creates a relationship with given properties and index.
-  Cf. http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html (19.8.4)"
+  
+  "Atomically creates and returns a relationship with the given properties and adds it to an index while ensuring key uniqueness
+   in that index. This is the same as first creating a relationship using the `clojurewerkz.neocons.rest.relationships/create` function
+   and indexing it with the 4-arity of `clojurewerkz.neocons.rest.relationships/add-to-index` but performed atomically and requires
+   only a single request.
+
+   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html (section 19.8.4)"
   ([^Node from ^Node to rel-type idx k v]
      (create-unique-in-index from to rel-type idx k v {}))
   ([^Node from ^Node to rel-type idx k v data]
