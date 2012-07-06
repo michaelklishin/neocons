@@ -72,6 +72,28 @@
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= (:data created-rel) (:data fetched-rel)))))
 
+(deftest test-creating-and-immediately-accessing-a-unique-relationship-in-index
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-r1   (relationships/create-unique-in-index from-node to-node :links "edges" "test" "test-1")
+        created-r2   (relationships/create-unique-in-index from-node to-node :links "edges" "test" "test-1")]
+    (is (= (:id created-r1) (:id created-r2)))
+    (is (= (:type created-r1) (:type created-r2)))))
+
+(deftest test-creating-and-immediately-accessing-a-unique-relationship-in-index-with-properties
+  (let [data         {:one "uno" :two "due"}
+        from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-r1   (relationships/create-unique-in-index from-node to-node :links "edges" "test" "test-2" data)
+        created-r2   (relationships/create-unique-in-index from-node to-node :links "edges" "test" "test-2" data)
+        fetched-r1   (relationships/get (:id created-r1))
+        fetched-r2   (relationships/get (:id created-r2))]
+    (is (= (:id created-r1) (:id created-r2)))
+    (is (= (:type created-r1) (:type created-r2)))
+    (is (= (:data created-r1) (:data created-r2)))
+    (is (= (:data created-r1) (:data fetched-r2)))
+    (is (= (:id created-r2) (:id fetched-r1)))))
+
 (deftest test-creating-and-deleting-a-relationship-without-properties
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
