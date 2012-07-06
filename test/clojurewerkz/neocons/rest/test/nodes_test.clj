@@ -27,8 +27,9 @@
 (deftest test-creating-and-immediately-accessing-a-unique-node-in-an-index
   (let [data         {:name "Tobias" :value "test"}
         created-n1   (nodes/create-unique-in-index "vertices" "name" "Tobias" data)
-        created-n2   (nodes/create-unique-in-index "vertices" "name" "Tobias" data)]
+        created-n2   (nodes/create-unique-in-index "vertices" "name" "Tobias" {})]
     (is (= (:id created-n1) (:id created-n2)))
+    (is (= (:data created-n1) (:data created-n2)))
     (is (= (:data created-n1) data))))
 
 
