@@ -55,7 +55,6 @@
        (instantiate-rel-from payload))))
 
 (defn create-unique-in-index
-  
   "Atomically creates and returns a relationship with the given properties and adds it to an index while ensuring key uniqueness
    in that index. This is the same as first creating a relationship using the `clojurewerkz.neocons.rest.relationships/create` function
    and indexing it with the 4-arity of `clojurewerkz.neocons.rest.relationships/add-to-index` but performed atomically and requires
