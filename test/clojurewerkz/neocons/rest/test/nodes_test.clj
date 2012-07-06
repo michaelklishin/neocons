@@ -24,6 +24,14 @@
     (is (= (:data created-node) data))))
 
 
+(deftest test-creating-and-immediately-accessing-a-unique-node-in-an-index
+  (let [data         {:name "Tobias" :value "test"}
+        created-n1   (nodes/create-unique-in-index "vertices" "name" "Tobias" data)
+        created-n2   (nodes/create-unique-in-index "vertices" "name" "Tobias" data)]
+    (is (= (:id created-n1) (:id created-n2)))
+    (is (= (:data created-n1) data))))
+
+
 (deftest test-accessing-a-non-existent-node
   (is (thrown? Exception
                (nodes/get 928398827))))
