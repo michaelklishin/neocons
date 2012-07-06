@@ -1,4 +1,4 @@
-Changes between Neocons 1.0.0-rc3 and 1.0.0
+## Changes between Neocons 1.0.0-rc3 and 1.0.0
 
 ### Better support for unique graph entities
 
@@ -6,7 +6,7 @@ Changes between Neocons 1.0.0-rc3 and 1.0.0
 two functions that create a node (relationship) and add it to an index while ensuring entry uniqueness atomically.
 
 
-Contributed by Lin Zhemin.
+Contributed by Zhemin Lin.
 
 
 ## Changes between Neocons 1.0.0-rc2 and 1.0.0-rc3
