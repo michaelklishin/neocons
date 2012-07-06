@@ -43,6 +43,17 @@
          (add-to-index node idx k v))
        node)))
 
+(defn create-unique-in-index
+  "Creates and returns a node with given properties and index.
+  Cf. http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html (19.8.1)"
+  [idx k v data]
+  (let [req-body    (json/json-str {:key k :value v :properties data})
+        uri         (str (:node-index-uri rest/*endpoint*) "/" (encode idx) "?unique")
+        {:keys [status headers body]} (rest/POST uri :body req-body)
+        payload  (json/read-json body true)
+        location (:self payload)]
+    (Node. (extract-id location) location (:data payload) (:relationships payload) (:create_relationship payload))))
+
 (defn create-batch
   "Does an efficient batch insert of multiple nodes. Use it if you need to insert tens of hundreds of thousands
    of nodes.

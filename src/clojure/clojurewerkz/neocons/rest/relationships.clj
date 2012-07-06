@@ -54,6 +54,23 @@
            payload  (json/read-json body true)]
        (instantiate-rel-from payload))))
 
+(defn create-unique-in-index
+  "Creates a relationship with given properties and index.
+  Cf. http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html (19.8.4)"
+  ([^Node from ^Node to rel-type idx k v]
+     (create-unique-in-index from to rel-type idx k v {}))
+  ([^Node from ^Node to rel-type idx k v data]
+     (let [uri   (str (:relationship-index-uri rest/*endpoint*) "/" (encode idx) "/?unique")
+           body  {:key k 
+                  :value v
+                  :start (or (:location-uri from) (node-location-for rest/*endpoint* (to-id from)))
+                  :end   (or (:location-uri to) (node-location-for rest/*endpoint* (to-id to)))
+                  :type rel-type
+                  :properties data}
+           {:keys [status headers body]} (rest/POST uri :body (json/json-str body))
+           payload  (json/read-json body true)]
+       (instantiate-rel-from payload))))
+
 (defn create-many
   "Concurrently creates multiple relations of given type between the *from* node and several provded nodes.
    All relationships will be of the same type.
