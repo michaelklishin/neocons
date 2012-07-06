@@ -30,7 +30,9 @@
         created-n2   (nodes/create-unique-in-index "vertices" "name" "Tobias" {})]
     (is (= (:id created-n1) (:id created-n2)))
     (is (= (:data created-n1) (:data created-n2)))
-    (is (= (:data created-n1) data))))
+    (is (= (:data created-n1) data))
+    (is (nodes/find-one "vertices" "name" "Tobias"))
+    (is (not (nodes/find-one "vertices" "name" "asd09asud987987")))))
 
 
 (deftest test-accessing-a-non-existent-node

@@ -78,7 +78,8 @@
         created-r1   (relationships/create-unique-in-index from-node to-node :links "edges" "test" "test-1")
         created-r2   (relationships/create-unique-in-index from-node to-node :links "edges" "test" "test-1")]
     (is (= (:id created-r1) (:id created-r2)))
-    (is (= (:type created-r1) (:type created-r2)))))
+    (is (= (:type created-r1) (:type created-r2)))
+    (is (relationships/find-one "edges" "test" "test-1"))))
 
 (deftest test-creating-and-immediately-accessing-a-unique-relationship-in-index-with-properties
   (let [data         {:one "uno" :two "due"}
