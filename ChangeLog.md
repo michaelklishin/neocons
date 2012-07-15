@@ -1,3 +1,9 @@
+## Changes between Neocons 1.0.0 and 1.0.1
+
+No changes yet.
+
+
+
 ## Changes between Neocons 1.0.0-rc3 and 1.0.0
 
 ### Better support for unique graph entities
