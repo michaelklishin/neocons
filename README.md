@@ -40,8 +40,8 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: it is more than 6 months old, with active production use from week 1. It is now at 1.0.0-rcs,
-all API parts are set in stone and 1.0 will be released as soon as all documentation guides are in good shape.
+Neocons is not a young project: it is more than 6 months old, with active production use from week 1. It is now at 1.0,
+all API parts are set in stone and most documentation guides in good shape.
 
 
 
@@ -49,16 +49,26 @@ all API parts are set in stone and 1.0 will be released as soon as all documenta
 
 ### The Most Recent Release
 
+Neocons artifacts are [released to Clojars](https://clojars.org/clojurewerkz/neocons). If you are using Maven, add the following repository
+definition to your `pom.xml`:
+
+``` xml
+<repository>
+  <id>clojars.org</id>
+  <url>http://clojars.org/repo</url>
+</repository>
+```
+
 With Leiningen:
 
-    [clojurewerkz/neocons "1.0.0-rc3"]
+    [clojurewerkz/neocons "1.0.0"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>1.0.0-rc3</version>
+      <version>1.0.0</version>
     </dependency>
 
 
@@ -82,11 +92,13 @@ versions because Cypher is supported by the REST API directly without any plugin
 may be specific to later version. We recommend using the most recent stable release. Neocons is actively tested against bleeding
 edge Neo4J Server snapshots and we try to support important new features before stable server releases come out.
 
+If you use OpsCode Chef, there is a [Neo4J Server Chef cookbook](https://github.com/michaelklishin/neo4j-server-chef-cookbook).
+
 
 ## Neocons Is a ClojureWerkz Project
 
 Neocons is part of the [group of libraries known as ClojureWerkz](http://clojurewerkz.org), together with
-[Monger](https://github.com/michaelklishin/monger), [Langohr](https://github.com/michaelklishin/langohr), [Elastisch](https://github.com/clojurewerkz/elastisch), [Quartzite](https://github.com/michaelklishin/quartzite) and several others.
+[Monger](https://github.com/michaelklishin/monger), [Langohr](https://github.com/michaelklishin/langohr), [Welle](https://github.com/michaelklishin/welle), [Quartzite](https://github.com/michaelklishin/quartzite), [Validateur](https://github.com/michaelklishin/validateur) and several others.
 
 
 ## Development
