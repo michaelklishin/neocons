@@ -1,6 +1,8 @@
 ## Changes between Neocons 1.0.0 and 1.1.0-alpha1
 
-No changes yet.
+### clj-http upgraded to 0.5.2
+
+Neocons now uses clj-http 0.5.2.
 
 
 
