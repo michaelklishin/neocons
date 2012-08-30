@@ -3,7 +3,7 @@
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.3.0"]
+  :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.2"]
                  [clj-http "0.5.2" :exclude [cheshire]]
                  [clojurewerkz/support "0.5.0"]]
@@ -22,9 +22,9 @@
                    :batching       :batching
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
-  :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
+  :profiles       {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
                    :1.5 {:dependencies [[org.clojure/clojure "1.5.0-master-SNAPSHOT"]]}}
-  :aliases        {"all" ["with-profile" "dev:dev,1.4:dev,1.5"]}
+  :aliases        {"all" ["with-profile" "dev:dev,1.3:dev,1.5"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail :update :always}}
