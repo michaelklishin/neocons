@@ -165,7 +165,7 @@
                                      :query-string (if (:unique configuration)
                                                      {"unique" "true"}
                                                      {})
-                                     :body (json/json-str (merge {:name (name s)} (dissoc configuration :unique))))
+                                     :body (json/json-str (merge {:name (name s)} {:config (dissoc configuration :unique)})))
            payload (json/read-json body true)]
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
