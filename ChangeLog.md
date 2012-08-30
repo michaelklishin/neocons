@@ -1,4 +1,10 @@
-## Changes between Neocons 1.0.0 and 1.1.0-alpha1
+## Changes between Neocons 1.0.0 and 1.1.0
+
+### Pass Configuration When Creating Node Indexes
+
+`clojurewerkz.neocons.rest.nodes/create-index` now correctly passes index configuration
+to Neo4J Server. Reported in #38.
+
 
 ### clj-http upgraded to 0.5.2
 
