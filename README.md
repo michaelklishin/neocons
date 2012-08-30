@@ -27,8 +27,7 @@ Neocons currently supports the following features (all via REST API, so [you can
 
 To get started and see what using Neocons feels like, please use our [Getting started with Clojure and Neo4J Server](http://clojureneo4j.info/articles/getting_started.html) guide.
 
-Neocons is fairly rapidly approaching 1.0 and our main focus since June 2012 is finishing [documentation guides](http://clojureneo4j.info).
-For more examples, see our test suite.
+Our main focus since June 2012 is finishing [documentation guides](http://clojureneo4j.info). For more examples, see our test suite.
 
 
 ## Community
