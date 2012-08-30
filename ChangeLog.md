@@ -3,7 +3,7 @@
 ### Pass Configuration When Creating Node Indexes
 
 `clojurewerkz.neocons.rest.nodes/create-index` now correctly passes index configuration
-to Neo4J Server. Reported in #38.
+to Neo4J Server. Reported in #6.
 
 
 ### clj-http upgraded to 0.5.2
