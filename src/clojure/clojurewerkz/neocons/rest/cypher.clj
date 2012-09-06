@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest.cypher
   (:refer-clojure :exclude [empty?])
-  (:require [clojure.data.json                 :as json]
-            [clojurewerkz.neocons.rest         :as rest])
+  (:require [cheshire.custom           :as json]
+            [clojurewerkz.neocons.rest :as rest])
   (:use     clojurewerkz.support.http.statuses
             clojurewerkz.neocons.rest.helpers
             clojurewerkz.neocons.rest.records)
@@ -37,10 +37,10 @@
   ([^String q]
      (query q {}))
   ([^String q params]
-     (let [{ :keys [status headers body] } (rest/POST (cypher-query-location-for rest/*endpoint*) :body (json/json-str { :query q :params params }))]
+     (let [{:keys [status headers body]} (rest/POST (cypher-query-location-for rest/*endpoint*) :body (json/encode {:query q :params params}))]
        (if (missing? status)
          nil
-         (instantiate-cypher-query-response-from (json/read-json body true))))))
+         (instantiate-cypher-query-response-from (json/decode body true))))))
 
 (def ^{:doc "Performs a Cypher query, returning result formatted as a table (using tableize)"}
   tquery (comp tableize query))

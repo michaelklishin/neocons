@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest.batch
   (:require [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.records :as rec]
-            [clojure.data.json                 :as json]))
+            [cheshire.custom                   :as json]))
 
 
 
@@ -25,6 +25,6 @@
 
    See http://docs.neo4j.org/chunked/milestone/rest-api-batch-ops.html for more information."
   [ops]
-  (let [{:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/json-str ops))
-        payload                       (map :body (json/read-json body true))]
+  (let [{:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/encode ops))
+        payload                       (map :body (json/decode body true))]
     (map rec/instantiate-record-from payload)))

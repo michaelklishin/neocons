@@ -3,10 +3,10 @@
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.4.0"]
-                 [org.clojure/data.json "0.1.2"]
-                 [clj-http "0.5.2" :exclude [cheshire]]
-                 [clojurewerkz/support "0.5.0"]]
+  :dependencies [[org.clojure/clojure  "1.4.0"]
+                 [cheshire             "4.0.2"]
+                 [clj-http             "0.5.2"]
+                 [clojurewerkz/support "0.7.0"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))))
