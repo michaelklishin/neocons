@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.relationships
   (:refer-clojure :exclude [get find])
-  (:require [clojure.data.json                 :as json]
+  (:require [cheshire.custom                 :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.paths   :as paths])
   (:use     clojurewerkz.support.http.statuses
@@ -30,7 +30,7 @@
 (defn- relationships-for
   [^Node node kind types]
   (let [{ :keys [status headers body] } (rest/GET (relationships-location-for rest/*endpoint* node kind types))
-        xs  (json/read-json body true)]
+        xs  (json/decode body true)]
     (if (missing? status)
       nil
       (map instantiate-rel-from xs))))
@@ -49,9 +49,9 @@
      ;; and found via index. We have to account for that. MK.
      (let [{:keys [status headers body]} (rest/POST (or (:create-relationship-uri from)
                                                         (create-relationship-location-for rest/*endpoint* from))
-                                                    :body (json/json-str {:to (or (:location-uri to)
+                                                    :body (json/encode {:to (or (:location-uri to)
                                                                                   (node-location-for rest/*endpoint* (to-id to))) :type rel-type :data data}))
-           payload  (json/read-json body true)]
+           payload  (json/decode body true)]
        (instantiate-rel-from payload))))
 
 (defn create-unique-in-index
@@ -71,8 +71,8 @@
                   :end   (or (:location-uri to) (node-location-for rest/*endpoint* (to-id to)))
                   :type rel-type
                   :properties data}
-           {:keys [status headers body]} (rest/POST uri :body (json/json-str body))
-           payload  (json/read-json body true)]
+           {:keys [status headers body]} (rest/POST uri :body (json/encode body))
+           payload  (json/decode body true)]
        (instantiate-rel-from payload))))
 
 (defn create-many
@@ -105,7 +105,7 @@
   "Fetches relationship by id"
   [^long id]
   (let [{:keys [status headers body]} (rest/GET (rel-location-for rest/*endpoint* id))
-        payload  (json/read-json body true)]
+        payload  (json/decode body true)]
     (if (missing? status)
       nil
       (instantiate-rel-from payload id))))
@@ -147,7 +147,7 @@
 (defn update
   "Updates relationship data by id"
   [rel data]
-  (rest/PUT (rel-properties-location-for rest/*endpoint* rel) :body (json/json-str data))
+  (rest/PUT (rel-properties-location-for rest/*endpoint* rel) :body (json/encode data))
   data)
 
 
@@ -179,16 +179,16 @@
 (defn create-index
   "Creates a new relationship index. Indexes are used for fast lookups by a property or full text search query."
   ([^String s]
-     (let [{:keys [body]} (rest/POST (:relationship-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
-           payload (json/read-json body true)]
+     (let [{:keys [body]} (rest/POST (:relationship-index-uri rest/*endpoint*) :body (json/encode {:name (name s)}))
+           payload (json/decode body true)]
        (Index. (name s) (:template payload) "lucene" "exact")))
   ([^String s configuration]
      (let [{:keys [body]} (rest/POST (:relationship-index-uri rest/*endpoint*)
                                      :query-string (if (:unique configuration)
                                                      {"unique" "true"}
                                                      {})
-                                     :body (json/json-str (merge {:name (name s)} (dissoc configuration :unique))))
-           payload (json/read-json body true)]
+                                     :body (json/encode (merge {:name (name s)} (dissoc configuration :unique))))
+           payload (json/decode body true)]
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 
@@ -206,7 +206,7 @@
     (if (= 204 (long status))
       []
       (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
-           (json/read-json body true)))))
+           (json/decode body true)))))
 
 
 (defn add-to-index
@@ -215,11 +215,11 @@
      (add-to-index rel idx key value false))
   ([rel idx key value unique?]
      (let [id                    (to-id rel)
-           req-body              (json/json-str {:key key :value value :uri (rel-location-for rest/*endpoint* (to-id rel))})
+           req-body              (json/encode {:key key :value value :uri (rel-location-for rest/*endpoint* (to-id rel))})
            {:keys [status body]} (rest/POST (rel-index-location-for rest/*endpoint* idx) :body req-body :query-string (if unique?
                                                                                                                         {"unique" "true"}
                                                                                                                         {}))
-          payload  (json/read-json body true)]
+          payload  (json/decode body true)]
       (instantiate-rel-from payload id))))
 
 
@@ -243,7 +243,7 @@
   "Fetches a relationships from given URI. Exactly like clojurewerkz.neocons.rest.relationships/get but takes a URI instead of an id."
   [^String uri]
   (let [{:keys [status body]} (rest/GET uri)
-        payload (json/read-json body true)
+        payload (json/decode body true)
         id      (extract-id uri)]
     (instantiate-rel-from payload id)))
 
@@ -252,18 +252,18 @@
   "Finds relationships using the index"
   ([^String key value]
      (let [{:keys [status body]} (rest/GET (auto-rel-index-lookup-location-for rest/*endpoint* key value))
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs)))
   ([^String idx key value]
      (let [{:keys [status body]} (rest/GET (rel-index-lookup-location-for rest/*endpoint* idx key value))
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs))))
 
 (defn find-one
   "Finds a single relationship using the index"
   [^String idx key value]
   (let [{:keys [status body]} (rest/GET (rel-index-lookup-location-for rest/*endpoint* idx key value))
-        [rel] (json/read-json body true)]
+        [rel] (json/decode body true)]
     (when rel
       (fetch-from (:indexed rel)))))
 
@@ -272,11 +272,11 @@
   "Finds relationships using full text search query"
   ([^String query]
      (let [{:keys [status body]} (rest/GET (auto-rel-index-location-for rest/*endpoint*) :query-params {"query" query})
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (instantiate-rel-from doc)) xs)))
   ([^String idx ^String query]
      (let [{:keys [status body]} (rest/GET (rel-index-location-for rest/*endpoint* idx) :query-params {"query" query})
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (instantiate-rel-from doc)) xs))))
 
 
@@ -355,7 +355,7 @@
   "Returns all relationship types that exists in the entire database"
   []
   (let [{ :keys [_ _  body] } (rest/GET (:relationship-types-uri rest/*endpoint*))]
-    (json/read-json body true)))
+    (json/decode body true)))
 
 
 (defn traverse
@@ -370,7 +370,7 @@
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
                          :max_depth       max-depth}
-           {:keys [status body]} (rest/POST (rel-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
-           xs (json/read-json body true)]
+           {:keys [status body]} (rest/POST (rel-traverse-location-for rest/*endpoint* id) :body (json/encode request-body))
+           xs (json/decode body true)]
        (map (fn [doc]
               (instantiate-rel-from doc)) xs))))

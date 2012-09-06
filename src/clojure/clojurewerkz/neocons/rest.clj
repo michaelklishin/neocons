@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest
   (:import  java.net.URI)
   (:require [clj-http.client   :as http]
-            [clojure.data.json :as json])
+            [cheshire.custom   :as json])
   (:use     clojurewerkz.support.http.statuses
             [clojurewerkz.neocons.rest.helpers :only [maybe-append]]))
 
@@ -61,7 +61,7 @@
                                      (GET uri :basic-auth [login password])
                                      (GET uri))]
        (if (success? status)
-         (let [payload (json/read-json body true)]
+         (let [payload (json/decode body true)]
            (alter-var-root (var http-authentication-options) (constantly { :basic-auth [login password] }))
            (Neo4JEndpoint. (:neo4j_version      payload)
                            (:node               payload)

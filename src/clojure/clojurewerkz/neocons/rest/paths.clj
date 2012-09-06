@@ -2,7 +2,7 @@
   (:import  [java.net URI URL]
             clojurewerkz.neocons.rest.Neo4JEndpoint
             [clojurewerkz.neocons.rest.records Node Relationship Path])
-  (:require [clojure.data.json                 :as json]
+  (:require [cheshire.custom                 :as json]
             [clojurewerkz.neocons.rest         :as rest])
   (:use     clojurewerkz.support.http.statuses
             clojurewerkz.neocons.rest.helpers
@@ -35,8 +35,8 @@
                          :return_filter   return-filter
                          :max_depth       max-depth
                          }
-           { :keys [status body] } (rest/POST (path-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
-           xs (json/read-json body true)]
+           { :keys [status body] } (rest/POST (path-traverse-location-for rest/*endpoint* id) :body (json/encode request-body))
+           xs (json/decode body true)]
        (map (fn [doc]
               (instantiate-path-from doc)) xs))))
 
@@ -55,10 +55,10 @@
                          :max_depth       max-depth
                          :algorithm       "shortestPath"
                          }
-           { :keys [status body] } (rest/POST (paths-location-for rest/*endpoint* from) :body (json/json-str request-body))
-           xs (json/read-json body true)]
+           { :keys [status body] } (rest/POST (paths-location-for rest/*endpoint* from) :body (json/encode request-body))
+           xs (json/decode body true)]
        (map (fn [doc]
-              (instantiate-path-from doc)) (json/read-json body true)))))
+              (instantiate-path-from doc)) (json/decode body true)))))
 
 
 (defn shortest-between
@@ -75,11 +75,11 @@
                          :max_depth     max-depth
                          :algorithm     "shortestPath"
                          }
-           { :keys [status body] } (rest/POST (path-location-for rest/*endpoint* from) :body (json/json-str request-body) :throw-exceptions false)]
+           { :keys [status body] } (rest/POST (path-location-for rest/*endpoint* from) :body (json/encode request-body) :throw-exceptions false)]
        (if (or (missing? status)
                (server-error? status))
          nil
-         (instantiate-path-from (json/read-json body true))))))
+         (instantiate-path-from (json/decode body true))))))
 
 (defn exists-between?
   [from to &{ :keys [relationships max-depth prune-evaluator uniqueness] }]

@@ -5,7 +5,7 @@
             [clojure.string :only [join]]
             [clojurewerkz.neocons.rest.conversion :only [to-id]])
   (:require [clj-http.client                         :as http]
-            [clojure.data.json                       :as json]
+            [cheshire.custom                       :as json]
             [clojurewerkz.neocons.rest               :as rest]
             [clojurewerkz.neocons.rest.relationships :as relationships]
             [clojurewerkz.neocons.rest.paths         :as paths]
@@ -33,8 +33,8 @@
   ([]
      (create {}))
   ([data]
-     (let [{:keys [status headers body]} (rest/POST (:node-uri rest/*endpoint*) :body (json/json-str data))
-           payload  (json/read-json body true)
+     (let [{:keys [status headers body]} (rest/POST (:node-uri rest/*endpoint*) :body (json/encode data))
+           payload  (json/decode body true)
            location (:self payload)]
        (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload))))
   ([data indexes]
@@ -51,10 +51,10 @@
 
    For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html section (19.8.1)"
   [idx k v data]
-  (let [req-body    (json/json-str {:key k :value v :properties data})
+  (let [req-body    (json/encode {:key k :value v :properties data})
         uri         (str (:node-index-uri rest/*endpoint*) "/" (encode idx) "?unique")
         {:keys [status headers body]} (rest/POST uri :body req-body)
-        payload  (json/read-json body true)
+        payload  (json/decode body true)
         location (:self payload)]
     (Node. (extract-id location) location (:data payload) (:relationships payload) (:create_relationship payload))))
 
@@ -68,22 +68,22 @@
                           (conj acc {:body   x
                                      :to     "/node"
                                      :method "POST"})) [] xs))
-        {:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/json-str batched))
-        payload                       (map :body (json/read-json body true))]
+        {:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/encode batched))
+        payload                       (map :body (json/decode body true))]
     (map instantiate-node-from payload)))
 
 (defn get
   "Fetches a node by id"
   [^long id]
   (let [{:keys [status body]} (rest/GET (node-location-for rest/*endpoint* id))
-        payload  (json/read-json body true)]
+        payload  (json/decode body true)]
     (instantiate-node-from payload id)))
 
 (defn get-properties
   [^long id]
   (let [{:keys [status headers body]} (rest/GET (node-properties-location-for rest/*endpoint* id))]
     (case (long status)
-      200 (json/read-json body true)
+      200 (json/decode body true)
       204 {}
       (throw (Exception. (str "Unexpected response from the server: " status ", expected 200 or 204"))))))
 
@@ -128,10 +128,10 @@
     (relationships/purge-all (Node. id nil nil nil nil))
     (delete id))
   (update [^long id data]
-    (rest/PUT (node-properties-location-for rest/*endpoint* id) :body (json/json-str data))
+    (rest/PUT (node-properties-location-for rest/*endpoint* id) :body (json/encode data))
     data)
   (set-property [^long id prop value]
-    (rest/PUT (node-property-location-for rest/*endpoint* id prop) :body (json/json-str value))
+    (rest/PUT (node-property-location-for rest/*endpoint* id prop) :body (json/encode value))
     value))
 
 (defn delete-many
@@ -157,16 +157,16 @@
 (defn create-index
   "Creates a new node index. Indexes are used for fast lookups by a property or full text search query."
   ([^String s]
-     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/json-str {:name (name s)}))
-           payload (json/read-json body true)]
+     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/encode {:name (name s)}))
+           payload (json/decode body true)]
        (Index. (name s) (:template payload) "lucene" "exact")))
   ([^String s configuration]
      (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*)
                                      :query-string (if (:unique configuration)
                                                      {"unique" "true"}
                                                      {})
-                                     :body (json/json-str (merge {:name (name s)} {:config (dissoc configuration :unique)})))
-           payload (json/read-json body true)]
+                                     :body (json/encode (merge {:name (name s)} {:config (dissoc configuration :unique)})))
+           payload (json/decode body true)]
        (Index. (name s) (:template payload) (:provider configuration) (:type configuration)))))
 
 (defn delete-index
@@ -183,7 +183,7 @@
     (if (= 204 (long status))
       []
       (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
-           (json/read-json body true)))))
+           (json/decode body true)))))
 
 
 (defn add-to-index
@@ -192,11 +192,11 @@
      (add-to-index node idx key value false))
   ([node idx key value unique?]
      (let [id                    (to-id node)
-           req-body              (json/json-str {:key key :value value :uri (node-location-for rest/*endpoint* (to-id node))})
+           req-body              (json/encode {:key key :value value :uri (node-location-for rest/*endpoint* (to-id node))})
            {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body req-body :query-string (if unique?
                                                                                                                         {"unique" "true"}
                                                                                                                         {}))
-          payload  (json/read-json body true)]
+          payload  (json/decode body true)]
       (instantiate-node-from payload id))))
 
 
@@ -220,7 +220,7 @@
   "Fetches a node from given URI. Exactly like clojurewerkz.neocons.rest.nodes/get but takes a URI instead of an id."
   [^String uri]
   (let [{:keys [status body]} (rest/GET uri)
-        payload (json/read-json body true)
+        payload (json/decode body true)
         id      (extract-id uri)]
     (instantiate-node-from payload id)))
 
@@ -229,18 +229,18 @@
   "Finds nodes using the index"
   ([^String key value]
      (let [{:keys [status body]} (rest/GET (auto-node-index-lookup-location-for rest/*endpoint* key value))
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs)))
   ([^String idx key value]
      (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs))))
 
 (defn find-one
   "Finds a single node using the index"
   [^String idx key value]
   (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
-        [node] (json/read-json body true)]
+        [node] (json/decode body true)]
     (when node
       (fetch-from (:indexed node)))))
 
@@ -249,11 +249,11 @@
   "Finds nodes using full text search query"
   ([^String query]
      (let [{:keys [status body]} (rest/GET (auto-node-index-location-for rest/*endpoint*) :query-params {"query" query})
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (instantiate-node-from doc)) xs)))
   ([^String idx ^String query]
      (let [{:keys [status body]} (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params {"query" query})
-           xs (json/read-json body true)]
+           xs (json/decode body true)]
        (map (fn [doc] (instantiate-node-from doc)) xs))))
 
 
@@ -271,8 +271,8 @@
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
                          :max_depth       max-depth}
-           {:keys [status body]} (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/json-str request-body))
-           xs (json/read-json body true)]
+           {:keys [status body]} (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/encode request-body))
+           xs (json/decode body true)]
        (map (fn [doc]
               (instantiate-node-from doc)) xs))))
 
