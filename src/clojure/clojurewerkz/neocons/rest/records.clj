@@ -137,13 +137,16 @@
 
 
 (defn instantiate-record-from
-  "Instantiates a record from the given payload, detecting what kind of Neo4J entity (a node, a relationship,
-   a path) this payload represents"
+  "Instantiates a record from the given payload, detecting what kind
+  of Neo4J entity (a node, a relationship, a path) this payload
+  represents. Defaults to returning the object if we don't know how to
+  deal with it."
   [payload]
   (let [f (cond (:create_relationship payload)   instantiate-node-from
                 (and (:type payload)
                      (:data payload))            instantiate-rel-from
-                     (and (:start payload)
-                          (:end payload)
-                          (not (:type payload))) instantiate-path-from)]
+                (and (:start payload)
+                     (:end payload)
+                     (not (:type payload)))      instantiate-path-from
+                :else                            identity)]
     (f payload)))
