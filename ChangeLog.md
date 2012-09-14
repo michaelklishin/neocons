@@ -2,7 +2,7 @@
 
 ### Index Lookups w/o Results No Longer Throw Exceptions
 
-Index lookups that return no results no longer fails. A contribution
+Index lookups that return no results no longer fail. A contribution
 by Zack Maril.
 
 
