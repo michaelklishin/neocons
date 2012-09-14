@@ -1,6 +1,9 @@
 ## Changes between Neocons 1.0.1 and 1.0.2
 
-No changes yet.
+### Index Lookups w/o Results No Longer Throw Exceptions
+
+Index lookups that return no results no longer fails. A contribution
+by Zack Maril.
 
 
 ## Changes between Neocons 1.0.0 and 1.0.1
