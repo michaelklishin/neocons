@@ -19,9 +19,9 @@ We encourage all users to upgrade to 1.4, it is a drop-in replacement for the ma
 to Neo4J Server. Reported in #6.
 
 
-### clj-http upgraded to 0.5.2
+### clj-http upgraded to 0.5.5
 
-Neocons now uses clj-http 0.5.2.
+Neocons now uses clj-http 0.5.5.
 
 
 
