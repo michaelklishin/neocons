@@ -1,4 +1,17 @@
-## Changes between Neocons 1.0.0 and 1.1.0
+## Changes between Neocons 1.1.0-beta1 and 1.1.0-beta2
+
+No changes yet.
+
+
+## Changes between Neocons 1.0.0 and 1.1.0-beta1
+
+### Initial Spatial Plugin Support
+
+Neocons now has initial support for the Neo4J Spatial plugin in the `clojurewerkz.neocons.spatial`
+namespace.
+
+Contributed by Kyle Goodwin.
+
 
 ### Cheshire For JSON Serliazation
 
