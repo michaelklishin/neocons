@@ -9,12 +9,14 @@
                  [clojurewerkz/support "0.7.0"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
-                                                (not (:edge-features m))))
+                                                (not (:edge-features m))
+                                                (not (:spatial m))))
                    :time-consuming :time-consuming
                    :focus          :focus
                    :indexing       :indexing
                    :cypher         :cypher
                    :http-auth      :http-auth
+                   :spatial        :spatial
                    ;; as in, bleeding edge Neo4J Server
                    :edge-features  :edge-features
                    ;; assorted examples (extra integration tests)
