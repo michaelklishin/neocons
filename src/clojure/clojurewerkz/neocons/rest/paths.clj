@@ -52,6 +52,9 @@
      (let [request-body {
                          :to              (node-location-for rest/*endpoint* to)
                          :relationships   relationships
+                         :uniqueness      uniqueness
+                         :prune_evaluator prune-evaluator
+                         :return_filter   return-filter
                          :max_depth       max-depth
                          :algorithm       "shortestPath"
                          }
@@ -70,10 +73,13 @@
      (check-not-nil! from "from argument must not be nil")
      (check-not-nil! to   "to argument must not be nil")
      (let [request-body {
-                         :to            (node-location-for rest/*endpoint* to)
-                         :relationships relationships
-                         :max_depth     max-depth
-                         :algorithm     "shortestPath"
+                         :to              (node-location-for rest/*endpoint* to)
+                         :relationships   relationships
+                         :uniqueness      uniqueness
+                         :prune_evaluator prune-evaluator
+                         :return_filter   return-filter
+                         :max_depth       max-depth
+                         :algorithm       "shortestPath"
                          }
            { :keys [status body] } (rest/POST (path-location-for rest/*endpoint* from) :body (json/encode request-body) :throw-exceptions false)]
        (if (or (missing? status)
