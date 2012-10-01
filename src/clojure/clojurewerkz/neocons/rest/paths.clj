@@ -42,18 +42,14 @@
 
 
 (defn all-shortest-between
-  ([from to & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {
-                                                                                                    order         "breadth_first"
-                                                                                                    uniqueness    "none"
-                                                                                                    return-filter   { :language "builtin" :name "all"  }
-                                                                                                    } }]
+  ([from to & { :keys [relationships max-depth] }]
      (check-not-nil! from "from argument must not be nil")
      (check-not-nil! to   "to argument must not be nil")
      (let [request-body {
-                         :to              (node-location-for rest/*endpoint* to)
-                         :relationships   relationships
-                         :max_depth       max-depth
-                         :algorithm       "shortestPath"
+                         :to            (node-location-for rest/*endpoint* to)
+                         :relationships relationships
+                         :max_depth     max-depth
+                         :algorithm     "shortestPath"
                          }
            { :keys [status body] } (rest/POST (paths-location-for rest/*endpoint* from) :body (json/encode request-body))
            xs (json/decode body true)]
@@ -62,11 +58,7 @@
 
 
 (defn shortest-between
-  ([from to & { :keys [order relationships uniqueness prune-evaluator return-filter max-depth] :or {
-                                                                                                    order         "breadth_first"
-                                                                                                    uniqueness    "none"
-                                                                                                    return-filter   { :language "builtin" :name "all"  }
-                                                                                                    } }]
+  ([from to & { :keys [relationships max-depth] }]
      (check-not-nil! from "from argument must not be nil")
      (check-not-nil! to   "to argument must not be nil")
      (let [request-body {
