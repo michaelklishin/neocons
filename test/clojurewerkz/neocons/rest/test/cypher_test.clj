@@ -75,6 +75,15 @@
         ids   (vec (map :id [sarah john]))]
     (is (= ids (vec (map :id (nodes/get-many ids)))))))
 
+(deftest ^{:cypher true} test-cypher-query-example6
+  (let [john  (nodes/create { :name "John" })
+        sarah (nodes/create { :name "Sarah" })
+        tim   (nodes/create { :name "Tim" })
+        rel1 (rel/create john sarah :friend)
+        rel2 (rel/create sarah tim :friend)
+        ids   (vec (map :id [rel1 rel2]))]
+    (is (= ids (vec (map :id (rel/get-many ids)))))))
+
 (deftest ^{:cypher true} test-cypher-tquery
   (let [john  (nodes/create { :name "John"  :age 27 })
         sarah (nodes/create { :name "Sarah" :age 28 })
