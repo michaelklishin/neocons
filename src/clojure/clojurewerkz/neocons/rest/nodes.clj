@@ -90,7 +90,8 @@
 (defn get-many
   "Fetches multiple nodes by id.
 
-  This is a non-standard operation that requires Cypher support from Neo4J Server (versions 1.6.0 and later have it in the core)."
+  This is a non-standard operation that requires Cypher support as well as support for that very feature
+  by Cypher itself (Neo4j Server versions 1.6.3 and later)."
   ([coll]
      (let [{:keys [data]} (cypher/query "START x = node({ids}) RETURN x" {:ids coll})]
        (map (comp instantiate-node-from first) data))))
