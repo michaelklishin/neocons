@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [get find])
   (:require [cheshire.custom                 :as json]
             [clojurewerkz.neocons.rest         :as rest]
+            [clojurewerkz.neocons.rest.cypher  :as cypher]
             [clojurewerkz.neocons.rest.paths   :as paths])
   (:use     clojurewerkz.support.http.statuses
             clojurewerkz.neocons.rest.helpers
@@ -109,6 +110,15 @@
     (if (missing? status)
       nil
       (instantiate-rel-from payload id))))
+
+(defn get-many
+  "Fetches multiple relationships by id.
+
+  This is a non-standard operation that requires Cypher support as well as support for that very feature
+  by Cypher itself (Neo4j Server versions 1.6.3 and later)."
+  ([coll]
+     (let [{:keys [data]} (cypher/query "START x = relationship({ids}) RETURN x" {:ids coll})]
+       (map (comp instantiate-rel-from first) data))))
 
 (defn delete
   "Deletes relationship by id"
