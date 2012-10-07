@@ -1,6 +1,17 @@
 ## Changes between Neocons 1.1.0-beta1 and 1.1.0-beta2
 
-No changes yet.
+### clojurewerkz.neocons.rest.relationships/get-many
+
+`clojurewerkz.neocons.rest.relationships/get-many` is a new function that fetches multiple relationships
+by id in a single request:
+
+```clojure
+(require '[clojurewerkz.neocons.rest.relationships :as rel])
+
+(rel/get-many [id1 id2 id3])
+```
+
+Contributed by Adrian Gruntkowski.
 
 
 ## Changes between Neocons 1.0.0 and 1.1.0-beta1
