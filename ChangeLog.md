@@ -1,5 +1,12 @@
 ## Changes between Neocons 1.1.0-beta1 and 1.1.0-beta2
 
+### More Informative Exceptions
+
+HTTP exceptions bubbling up now will carry more information (namely the response `:body`).
+
+Contributed by Adrian Gruntkowski.
+
+
 ### clojurewerkz.neocons.rest.relationships/get-many
 
 `clojurewerkz.neocons.rest.relationships/get-many` is a new function that fetches multiple relationships
