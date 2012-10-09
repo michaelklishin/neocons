@@ -14,27 +14,30 @@
   (get (System/getenv) s))
 
 (def ^{:private true}
+  global-options {:throw-entire-message? true})
+
+(def ^{:private true}
   http-authentication-options {})
 
 (defn GET
   [^String uri & {:as options}]
   (io!
-   (http/get uri (merge http-authentication-options options {:accept :json}))))
+   (http/get uri (merge global-options http-authentication-options options {:accept :json}))))
 
 (defn POST
   [^String uri &{:keys [body] :as options}]
   (io!
-   (http/post uri (merge http-authentication-options options {:accept :json :content-type :json :body body}))))
+   (http/post uri (merge global-options http-authentication-options options {:accept :json :content-type :json :body body}))))
 
 (defn PUT
   [^String uri &{:keys [body] :as options}]
   (io!
-   (http/put uri (merge http-authentication-options options {:accept :json :content-type :json :body body}))))
+   (http/put uri (merge global-options http-authentication-options options {:accept :json :content-type :json :body body}))))
 
 (defn DELETE
   [^String uri &{:keys [body] :as options}]
   (io!
-   (http/delete uri (merge http-authentication-options options {:accept :json}))))
+   (http/delete uri (merge global-options http-authentication-options options {:accept :json}))))
 
 
 
