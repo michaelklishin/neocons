@@ -87,13 +87,6 @@
   (relationship-in? [rel  path] "Returns true if path includes given relationship"))
 
 
-(defprotocol PathPredicates
-  (included-in?     [node path] "Returns true if path includes given node")
-  (included-in?     [rel  path] "Returns true if path includes given relationship")
-  (node-in?         [node path] "Returns true if path includes given node")
-  (relationship-in? [rel  path] "Returns true if path includes given relationship"))
-
-
 (extend-protocol PathPredicates
   Long
   (node-in? [^long node ^Path path]
