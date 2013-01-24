@@ -48,6 +48,18 @@
     (is (= (:type created-rel) (:type fetched-rel)))
     (is (= (:type created-rel) (:type created-rel2)))))
 
+(deftest test-avoiding-creating-the-same-relationship-with-ids
+  (let [from-node    (nodes/create)
+        to-node      (nodes/create)
+        created-rel   (relationships/maybe-create (:id from-node) (:id to-node) :links)
+        created-rel2  (relationships/maybe-create (:id from-node) (:id to-node) :links)
+        fetched-rel   (relationships/get (:id created-rel))]
+    (is (= created-rel created-rel2))
+    (is (= (:id created-rel)   (:id fetched-rel)))
+    (is (= (:id created-rel)   (:id created-rel2)))
+    (is (= (:type created-rel) (:type fetched-rel)))
+    (is (= (:type created-rel) (:type created-rel2)))))
+
 (deftest test-avoiding-destroying-the-same-relationship-without-properties-twice
   (let [from-node    (nodes/create)
         to-node      (nodes/create)
