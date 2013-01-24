@@ -1,3 +1,14 @@
+## Changes between Neocons 1.0.2 and 1.0.3
+
+### clojurewerkz.neocons.rest.relationship/maybe-create Now Fully Supports Ids
+
+`clojurewerkz.neocons.rest.relationship/maybe-create` now correctly works with node ids
+as well as `Node` records.
+
+GH issue: #19.
+
+
+
 ## Changes between Neocons 1.0.1 and 1.0.2
 
 ### Index Lookups w/o Results No Longer Throw Exceptions
