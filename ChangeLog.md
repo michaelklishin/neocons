@@ -1,5 +1,15 @@
 ## Changes between Neocons 1.1.0-beta1 and 1.1.0-beta2
 
+### Support upgraded to 0.10.0
+
+Neocons now uses ClojureWerkz Support 0.10.0.
+
+
+### clj-http upgraded to 0.6.3
+
+Neocons now uses clj-http 0.6.3.
+
+
 ### clojurewerkz.neocons.rest.relationship/maybe-create Now Fully Supports Ids
 
 `clojurewerkz.neocons.rest.relationship/maybe-create` now correctly works with node ids
