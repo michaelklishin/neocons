@@ -113,7 +113,7 @@ a pull request on Github.
 
 ## License
 
-Copyright (C) 2011-2012 Michael S. Klishin
+Copyright (C) 2011-2013 Michael S. Klishin, Alex Petrov
 
 Distributed under the Eclipse Public License, the same as Clojure.
 
