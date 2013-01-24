@@ -1,5 +1,12 @@
 ## Changes between Neocons 1.1.0-beta1 and 1.1.0-beta2
 
+### clojurewerkz.neocons.rest.relationship/maybe-create Now Fully Supports Ids
+
+`clojurewerkz.neocons.rest.relationship/maybe-create` now correctly works with node ids
+as well as `Node` records.
+
+GH issue: #19.
+
 ### More Informative Exceptions
 
 HTTP exceptions bubbling up now will carry more information (namely the response `:body`).
