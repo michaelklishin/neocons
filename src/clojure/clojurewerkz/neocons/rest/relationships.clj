@@ -97,7 +97,7 @@
   ([from to rel-type data]
      (if (paths/exists-between? (to-id from) (to-id to) :relationships [{:type (name rel-type) :direction "out"}] :max-depth 1)
        (let [rels (outgoing-for from :types [rel-type])
-             uri  (node-location-for rest/*endpoint* (:id to))]
+             uri  (node-location-for rest/*endpoint* (to-id to))]
          (first (filter #(= (:end %) uri) rels)))
        (create from to rel-type data))))
 
