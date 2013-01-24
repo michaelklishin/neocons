@@ -5,8 +5,8 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure  "1.4.0"]
                  [cheshire             "4.0.3"]
-                 [clj-http             "0.5.5"]
-                 [clojurewerkz/support "0.7.0"]]
+                 [clj-http             "0.6.3"]
+                 [clojurewerkz/support "0.10.0"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
@@ -25,7 +25,7 @@
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
-                   :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC1"]]}
+                   :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC2"]]}
                    :dev {:plugins [[codox "0.6.1"]]
                          :codox {:sources ["src/clojure"]
                                  :output-dir "doc/api"}}}
