@@ -1,3 +1,9 @@
+## Changes between Neocons 1.1.0-beta2 and 1.1.0-beta3
+
+No changes yet.
+
+
+
 ## Changes between Neocons 1.1.0-beta1 and 1.1.0-beta2
 
 ### Support upgraded to 0.10.0
