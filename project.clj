@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure  "1.4.0"]
                  [cheshire             "4.0.3"]
                  [clj-http             "0.6.3"]
-                 [clojurewerkz/support "0.10.0"]]
+                 [clojurewerkz/support "0.11.0"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
