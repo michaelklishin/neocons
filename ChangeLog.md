@@ -1,6 +1,16 @@
 ## Changes between Neocons 1.1.0-beta2 and 1.1.0-beta3
 
-No changes yet.
+### Correct URI Path Encoding
+
+Neocons now correctly encodes all parts of URIs, which means
+index keys and values can contain whitespace and Unicode
+characters, for example.
+
+GH issue: #20
+
+### Support upgraded to 0.10.0
+
+Neocons now uses ClojureWerkz Support 0.10.0.
 
 
 

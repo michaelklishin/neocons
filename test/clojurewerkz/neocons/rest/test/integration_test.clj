@@ -13,7 +13,7 @@
 ;; kinds of features
 ;;
 
-(deftest ^{:examples true} test-example1
+(deftest ^{:examples true :focus true} test-example1
   (let [homepage  (nn/create {:url "http://clojurewerkz.org/"})
         community (nn/create {:url "http://clojurewerkz.org/articles/community.html"})
         about     (nn/create {:url "http://clojurewerkz.org/articles/about.html"})
@@ -32,22 +32,22 @@
     (is (not (np/exists-between? (:id homepage) (:id about)     :relationships [rt])))
     (nn/destroy-many [homepage community about projects])))
 
-(deftest ^{:examples true} test-example2
+(deftest ^{:examples true :focus true} test-example2
   (nn/create-index "by-url" {:type "exact"})
   (nn/create-index "roots"  {:type "exact"})
   (let [homepage  (nn/create {:url "http://clojurewerkz.org/"} {"roots" ["root" true]})
         community (nn/create {:url "http://clojurewerkz.org/articles/community.html"}
                              {"by-url" [:url "http://clojurewerkz.org/articles/community.html"]})
         _             (nn/add-to-index homepage "by-url" :url "http://clojurewerkz.org/")
-        homepage-alt  (nn/find-one "by-url" :url "http://clojurewerkz.org/")
-        root-alt      (nn/find-one "roots" :root true)
-        community-alt (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html")]
+        homepage-alt  (nn/find-one "by-url" "url" "http://clojurewerkz.org/")
+        root-alt      (nn/find-one "roots" "root" true)
+        community-alt (nn/find-one "by-url" "url" "http://clojurewerkz.org/articles/community.html")]
     (is (= (:id homepage)
            (:id homepage-alt)
            (:id root-alt)))
     (is (= (:id community)
            (:id community-alt)))
-    (is (nil? (nn/find-one "by-url" :url "http://example99.com")))
+    (is (nil? (nn/find-one "by-url" "url" "http://example99.com")))
     ;; Neo4J REST API returns nodes in different format via index and regular GET. Make sure we handle
     ;; both cases.
     (nr/create homepage-alt community-alt :links)

@@ -43,7 +43,17 @@
 
 
 (defrecord Neo4JEndpoint
-    [version node-uri relationships-uri node-index-uri relationship-index-uri relationship-types-uri batch-uri extensions-info-uri extensions reference-node-uri uri])
+    [version
+     node-uri
+     relationships-uri
+     node-index-uri
+     relationship-index-uri
+     relationship-types-uri
+     batch-uri
+     extensions-info-uri
+     extensions
+     reference-node-uri
+     uri])
 
 (def ^{:dynamic true} *endpoint*)
 

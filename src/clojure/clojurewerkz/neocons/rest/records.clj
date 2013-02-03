@@ -1,8 +1,11 @@
 (ns clojurewerkz.neocons.rest.records
-  (:require clojurewerkz.neocons.rest)
+  (:require clojurewerkz.neocons.rest
+            [clojurewerkz.urly.core :as u]
+            [clojure.string :as s])
   (:use clojurewerkz.neocons.rest.helpers
         [clojurewerkz.neocons.rest.conversion :only [to-id]])
-  (:import clojurewerkz.neocons.rest.Neo4JEndpoint))
+  (:import clojurewerkz.neocons.rest.Neo4JEndpoint
+           java.net.URLEncoder))
 
 (defrecord Node
     [id location-uri data relationships-uri create-relationship-uri])
@@ -19,99 +22,109 @@
 (defrecord CypherQueryResponse
     [data columns])
 
+(def ^{:const true} slash    "/")
+
+(defn url-with-path
+  [^String root & segments]
+  (str root slash (u/encode-path (s/join slash segments))))
+
+(defn root-with-path
+  [^Neo4JEndpoint endpoint & segments]
+  (str (:uri endpoint) slash (URLEncoder/encode (u/encode-path (s/join slash segments)))))
+
 (defn node-location-for
   [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id))
+  (url-with-path (:node-uri endpoint) id))
 
 (defn rel-location-for
   [^Neo4JEndpoint endpoint ^long id]
-  (str (:relationships-uri endpoint) "/" id))
+  (url-with-path (:relationships-uri endpoint) id))
 
 (defn node-properties-location-for
   [^Neo4JEndpoint endpoint ^long id]
-  (str (:node-uri endpoint) "/" id "/properties"))
+  (url-with-path (:node-uri endpoint) id "properties"))
 
 (defn node-property-location-for
   [^Neo4JEndpoint endpoint ^long id prop]
-  (str (node-properties-location-for endpoint id) "/" (encode prop)))
+  (url-with-path (:node-uri endpoint) id "properties" (encode-segment (name prop))))
 
 (defn node-index-location-for
   [^Neo4JEndpoint endpoint idx]
-  (str (:node-index-uri endpoint) "/" (encode idx)))
+  (url-with-path (:node-index-uri endpoint) (encode-segment idx)))
 
 (defn rel-index-location-for
   [^Neo4JEndpoint endpoint idx]
-  (str (:relationship-index-uri endpoint) "/" (encode idx)))
+  (url-with-path (:relationship-index-uri endpoint) (encode-segment idx)))
 
 (defn node-in-index-location-for
   ([^Neo4JEndpoint endpoint ^long id idx]
-     (str (:node-index-uri endpoint) "/" (encode idx) "/" id))
+     (url-with-path (:node-index-uri endpoint) (encode-segment idx) id))
   ([^Neo4JEndpoint endpoint ^long id idx key]
-     (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" id))
+     (url-with-path (:node-index-uri endpoint) (encode-segment idx) (encode-segment key) id))
   ([^Neo4JEndpoint endpoint id idx key value]
-     (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
+     (url-with-path (:node-index-uri endpoint) (encode-segment idx) (encode-segment key) (encode-segment (str value)) id)))
 
 (defn rel-in-index-location-for
   ([^Neo4JEndpoint endpoint ^long id idx]
-     (str (:relationship-index-uri endpoint) "/" (encode idx) "/" id))
+     (url-with-path (:relationship-index-uri endpoint) (encode-segment idx) id))
   ([^Neo4JEndpoint endpoint ^long id idx key]
-     (str (:relationship-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" id))
+     (url-with-path (:relationship-index-uri endpoint) (encode-segment idx) (encode-segment key) id))
   ([^Neo4JEndpoint endpoint id idx key value]
-     (str (:relationship-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value)) "/" id)))
+     (url-with-path (:relationship-index-uri endpoint) (encode-segment idx) (encode-segment key) (encode-segment (str value)) id)))
 
 (defn node-index-lookup-location-for
   [^Neo4JEndpoint endpoint ^String idx key value]
-  (str (:node-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
+  (url-with-path (:node-index-uri endpoint) (encode-segment idx) (encode-segment key) (encode-segment (str value))))
 
 (defn auto-node-index-location-for
   [^Neo4JEndpoint endpoint]
-  (str (:uri endpoint) "index/auto/node/"))
+  (root-with-path endpoint "index" "auto" "node"))
 
 (defn auto-node-index-lookup-location-for
   [^Neo4JEndpoint endpoint key value]
-  (str (auto-node-index-location-for endpoint) (encode key) "/" (encode (str value))))
+  (url-with-path (auto-node-index-location-for endpoint) (encode-segment key) (encode-segment (str value))))
 
 
 (defn rel-index-lookup-location-for
   [^Neo4JEndpoint endpoint ^String idx key value]
-  (str (:relationship-index-uri endpoint) "/" (encode idx) "/" (encode key) "/" (encode (str value))))
+  (url-with-path (:relationship-index-uri endpoint) (encode-segment idx) (encode-segment key) (encode-segment (str value))))
 
 (defn auto-rel-index-location-for
   [^Neo4JEndpoint endpoint]
-  (str (:uri endpoint) "index/auto/relationship/"))
+  (str (root-with-path endpoint) "index" "auto" "relationship"))
 
 (defn auto-rel-index-lookup-location-for
   [^Neo4JEndpoint endpoint key value]
-  (str (auto-rel-index-location-for endpoint) (encode key) "/" (encode (str value))))
+  (root-with-path (auto-rel-index-location-for endpoint) (encode-segment key) (encode-segment (str value))))
 
 
 (defn node-traverse-location-for
   [^Neo4JEndpoint endpoint rel]
-  (str (:node-uri endpoint) "/" (to-id rel) "/traverse/node"))
+  (url-with-path (:node-uri endpoint) (to-id rel) "traverse" "node"))
 
 (defn path-traverse-location-for
   [^Neo4JEndpoint endpoint rel]
-  (str (:node-uri endpoint) "/" (to-id rel) "/traverse/path"))
+  (url-with-path (:node-uri endpoint) (to-id rel) "traverse" "path"))
 
 (defn paths-location-for
   [^Neo4JEndpoint endpoint rel]
-  (str (:node-uri endpoint) "/" (to-id rel) "/paths"))
+  (url-with-path (:node-uri endpoint) (to-id rel) "paths"))
 
 (defn path-location-for
   [^Neo4JEndpoint endpoint rel]
-  (str (:node-uri endpoint) "/" (to-id rel) "/path"))
+  (url-with-path (:node-uri endpoint) (to-id rel) "path"))
 
 (defn rel-properties-location-for
   [^Neo4JEndpoint endpoint rel]
-  (str (:relationships-uri endpoint) "/" (to-id rel) "/properties"))
+  (url-with-path (:relationships-uri endpoint) (to-id rel) "properties"))
 
 (defn rel-property-location-for
   [^Neo4JEndpoint endpoint rel prop]
-  (str (rel-properties-location-for endpoint (to-id rel)) "/" (name prop)))
+  (url-with-path (rel-properties-location-for endpoint (to-id rel)) (encode-segment (name prop))))
 
 (defn rel-traverse-location-for
   [^Neo4JEndpoint endpoint rel]
-  (str (:node-uri endpoint) "/" (to-id rel) "/traverse/relationship"))
+  (url-with-path (:node-uri endpoint) (to-id rel) "traverse" "relationship"))
 
 (defn instantiate-node-from
   ([payload]

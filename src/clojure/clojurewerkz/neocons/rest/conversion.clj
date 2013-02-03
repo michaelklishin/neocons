@@ -10,4 +10,8 @@
 
   Long
   (to-id [^Long id]
-    id))
+    id)
+
+  nil
+  (to-id [id]
+    nil))

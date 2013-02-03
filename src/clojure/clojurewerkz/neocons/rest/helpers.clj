@@ -11,10 +11,9 @@
   (let [url (URL. location)]
     (Long/valueOf ^String (first (re-seq #"\d+$" (.getPath url))))))
 
-
-(defn encode
-  [s]
-  (URLEncoder/encode (name s) "UTF-8"))
+(defn encode-segment
+  [^String s]
+  (URLEncoder/encode s))
 
 (defn maybe-append
   [^String s ^String prefix]
