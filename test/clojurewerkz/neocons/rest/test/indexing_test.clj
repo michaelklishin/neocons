@@ -30,7 +30,7 @@
     (nodes/create-index name conf)
     (nodes/delete-index name)))
 
-(deftest ^{:indexing true :focus true} test-create-a-new-rel-index-with-explicit-configuration
+(deftest ^{:indexing true} test-create-a-new-rel-index-with-explicit-configuration
   (let [name "rel-index-2"
         conf {:type "fulltext" :provider "lucene"}]
     (rels/create-index name conf)))
@@ -73,14 +73,14 @@
         home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
 
-(deftest ^{:indexing true :focus true} test-adding-a-node-to-index-with-value-with-spaces
+(deftest ^{:indexing true} test-adding-a-node-to-index-with-value-with-spaces
   (let [idx  (nodes/create-index "things")
         s    "a value with spaces"
         k    "a key with spaces"
         n    (nodes/create {:value s})
         _    (nodes/add-to-index (:id n) (:name idx) k s)
         n'   (nodes/find-one (:name idx) k s)]
-    (println n')))
+    (is (= "a value with spaces" (-> n' :data :value)))))
 
 (deftest ^{:indexing true} test-adding-a-node-to-index-as-unique
   (let [idx  (nodes/create-index "uris")
@@ -147,7 +147,7 @@
     (nodes/add-to-index (:id home) (:name idx) "lat" 20.0)
     (nodes/delete-from-index (:id home) (:name idx) "lat" 20.0)))
 
-(deftest ^{:indexing true :focus true} test-finding-nodes-using-an-index
+(deftest ^{:indexing true} test-finding-nodes-using-an-index
   (let [node1 (nodes/create {:name "Wired"})
         node2 (nodes/create {:name "Craigslist"})
         url1  "http://wired.com"
@@ -157,13 +157,11 @@
     (nodes/delete-from-index (:id node2) (:name idx) "url")
     (nodes/add-to-index (:id node1) (:name idx) "url" url1)
     (nodes/add-to-index (:id node2) (:name idx) "url" url2)
-    (println (nodes/find (:name idx) "url" url1))
-    (println (nodes/find (:name idx) "url" url1))
     (let [ids (set (map :id (nodes/find (:name idx) "url" url1)))]
       (is (ids (:id node1)))
       (is (not (ids (:id node2)))))))
 
-(deftest ^{:indexing true :focus true} test-finding-rels-using-an-index
+(deftest ^{:indexing true} test-finding-rels-using-an-index
   (let [node1 (nodes/create {:name "Wired" :url "http://wired.com"})
         url   "http://craigslist.org"
         node2 (nodes/create {:name "Craigslist" :url url})

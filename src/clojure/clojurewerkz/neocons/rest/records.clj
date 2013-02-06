@@ -22,15 +22,27 @@
 (defrecord CypherQueryResponse
     [data columns])
 
+
+
 (def ^{:const true} slash    "/")
 
-(defn url-with-path
-  [^String root & segments]
-  (str root slash (u/encode-path (s/join slash segments))))
+(defn ^String encode-slashes
+  [^String s]
+  (.replaceAll s "/" "%2F"))
 
-(defn root-with-path
+(defn ^String encode-segment
+  [^String s]
+  (encode-slashes (u/encode-path s)))
+
+
+
+(defn ^String url-with-path
+  [^String root & segments]
+  (str root slash (s/join slash segments)))
+
+(defn ^String root-with-path
   [^Neo4JEndpoint endpoint & segments]
-  (str (:uri endpoint) slash (URLEncoder/encode (u/encode-path (s/join slash segments)))))
+  (str (:uri endpoint) slash (s/join slash segments)))
 
 (defn node-location-for
   [^Neo4JEndpoint endpoint ^long id]

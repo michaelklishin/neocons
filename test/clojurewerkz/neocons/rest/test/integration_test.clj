@@ -13,7 +13,7 @@
 ;; kinds of features
 ;;
 
-(deftest ^{:examples true :focus true} test-example1
+(deftest ^{:examples true} test-example1
   (let [homepage  (nn/create {:url "http://clojurewerkz.org/"})
         community (nn/create {:url "http://clojurewerkz.org/articles/community.html"})
         about     (nn/create {:url "http://clojurewerkz.org/articles/about.html"})
@@ -32,7 +32,7 @@
     (is (not (np/exists-between? (:id homepage) (:id about)     :relationships [rt])))
     (nn/destroy-many [homepage community about projects])))
 
-(deftest ^{:examples true :focus true} test-example2
+(deftest ^{:examples true} test-example2
   (nn/create-index "by-url" {:type "exact"})
   (nn/create-index "roots"  {:type "exact"})
   (let [homepage  (nn/create {:url "http://clojurewerkz.org/"} {"roots" ["root" true]})

@@ -24,6 +24,8 @@
                    :examples       :examples
                    :batching       :batching
                    :traversal      :traversal
+                   :uri-encoding   (fn [m] (or (:examples m)
+                                               (:indexing m)))
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
