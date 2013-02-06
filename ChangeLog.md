@@ -8,7 +8,11 @@ characters, for example.
 
 GH issue: #20
 
-### Support upgraded to 0.10.0
+### clj-http upgraded to 0.6.4
+
+Neocons now uses clj-http 0.6.4.
+
+### Support upgraded to 0.12.0
 
 Neocons now uses ClojureWerkz Support 0.10.0.
 
