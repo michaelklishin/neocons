@@ -2,7 +2,7 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.paths         :as paths]            )
+            [clojurewerkz.neocons.rest.paths         :as paths])
   (:use clojure.test
         [clojure.set :only [subset?]]
         [clojurewerkz.neocons.rest.records :only [instantiate-node-from instantiate-rel-from]]))
