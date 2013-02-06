@@ -9,9 +9,8 @@
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
-(defn- ids-from
-  [xs]
-  (map :id xs))
+(def ^{:private true}
+  ids-from (partial map :id))
 
 ;;
 ;; Working with relationships
