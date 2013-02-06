@@ -1,5 +1,5 @@
 (ns clojurewerkz.neocons.rest.helpers
-  (:import  [java.net URI URL URLEncoder]))
+  (:import  [java.net URI URL]))
 
 
 ;;
@@ -10,11 +10,6 @@
   [^String location]
   (let [url (URL. location)]
     (Long/valueOf ^String (first (re-seq #"\d+$" (.getPath url))))))
-
-
-(defn encode
-  [s]
-  (URLEncoder/encode (name s) "UTF-8"))
 
 (defn maybe-append
   [^String s ^String prefix]

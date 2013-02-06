@@ -39,15 +39,15 @@
         community (nn/create {:url "http://clojurewerkz.org/articles/community.html"}
                              {"by-url" [:url "http://clojurewerkz.org/articles/community.html"]})
         _             (nn/add-to-index homepage "by-url" :url "http://clojurewerkz.org/")
-        homepage-alt  (nn/find-one "by-url" :url "http://clojurewerkz.org/")
-        root-alt      (nn/find-one "roots" :root true)
-        community-alt (nn/find-one "by-url" :url "http://clojurewerkz.org/articles/community.html")]
+        homepage-alt  (nn/find-one "by-url" "url" "http://clojurewerkz.org/")
+        root-alt      (nn/find-one "roots" "root" true)
+        community-alt (nn/find-one "by-url" "url" "http://clojurewerkz.org/articles/community.html")]
     (is (= (:id homepage)
            (:id homepage-alt)
            (:id root-alt)))
     (is (= (:id community)
            (:id community-alt)))
-    (is (nil? (nn/find-one "by-url" :url "http://example99.com")))
+    (is (nil? (nn/find-one "by-url" "url" "http://example99.com")))
     ;; Neo4J REST API returns nodes in different format via index and regular GET. Make sure we handle
     ;; both cases.
     (nr/create homepage-alt community-alt :links)

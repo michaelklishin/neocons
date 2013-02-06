@@ -30,7 +30,7 @@
     (nodes/create-index name conf)
     (nodes/delete-index name)))
 
-(deftest ^{:indexing true :focus true} test-create-a-new-rel-index-with-explicit-configuration
+(deftest ^{:indexing true} test-create-a-new-rel-index-with-explicit-configuration
   (let [name "rel-index-2"
         conf {:type "fulltext" :provider "lucene"}]
     (rels/create-index name conf)))
@@ -72,6 +72,15 @@
         uri  "http://arstechnica.com"
         home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)))
+
+(deftest ^{:indexing true} test-adding-a-node-to-index-with-value-with-spaces
+  (let [idx  (nodes/create-index "things")
+        s    "a value with spaces"
+        k    "a key with spaces"
+        n    (nodes/create {:value s})
+        _    (nodes/add-to-index (:id n) (:name idx) k s)
+        n'   (nodes/find-one (:name idx) k s)]
+    (is (= "a value with spaces" (-> n' :data :value)))))
 
 (deftest ^{:indexing true} test-adding-a-node-to-index-as-unique
   (let [idx  (nodes/create-index "uris")
@@ -148,7 +157,7 @@
     (nodes/delete-from-index (:id node2) (:name idx) "url")
     (nodes/add-to-index (:id node1) (:name idx) "url" url1)
     (nodes/add-to-index (:id node2) (:name idx) "url" url2)
-    (let [ids (set (map :id (nodes/find (:name idx) :url url1)))]
+    (let [ids (set (map :id (nodes/find (:name idx) "url" url1)))]
       (is (ids (:id node1)))
       (is (not (ids (:id node2)))))))
 
@@ -160,7 +169,7 @@
         rel   (rels/create node1 node2 :links {:url url})]
     (rels/delete-from-index (:id rel) (:name idx) "target-url")
     (rels/add-to-index (:id rel) (:name idx) "target-url" url)
-    (let [ids (set (map :id (rels/find (:name idx) :target-url url)))]
+    (let [ids (set (map :id (rels/find (:name idx) "target-url" url)))]
       (is (ids (:id rel))))))
 
 (deftest ^{:indexing true} test-finding-a-node-with-url-unsafe-key-to-index
@@ -168,7 +177,7 @@
         uri  "http://arstechnica.com/search/?query=Diablo+III"
         home (nodes/create {:uri uri})]
     (nodes/add-to-index (:id home) (:name idx) "uri" uri)
-    (nodes/find-one (:name idx) :uri uri)
+    (nodes/find-one (:name idx) "uri" uri)
     (nodes/delete-from-index (:id home) (:name idx))))
 
 (deftest ^{:indexing true} test-removing-a-node-removes-it-from-indexes
@@ -182,7 +191,7 @@
     (nodes/delete-from-index (:id node1) (:name idx) "url")
     (nodes/add-to-index (:id node1) (:name idx) "url" url1)
     (nodes/delete (:id node1))
-    (let [ids (set (map :id (nodes/find (:name idx) :url url1)))]
+    (let [ids (set (map :id (nodes/find (:name idx) "url" url1)))]
       (is (not (ids (:id node1)))))))
 
 (deftest ^{:indexing true} test-finding-nodes-using-full-text-search-queries-over-index

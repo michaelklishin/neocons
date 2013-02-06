@@ -52,7 +52,7 @@
    For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html section (19.8.1)"
   [idx k v data]
   (let [req-body    (json/encode {:key k :value v :properties data})
-        uri         (str (:node-index-uri rest/*endpoint*) "/" (encode idx) "?unique")
+        uri         (str (url-with-path (:node-index-uri rest/*endpoint*) idx) "?unique")
         {:keys [status headers body]} (rest/POST uri :body req-body)
         payload  (json/decode body true)
         location (:self payload)]
@@ -65,9 +65,9 @@
    This function returns a lazy sequence of results, so you may need to force it using clojure.core/doall"
   [xs]
   (let [batched (doall (reduce (fn [acc x]
-                          (conj acc {:body   x
-                                     :to     "/node"
-                                     :method "POST"})) [] xs))
+                                 (conj acc {:body   x
+                                            :to     "/node"
+                                            :method "POST"})) [] xs))
         {:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/encode batched))
         payload                       (map :body (json/decode body true))]
     (map instantiate-node-from payload)))
@@ -189,16 +189,16 @@
 
 (defn add-to-index
   "Adds the given node to the index"
-  ([node idx key value]
+  ([node idx ^String key value]
      (add-to-index node idx key value false))
-  ([node idx key value unique?]
+  ([node idx ^String key value unique?]
      (let [id                    (to-id node)
-           req-body              (json/encode {:key key :value value :uri (node-location-for rest/*endpoint* (to-id node))})
+           req-body              (json/encode {:key (name key) :value value :uri (node-location-for rest/*endpoint* (to-id node))})
            {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body req-body :query-string (if unique?
-                                                                                                                        {"unique" "true"}
-                                                                                                                        {}))
-          payload  (json/decode body true)]
-      (instantiate-node-from payload id))))
+                                                                                                                         {"unique" "true"}
+                                                                                                                         {}))
+           payload  (json/decode body true)]
+       (instantiate-node-from payload id))))
 
 
 (defn delete-from-index
@@ -232,14 +232,14 @@
      (let [{:keys [status body]} (rest/GET (auto-node-index-lookup-location-for rest/*endpoint* key value))
            xs (json/decode body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs)))
-  ([^String idx key value]
+  ([^String idx ^String  key value]
      (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
            xs (json/decode body true)]
        (map (fn [doc] (fetch-from (:indexed doc))) xs))))
 
 (defn find-one
   "Finds a single node using the index"
-  [^String idx key value]
+  [^String idx ^String key value]
   (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
         [node] (json/decode body true)]
     (when node

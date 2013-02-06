@@ -5,8 +5,9 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure  "1.4.0"]
                  [cheshire             "4.0.3"]
-                 [clj-http             "0.6.3"]
-                 [clojurewerkz/support "0.11.0"]]
+                 [clj-http             "0.6.4"]
+                 [clojurewerkz/support "0.12.0"]
+                 [clojurewerkz/urly    "2.0.0-alpha4"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
@@ -22,10 +23,13 @@
                    ;; assorted examples (extra integration tests)
                    :examples       :examples
                    :batching       :batching
+                   :traversal      :traversal
+                   :uri-encoding   (fn [m] (or (:examples m)
+                                               (:indexing m)))
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
-                   :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC4"]]}
+                   :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC6"]]}
                    :dev {:plugins [[codox "0.6.1"]]
                          :codox {:sources ["src/clojure"]
                                  :output-dir "doc/api"}}}

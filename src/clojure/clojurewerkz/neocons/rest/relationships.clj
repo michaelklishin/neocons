@@ -65,7 +65,7 @@
   ([^Node from ^Node to rel-type idx k v]
      (create-unique-in-index from to rel-type idx k v {}))
   ([^Node from ^Node to rel-type idx k v data]
-     (let [uri   (str (:relationship-index-uri rest/*endpoint*) "/" (encode idx) "/?unique")
+     (let [uri   (str (url-with-path (:relationship-index-uri rest/*endpoint*) idx) "/?unique")
            body  {:key k 
                   :value v
                   :start (or (:location-uri from) (node-location-for rest/*endpoint* (to-id from)))

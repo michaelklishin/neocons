@@ -14,7 +14,7 @@
 ;; Traversal
 ;;
 
-(deftest test-traversing-nodes-using-all-return-filter-all-relationships-and-no-pagination
+(deftest ^{:traversal true} test-traversing-nodes-using-all-return-filter-all-relationships-and-no-pagination
   (let [john (nodes/create {:name "John"})
         adam (nodes/create {:name "Alan"})
         pete (nodes/create {:name "Peter"})
@@ -29,7 +29,7 @@
     (is (= [(:id john)] ids2))))
 
 
-(deftest test-traversing-relationships-using-all-return-filter-all-relationships-and-no-pagination
+(deftest ^{:traversal true} test-traversing-relationships-using-all-return-filter-all-relationships-and-no-pagination
   (let [john (nodes/create {:name "John"})
         adam (nodes/create {:name "Alan"})
         pete (nodes/create {:name "Peter"})
@@ -44,7 +44,7 @@
     (is (empty? ids2))))
 
 
-(deftest test-traversing-nodes-using-all-but-start-node-return-filter-out-relationships-and-no-pagination
+(deftest ^{:traversal true} test-traversing-nodes-using-all-but-start-node-return-filter-out-relationships-and-no-pagination
   (let [john (nodes/create {:name "John"})
         adam (nodes/create {:name "Alan"})
         pete (nodes/create {:name "Peter"})
@@ -58,7 +58,7 @@
     (is (= [(:id pete)] ids2))))
 
 
-(deftest test-traversing-nodes-using-all-but-start-node-return-filter-in-relationships-and-no-pagination
+(deftest ^{:traversal true} test-traversing-nodes-using-all-but-start-node-return-filter-in-relationships-and-no-pagination
   (let [john (nodes/create {:name "John"})
         adam (nodes/create {:name "Alan"})
         pete (nodes/create {:name "Peter"})
@@ -69,7 +69,7 @@
     (is (empty? ids))))
 
 
-(deftest test-traversing-paths-using-all-return-filter-all-relationships-and-no-pagination
+(deftest ^{:traversal true} test-traversing-paths-using-all-return-filter-all-relationships-and-no-pagination
   (let [john (nodes/create {:name "John"})
         adam (nodes/create {:name "Alan"})
         pete (nodes/create {:name "Peter"})
@@ -103,7 +103,7 @@
 ;; Shortest path algorithm
 ;;
 
-(deftest test-shortest-path-algorithm-1
+(deftest ^{:traversal true} test-shortest-path-algorithm-1
   (let [john (nodes/create {:name "John" :age 28 :location "New York City, NY"})
         liz  (nodes/create {:name "Liz"  :age 27 :location "Buffalo, NY"})
         beth (nodes/create {:name "Elizabeth" :age 30 :location "Chicago, IL"})
