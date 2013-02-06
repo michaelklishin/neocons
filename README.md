@@ -39,7 +39,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: it is more than 6 months old, with active production use from week 1. It is now at 1.0,
+Neocons is not a young project: it is more than 1 year old, with active production use from week 1. It is now past 1.0,
 all API parts are set in stone and most documentation guides in good shape.
 
 
@@ -58,6 +58,8 @@ definition to your `pom.xml`:
 </repository>
 ```
 
+### The Most Recent Stable Release
+
 With Leiningen:
 
     [clojurewerkz/neocons "1.0.3"]
@@ -70,6 +72,21 @@ With Maven:
       <version>1.0.3</version>
     </dependency>
 
+### The Most Recent Preview Release
+
+With Leiningen:
+
+    [clojurewerkz/neocons "1.1.0-beta3"]
+
+With Maven:
+
+    <dependency>
+      <groupId>clojurewerkz</groupId>
+      <artifactId>neocons</artifactId>
+      <version>1.1.0-beta3</version>
+    </dependency>
+
+
 
 ## Continuous Integration
 
@@ -81,15 +98,20 @@ CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 ## Supported Clojure versions
 
-Neocons is built from the ground up for Clojure 1.3 and up. Clojure 1.4 is highly recommended.
+Neocons is built from the ground up for Clojure 1.3 and up. The most recent stable Clojure release is highly recommended.
 
 
 ## Supported Neo4J Server versions
 
-Neocons supports Neo4J Server 1.5.0 and later versions. For the [Cypher query language](http://docs.neo4j.org/chunked/1.7/cypher-query-lang.html) support, 1.6 is the minimum recommended
-versions because Cypher is supported by the REST API directly without any plugins. Some features (in Cypher in particular)
-may be specific to later version. We recommend using the most recent stable release. Neocons is actively tested against bleeding
-edge Neo4J Server snapshots and we try to support important new features before stable server releases come out.
+Neocons supports Neo4J Server 1.5.0 and later versions. For the
+[Cypher query
+language](http://docs.neo4j.org/chunked/1.7/cypher-query-lang.html)
+support, 1.6 is the minimum recommended versions because Cypher is
+supported by the REST API directly without any plugins. Some features
+(in Cypher in particular) may be specific to later version. We
+recommend using the most recent stable release. Neocons is actively
+tested against bleeding edge Neo4J Server snapshots and we try to
+support important new features before stable server releases come out.
 
 If you use OpsCode Chef, there is a [Neo4J Server Chef cookbook](https://github.com/michaelklishin/neo4j-server-chef-cookbook).
 
