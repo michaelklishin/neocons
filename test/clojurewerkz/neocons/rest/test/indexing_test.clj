@@ -80,7 +80,16 @@
         n    (nodes/create {:value s})
         _    (nodes/add-to-index (:id n) (:name idx) k s)
         n'   (nodes/find-one (:name idx) k s)]
-    (is (= "a value with spaces" (-> n' :data :value)))))
+    (is (= s (-> n' :data :value)))))
+
+(deftest ^{:indexing true} test-adding-a-node-to-index-with-value-with-colons
+  (let [idx  (nodes/create-index "things")
+        s    "a:value with spaces"
+        k    "a:key with spaces"
+        n    (nodes/create {:value s})
+        _    (nodes/add-to-index (:id n) (:name idx) k s)
+        n'   (nodes/find-one (:name idx) k s)]
+    (is (= s (-> n' :data :value)))))
 
 (deftest ^{:indexing true} test-adding-a-node-to-index-as-unique
   (let [idx  (nodes/create-index "uris")
