@@ -7,7 +7,7 @@
                  [cheshire             "4.0.3"]
                  [clj-http             "0.6.4"]
                  [clojurewerkz/support "0.12.0"]
-                 [clojurewerkz/urly    "2.0.0-alpha4"]]
+                 [clojurewerkz/urly    "2.0.0-alpha5"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
