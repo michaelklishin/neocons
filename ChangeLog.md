@@ -1,3 +1,11 @@
+## Changes between Neocons 1.1.0-beta3 and 1.1.0-beta4
+
+### Imrpoved URI Path Encoding
+
+Keys with colons are now handled correctly (as of Urly `2.0.0-alpha5`).
+
+
+
 ## Changes between Neocons 1.1.0-beta2 and 1.1.0-beta3
 
 ### Correct URI Path Encoding
