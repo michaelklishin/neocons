@@ -1,3 +1,10 @@
+## Changes between Neocons 1.1.0-beta4 and 1.1.0-beta5
+
+### Cheshire 5.x
+
+Neocons now uses [Cheshire](https://github.com/dakrone/cheshire) 5.x.
+
+
 ## Changes between Neocons 1.1.0-beta3 and 1.1.0-beta4
 
 ### Improved URI Path Encoding
