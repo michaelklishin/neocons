@@ -42,7 +42,21 @@
   (let [n1    (nodes/create)
         n2    (nodes/create)
         [{r "r"}] (cy/tquery "START n1 = node({id1}), n2 = node({id2}) CREATE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
-                                                                                                        :id2 (:id n2)})]
+                                                                                                          :id2 (:id n2)})
+        xs     (rel/all-outgoing-between n1 n2 ["knows"])]
+    (is (= 1 (count xs)))
+    (is (rel/starts-with? r (:id n1)))
+    (is (rel/ends-with? r (:id n2)))))
+
+(deftest ^{:cypher true} test-creating-a-relationship-between-nodes-if-it-does-not-exist
+  (let [n1    (nodes/create)
+        n2    (nodes/create)
+        [{r "r"}] (cy/tquery "START n1 = node({id1}), n2 = node({id2}) CREATE UNIQUE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
+                                                                                                                 :id2 (:id n2)})
+        _ (cy/tquery "START n1 = node({id1}), n2 = node({id2}) CREATE UNIQUE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
+                                                                                                         :id2 (:id n2)})
+        xs     (rel/all-outgoing-between n1 n2 ["knows"])]
+    (is (= 1 (count xs)))
     (is (rel/starts-with? r (:id n1)))
     (is (rel/ends-with? r (:id n2)))))
 
