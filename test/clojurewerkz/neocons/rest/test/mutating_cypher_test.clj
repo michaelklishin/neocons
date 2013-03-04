@@ -26,7 +26,7 @@
 ;; Mutating Cypher queries
 ;;
 
-(deftest ^{:cypher true :edge-features true} test-creating-a-node-via-mutating-cypher
+(deftest ^{:cypher true} test-creating-a-node-via-mutating-cypher
   (testing "without node properties"
     (let [response (cy/tquery "CREATE n RETURN n")]
       (is (empty? (get-in (first response) ["n" :data])))))
@@ -38,7 +38,7 @@
           response (cy/tquery "CREATE n = {props} RETURN n" {:props props})]
       (is (= props (get-in (first response) ["n" :data]))))))
 
-(deftest ^{:cypher true :edge-features true} test-creating-a-relationship-between-nodes-via-mutating-cypher
+(deftest ^{:cypher true} test-creating-a-relationship-between-nodes-via-mutating-cypher
   (let [n1    (nodes/create)
         n2    (nodes/create)
         [{r "r"}] (cy/tquery "START n1 = node({id1}), n2 = node({id2}) CREATE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
@@ -46,7 +46,7 @@
     (is (rel/starts-with? r (:id n1)))
     (is (rel/ends-with? r (:id n2)))))
 
-(deftest ^{:cypher true :edge-features true} test-purging-a-node-via-mutating-cypher-case1
+(deftest ^{:cypher true} test-purging-a-node-via-mutating-cypher-case1
   (let [john (nodes/create {:name "John" :age 28 :location "New York City, NY"})
         beth (nodes/create {:name "Elizabeth" :age 30 :location "Chicago, IL"})
         gael (nodes/create {:name "Gaël"      :age 31 :location "Montpellier"})
@@ -61,7 +61,7 @@
 
 
 ;; this needs Neo4J 1.8 snapshot past 1.8-M01
-(deftest ^{:cypher true :edge-features true} test-creating-a-bunch-of-nodes-via-mutating-cypher
+(deftest ^{:cypher true} test-creating-a-bunch-of-nodes-via-mutating-cypher
   (let [urls     ["http://clojurewerkz.org/"
                   "http://clojurewerkz.org/articles/about.html"
                   "http://clojurewerkz.org/articles/community.html"]
