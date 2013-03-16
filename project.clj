@@ -3,10 +3,10 @@
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure  "1.4.0"]
+  :dependencies [[org.clojure/clojure  "1.5.1"]
                  [cheshire             "5.0.2"]
                  [clj-http             "0.6.4"]
-                 [clojurewerkz/support "0.14.0"]
+                 [clojurewerkz/support "0.15.0"]
                  [clojurewerkz/urly    "2.0.0-alpha5"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
@@ -29,13 +29,13 @@
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
-                   :1.5 {:dependencies [[org.clojure/clojure "1.5.0"]]}
+                   :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
                    :1.6 {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
                    :master {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
-                   :dev {:plugins [[codox "0.6.1"]]
+                   :dev {:plugins [[codox "0.6.4"]]
                          :codox {:sources ["src/clojure"]
                                  :output-dir "doc/api"}}}
-  :aliases        {"all" ["with-profile" "dev:dev,1.3:dev,1.5:dev,1.6:dev,master"]}
+  :aliases        {"all" ["with-profile" "dev:dev,1.3:dev,1.4:dev,1.6:dev,master"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail :update :always}}
