@@ -4,6 +4,15 @@
 
 Neocons now uses ClojureWerkz Support 0.15.0.
 
+### Clojure 1.5 By Default
+
+Neocons now depends on `org.clojure/clojure` version `1.5.0`. It is
+still compatible with Clojure 1.3+ and if your `project.clj` depends on
+a different version, it will be used, but 1.5 is the default now.
+
+We encourage all users to upgrade to 1.5, it is a drop-in replacement
+for the majority of projects out there.
+
 ### Cheshire 5.x
 
 Neocons now uses [Cheshire](https://github.com/dakrone/cheshire) 5.x.
