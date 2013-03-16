@@ -1,4 +1,8 @@
-## Changes between Neocons 1.1.0-beta4 and 1.1.0-beta5
+## Changes between Neocons 1.1.0-beta4 and 1.1.0
+
+### ClojureWerkz Support Upgrade
+
+Neocons now uses ClojureWerkz Support 0.15.0.
 
 ### Cheshire 5.x
 
