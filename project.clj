@@ -4,9 +4,9 @@
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure  "1.5.1"]
-                 [cheshire             "5.0.2"]
-                 [clj-http             "0.6.4"]
-                 [clojurewerkz/support "0.15.0"]
+                 [cheshire             "5.1.0"]
+                 [clj-http             "0.7.0"]
+                 [clojurewerkz/support "0.16.0"]
                  [clojurewerkz/urly    "2.0.0-alpha5"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
