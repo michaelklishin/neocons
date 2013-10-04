@@ -13,13 +13,13 @@
   [stmts]
   {:statements (filter :statement (map statement-to-map stmts))} )
 
-(defn make-request
+(defn- make-request
   [xs uri]
   (let [statements                      (json/encode (statements-to-map xs))
         {:keys [status headers body]}   (rest/POST uri :body statements)]
     [status headers body]))
 
-(defn make-cypher-responses
+(defn- make-cypher-responses
   [payload]
   (map records/instantiate-cypher-query-response-from (:results payload)))
 
@@ -46,7 +46,7 @@
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-execute-statements-in-an-open-transaction"
 
-  [transaction] (execute transaction []))
+  ([transaction] (execute transaction []))
   ([transaction xs] (execute transaction xs (:location transaction)))
   ([transaction xs uri]
     (let [[status headers body]          (make-request xs uri)
