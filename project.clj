@@ -43,4 +43,4 @@
                                        :snapshots true
                                        :releases {:checksum :fail :update :always}}}
   :java-source-paths ["src/java"]
-  :warn-on-reflection true)
+  :global-vars {*warn-on-reflection* true})
