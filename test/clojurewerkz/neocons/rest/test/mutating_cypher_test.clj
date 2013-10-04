@@ -28,14 +28,14 @@
 
 (deftest ^{:cypher true} test-creating-a-node-via-mutating-cypher
   (testing "without node properties"
-    (let [response (cy/tquery "CREATE n RETURN n")]
+    (let [response (cy/tquery "CREATE (n) RETURN n")]
       (is (empty? (get-in (first response) ["n" :data])))))
   (testing "with node properties"
-    (let [response (cy/tquery "CREATE n = {name: 'Neocons', type: 'client', language: 'Clojure'} RETURN n")]
+    (let [response (cy/tquery "CREATE (n {name: 'Neocons', type: 'client', language: 'Clojure'}) RETURN n")]
       (is (= {:name "Neocons" :language "Clojure" :type "client"} (get-in (first response) ["n" :data])))))
   (testing "with node properties passed as a map"
     (let [props    {:name "Neocons" :language "Clojure" :type "client"}
-          response (cy/tquery "CREATE n = {props} RETURN n" {:props props})]
+          response (cy/tquery "CREATE (n {props}) RETURN n" {:props props})]
       (is (= props (get-in (first response) ["n" :data]))))))
 
 (deftest ^{:cypher true} test-creating-a-relationship-between-nodes-via-mutating-cypher
@@ -79,6 +79,6 @@
   (let [urls     ["http://clojurewerkz.org/"
                   "http://clojurewerkz.org/articles/about.html"
                   "http://clojurewerkz.org/articles/community.html"]
-        response (cy/tquery "CREATE n = {xs} RETURN n", {:xs (map #(hash-map :url %) urls)})
+        response (cy/tquery "CREATE (n {xs}) RETURN n", {:xs (map #(hash-map :url %) urls)})
         returned-urls (map #(-> (get % "n") :data :url) response)]
     (is (= urls returned-urls))))
