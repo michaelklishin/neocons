@@ -21,7 +21,7 @@
       [] {:statements []}
       ))
 
-(deftest test-empty-transaction-rollback
+(deftest ^{:edge-features true} test-empty-transaction-rollback
   (let [[transaction y] (neotrans/begin)]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -31,7 +31,7 @@
     (= (neotrans/rollback transaction) {"results" [] "errors" []})
   ))
 
-(deftest test-transaction-rollback
+(deftest ^{:edge-features true} test-transaction-rollback
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -43,7 +43,7 @@
     (= (neotrans/rollback transaction) {"results" [] "errors" []})
   ))
 
-(deftest test-transaction-commit-empty
+(deftest ^{:edge-features true} test-transaction-commit-empty
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -56,7 +56,7 @@
     (= (neotrans/commit transaction) [])
   ))
 
-(deftest test-transaction-commit
+(deftest ^{:edge-features true} test-transaction-commit
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -70,7 +70,7 @@
       (= (:columns result) ["id(n)"])
       (= (count (:data result)) 1))))
 
-(deftest test-transaction-continue-commit
+(deftest ^{:edge-features true} test-transaction-continue-commit
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
