@@ -18,8 +18,7 @@
       [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})]
       {:statements [{:statement "CREATE (n {props}) RETURN n"
                     :parameters {:props {:name "My Node"}}}]}
-      [] {:statements []}
-      ))
+      [] {:statements []}))
 
 (deftest ^{:edge-features true} test-empty-transaction-rollback
   (let [[transaction y] (neotrans/begin)]
@@ -28,8 +27,7 @@
          :location
          :expires)
     (is (= [] y))
-    (= (neotrans/rollback transaction) {"results" [] "errors" []})
-  ))
+    (= (neotrans/rollback transaction) {"results" [] "errors" []})))
 
 (deftest ^{:edge-features true} test-transaction-rollback
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
@@ -40,8 +38,7 @@
 
     (= (:data result) [{:row [{:name "My Node"}]}])
     (= (:columns result) ["n"])
-    (= (neotrans/rollback transaction) {"results" [] "errors" []})
-  ))
+    (= (neotrans/rollback transaction) {"results" [] "errors" []})))
 
 (deftest ^{:edge-features true} test-transaction-commit-empty
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
@@ -53,8 +50,7 @@
     (= (:data result) [{:row [{:name "My Node"}]}])
     (= (:columns result) ["n"])
 
-    (= (neotrans/commit transaction) [])
-  ))
+    (= (neotrans/commit transaction) [])))
 
 (deftest ^{:edge-features true} test-transaction-commit
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
