@@ -3,12 +3,12 @@
   (:require [cheshire.custom                 :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.cypher  :as cypher]
-            [clojurewerkz.neocons.rest.paths   :as paths])
-  (:use     clojurewerkz.support.http.statuses
-            clojurewerkz.neocons.rest.helpers
-            clojurewerkz.neocons.rest.records
-            [clojure.string :only [join]]
-            [clojurewerkz.neocons.rest.conversion :only [to-id]])
+            [clojurewerkz.neocons.rest.paths   :as paths]
+            [clojurewerkz.support.http.statuses :refer :all]
+            [clojurewerkz.neocons.rest.helpers  :refer :all]
+            [clojurewerkz.neocons.rest.records  :refer :all]
+            [clojure.string :refer [join]]
+            [clojurewerkz.neocons.rest.conversion :refer [to-id]])
   (:import  [java.net URI URL]
             clojurewerkz.neocons.rest.Neo4JEndpoint
             [clojurewerkz.neocons.rest.records Node Relationship Index]))

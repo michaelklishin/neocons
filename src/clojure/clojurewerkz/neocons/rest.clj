@@ -1,9 +1,9 @@
 (ns clojurewerkz.neocons.rest
   (:import  java.net.URI)
   (:require [clj-http.client   :as http]
-            [cheshire.custom   :as json])
-  (:use     clojurewerkz.support.http.statuses
-            [clojurewerkz.neocons.rest.helpers :only [maybe-append]]))
+            [cheshire.custom   :as json]
+            [clojurewerkz.support.http.statuses :refer :all]
+            [clojurewerkz.neocons.rest.helpers :refer [maybe-append]]))
 
 ;;
 ;; Implementation

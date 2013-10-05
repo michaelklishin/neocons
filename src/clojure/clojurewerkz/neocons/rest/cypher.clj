@@ -1,10 +1,10 @@
 (ns clojurewerkz.neocons.rest.cypher
   (:refer-clojure :exclude [empty?])
   (:require [cheshire.custom           :as json]
-            [clojurewerkz.neocons.rest :as rest])
-  (:use     clojurewerkz.support.http.statuses
-            clojurewerkz.neocons.rest.helpers
-            clojurewerkz.neocons.rest.records)
+            [clojurewerkz.neocons.rest :as rest]
+            [clojurewerkz.support.http.statuses :refer :all]
+            [clojurewerkz.neocons.rest.helpers  :refer :all]
+            [clojurewerkz.neocons.rest.records  :refer :all])
   (:import  [java.net URI URL]
             clojurewerkz.neocons.rest.Neo4JEndpoint
             clojurewerkz.neocons.rest.records.CypherQueryResponse))

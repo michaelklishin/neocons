@@ -1,9 +1,9 @@
 (ns clojurewerkz.neocons.rest.records
   (:require clojurewerkz.neocons.rest
             [clojurewerkz.urly.core :as u]
-            [clojure.string :as s])
-  (:use clojurewerkz.neocons.rest.helpers
-        [clojurewerkz.neocons.rest.conversion :only [to-id]])
+            [clojure.string :as s]
+            [clojurewerkz.neocons.rest.helpers  :refer :all]
+            [clojurewerkz.neocons.rest.conversion :refer [to-id]])
   (:import clojurewerkz.neocons.rest.Neo4JEndpoint
            java.net.URLEncoder))
 

@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.transaction
   (:require [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.records :as records]
-            [cheshire.custom                   :as json])
-  (:use     clojurewerkz.support.http.statuses))
+            [cheshire.custom                   :as json]
+            [clojurewerkz.support.http.statuses :refer :all]))
 
 
 (defn tx-statement-from
