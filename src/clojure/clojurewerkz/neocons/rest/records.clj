@@ -23,10 +23,10 @@
     [data columns])
 
 (defrecord Statement
-  [^String query parameters])
+    [^String query parameters])
 
 (defrecord Transaction
-  [^String commit ^String location ^String expires])
+    [^String commit ^String location ^String expires])
 
 
 
@@ -176,10 +176,10 @@
   (let [f (cond (:create_relationship payload)   instantiate-node-from
                 (and (:type payload)
                      (:data payload))            instantiate-rel-from
-                (and (:start payload)
-                     (:end payload)
-                     (not (:type payload)))      instantiate-path-from
-                :else                            identity)]
+                     (and (:start payload)
+                          (:end payload)
+                          (not (:type payload)))      instantiate-path-from
+                          :else                            identity)]
     (f payload)))
 
 (defn instantiate-transaction
@@ -187,5 +187,7 @@
   (Transaction. commit location expires))
 
 (defn instantiate-statement
-  [^String query parameters]
-  (Statement. query parameters))
+  ([^String query]
+     (Statement. query nil))
+  ([^String query parameters]
+     (Statement. query parameters)))
