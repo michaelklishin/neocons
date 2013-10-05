@@ -1,5 +1,9 @@
 ## Changes between Neocons 1.1.0 and 2.0.0-beta1
 
+### Clojure 1.3 Support Dropped
+
+Neocons no longer supports Clojure 1.3.
+
 ### Transaction Support (Neo4J Server 2.0)
 
 Neocons 2.0 gains support for [transactions](http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html). Transactions
