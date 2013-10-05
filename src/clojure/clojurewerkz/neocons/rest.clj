@@ -53,7 +53,9 @@
      extensions-info-uri
      extensions
      reference-node-uri
-     uri])
+     uri
+     cypher-uri
+     transaction-uri])
 
 (def ^{:dynamic true} *endpoint*)
 
@@ -88,7 +90,10 @@
                            (:extensions_info    payload)
                            (:extensions         payload)
                            (:reference_node     payload)
-                           (maybe-append uri "/")))))))
+                           (maybe-append uri "/")
+                           (:cypher             payload)
+                           (:transaction        payload)
+                           ))))))
 
 (defn connect!
   "Like connect but also mutates *endpoint* state to store the connection"

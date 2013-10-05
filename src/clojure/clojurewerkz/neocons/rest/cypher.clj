@@ -15,7 +15,7 @@
 
 (defn cypher-query-location-for
   [^Neo4JEndpoint endpoint]
-  (str (:uri endpoint) "cypher"))
+  (:cypher-uri endpoint))
 
 
 
