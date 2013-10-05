@@ -89,7 +89,17 @@ Neocons is built from the ground up for Clojure 1.3 and up. The most recent stab
 
 ## Supported Neo4J Server versions
 
-Neocons supports Neo4J Server 1.5.0 and later versions. For the
+### Neocons 2.0 (master)
+
+Neocons `2.0` tracks Neo4J Server 2.0 changes, although currently
+the test suite also passes against 1.9.x.
+
+There are incompatible changes in 1.9 and 2.0 in mutating Cypher
+syntax, so Neo4j Server 1.8 compatibility is less than perfect.
+
+### Neocons 1.1
+
+Neocons `1.1` supports Neo4J Server 1.5.0 and later versions. For the
 [Cypher query
 language](http://docs.neo4j.org/chunked/stable/cypher-query-lang.html)
 support, 1.6 is the minimum recommended versions because Cypher is
