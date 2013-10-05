@@ -13,14 +13,18 @@
   [stmts]
   {:statements (filter :statement (map statement-to-map stmts))} )
 
+(defn- check-error
+  [payload]
+  (let [error (:errors payload)]
+    (if (not= error [])
+      (throw (Exception. (str "Transaction failed and rolled back. Error: " error))))))
+
 (defn- make-request
   [xs uri]
   (let [statements                      (json/encode (statements-to-map xs))
         {:keys [status headers body]}   (rest/POST uri :body statements)
-        payload                         (json/decode body true)
-        error                           (:errors payload)]
-    (if (not= error [])
-      (throw (Exception. (str "Transaction failed and rolled back. Error: " error))))
+        payload                         (json/decode body true)]
+    (check-error payload)
     [status headers payload]))
 
 (defn- make-cypher-responses
@@ -76,5 +80,7 @@
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-rollback-an-open-transaction"
 
   [transaction]
-  (let [{:keys [status headers body]} (rest/DELETE (:location transaction))]
-    body))
+  (let [{:keys [status headers body]}   (rest/DELETE (:location transaction))
+        payload                         (json/decode body true)]
+    (check-error payload)
+    (:errors payload)))

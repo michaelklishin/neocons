@@ -27,7 +27,7 @@
          :location
          :expires)
     (is (= [] y))
-    (= (neotrans/rollback transaction) {"results" [] "errors" []})))
+    (= (neotrans/rollback transaction) [])))
 
 (deftest ^{:edge-features true} test-transaction-rollback
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
@@ -38,7 +38,7 @@
 
     (= (:data result) [{:row [{:name "My Node"}]}])
     (= (:columns result) ["n"])
-    (= (neotrans/rollback transaction) {"results" [] "errors" []})))
+    (= (neotrans/rollback transaction) [])))
 
 (deftest ^{:edge-features true} test-transaction-commit-empty
   (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
@@ -99,6 +99,4 @@
     (is (thrown-with-msg? Exception #"Transaction failed and rolled back"
                           (neotrans/execute
                             transaction
-                            [(records/instantiate-statement "CREATE n RETURN id(m)" nil)])))
-
-    ))
+                            [(records/instantiate-statement "CREATE n RETURN id(m)" nil)])))))
