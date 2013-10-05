@@ -1,3 +1,29 @@
+## Changes between Neocons 1.1.0 and 2.0.0-beta1
+
+### Transaction Support (Neo4J Server 2.0)
+
+Neocons 2.0 gains support for transactions. Transactions
+are instantiated from a group of Cypher statements
+that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.transaction :as tx])
+
+(let [t (tx/begin [{:statement "CREATE (n {props} RETURN n)" {:props {:name "My node"}}}])]
+  (tx/commit t))
+
+(let [t (tx/begin)]
+  (tx/rollback t))
+```
+
+`clojurewerkz.neocons.rest.transaction/commit` and
+`clojurewerkz.neocons.rest.transaction/rollback` commit
+and roll a transaction back, respectively.
+
+This API is a subject to change.
+
+
+
 ## Changes between Neocons 1.1.0-beta4 and 1.1.0
 
 ### ClojureWerkz Support Upgrade
