@@ -2,7 +2,7 @@
 
 ### Transaction Support (Neo4J Server 2.0)
 
-Neocons 2.0 gains support for transactions. Transactions
+Neocons 2.0 gains support for [transactions](http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html). Transactions
 are instantiated from a group of Cypher statements
 that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 
