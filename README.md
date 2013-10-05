@@ -41,8 +41,10 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: it is more than 1 year old, with active production use from week 1. It is now past 1.0,
-all API parts are set in stone and most documentation guides in good shape.
+Neocons is not a young project: as of October 2013, it is about 2
+years old, with active production use from week 1. It is now moving
+towards `2.0` release. Nearly API parts are set in stone and most
+documentation guides in good shape.
 
 
 
