@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest.test.transaction-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.records :as records]
+            [clojurewerkz.neocons.rest.records       :as records]
             [clojurewerkz.neocons.rest.transaction   :as neotrans])
   (:use clojure.test))
 
@@ -85,3 +85,20 @@
       (= (:columns b) ["id(n)"]))
 
     (= (neotrans/commit transaction) [])))
+
+(deftest ^{:edge-features true} test-transaction-fail-rollback
+  (let [[transaction result] (neotrans/begin [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
+    (are [x] (not (nil? (x transaction)))
+         :commit
+         :location
+         :expires)
+
+    (= (:data result) [{:row [{:name "My Node"}]}])
+    (= (:columns result) ["n"])
+
+    (is (thrown-with-msg? Exception #"Transaction failed and rolled back"
+                          (neotrans/execute
+                            transaction
+                            [(records/instantiate-statement "CREATE n RETURN id(m)" nil)])))
+
+    ))

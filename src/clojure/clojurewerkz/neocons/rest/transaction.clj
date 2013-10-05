@@ -16,8 +16,12 @@
 (defn- make-request
   [xs uri]
   (let [statements                      (json/encode (statements-to-map xs))
-        {:keys [status headers body]}   (rest/POST uri :body statements)]
-    [status headers body]))
+        {:keys [status headers body]}   (rest/POST uri :body statements)
+        payload                         (json/decode body true)
+        error                           (:errors payload)]
+    (if (not= error [])
+      (throw (Exception. (str "Transaction failed and rolled back. Error: " error))))
+    [status headers payload]))
 
 (defn- make-cypher-responses
   [payload]
@@ -29,8 +33,7 @@
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-a-transaction"
   ([] (begin []))
   ([xs]
-   (let [[status headers body]          (make-request xs (:transaction-uri rest/*endpoint*))
-        payload                         (json/decode body true)
+   (let [[status headers payload]       (make-request xs (:transaction-uri rest/*endpoint*))
         neo-trans                       (records/instantiate-transaction
                                           (:commit payload)
                                           (headers "location")
@@ -49,8 +52,7 @@
   ([transaction] (execute transaction []))
   ([transaction xs] (execute transaction xs (:location transaction)))
   ([transaction xs uri]
-    (let [[status headers body]          (make-request xs uri)
-          payload                        (json/decode body true)]
+    (let [[status headers payload]          (make-request xs uri)]
       (if (missing? status)
         nil
         [(records/instantiate-transaction
