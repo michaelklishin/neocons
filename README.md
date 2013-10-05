@@ -84,7 +84,8 @@ CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 ## Supported Clojure versions
 
-Neocons is built from the ground up for Clojure 1.3 and up. The most recent stable Clojure release is highly recommended.
+Neocons requires Clojure 1.4+.
+The most recent stable Clojure release is highly recommended.
 
 
 ## Supported Neo4J Server versions
