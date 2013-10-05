@@ -1,6 +1,13 @@
 #!/bin/sh
 
-# travis-ci.org provides neo4j server but it will be disabled from starting on boot
-# in the future
-which neo4j && sudo neo4j start
+VERSION="2.0.0-M05"
+TARBALL="neo4j2.0.tar.gz"
+
+cd /tmp
+wget -O $TARBALL "http://dist.neo4j.org/neo4j-community-$VERSION-unix.tar.gz?edition=community&version=$VERSION&distribution=tarball&dlid=2803678"
+tar zxf $TARBALL
+
+cd "neo4j-community-$VERSION"
+
+./bin/neo4j start
 sleep 3
