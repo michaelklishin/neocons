@@ -5,13 +5,13 @@
   (:use     clojurewerkz.support.http.statuses))
 
 
-(defn statement-to-map
-  [stmt]
-  {:statement (:query stmt) :parameters (:parameters stmt)})
+(defn tx-statement-from
+  [m]
+  {:statement (:query m) :parameters (:parameters m)})
 
-(defn statements-to-map
-  [stmts]
-  {:statements (filter :statement (map statement-to-map stmts))} )
+(defn tx-payload-from
+  [xs]
+  {:statements (filter :statement (map tx-statement-from xs))} )
 
 (defn- check-error
   [payload]
@@ -21,9 +21,9 @@
 
 (defn- make-request
   [xs uri]
-  (let [statements                      (json/encode (statements-to-map xs))
-        {:keys [status headers body]}   (rest/POST uri :body statements)
-        payload                         (json/decode body true)]
+  (let [req-body                      (json/encode (tx-payload-from xs))
+        {:keys [status headers body]} (rest/POST uri :body req-body)
+        payload                       (json/decode body true)]
     (check-error payload)
     [status headers payload]))
 

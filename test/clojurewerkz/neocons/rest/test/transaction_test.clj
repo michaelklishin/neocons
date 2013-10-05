@@ -7,14 +7,14 @@
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
-(deftest test-converting-from-statement-to-map
-  (are [x y] (= y (tx/statement-to-map x))
+(deftest test-converting-from-tx-statement-from
+  (are [x y] (= y (tx/tx-statement-from x))
       (records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})
       {:statement "CREATE (n {props}) RETURN n"
        :parameters {:props {:name "My Node"}}}))
 
-(deftest test-converting-from-statements-to-map
-  (are [x y] (= y (tx/statements-to-map x))
+(deftest test-converting-from-tx-payload-from
+  (are [x y] (= y (tx/tx-payload-from x))
       [(records/instantiate-statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})]
       {:statements [{:statement "CREATE (n {props}) RETURN n"
                     :parameters {:props {:name "My Node"}}}]}
