@@ -109,7 +109,7 @@ Neocons `1.1` supports Neo4J Server 1.5.0 and later versions. For the
 language](http://docs.neo4j.org/chunked/stable/cypher-query-lang.html)
 support, 1.6 is the minimum recommended versions because Cypher is
 supported by the REST API directly without any plugins. Some features
-(in Cypher in particular) may be specific to later version. We
+(in Cypher in particular) may be specific to a later version. We
 recommend using the most recent stable release. Neocons is actively
 tested against bleeding edge Neo4J Server snapshots and we try to
 support important new features before stable server releases come out.
