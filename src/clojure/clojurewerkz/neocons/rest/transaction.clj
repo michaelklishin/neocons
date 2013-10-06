@@ -100,7 +100,7 @@
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request"
   [ & coll]
   (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
-        [status headers payload]     (make-request coll uri)]
+       [status headers payload]      (make-request coll uri)]
     (check-error payload)
     (when-not (missing? status)
       (make-cypher-responses payload))))
