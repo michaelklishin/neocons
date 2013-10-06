@@ -6,8 +6,26 @@ Neocons no longer supports Clojure 1.3.
 
 ### Transaction Support (Neo4J Server 2.0)
 
-Neocons 2.0 gains support for [transactions](http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html). Transactions
-are instantiated from a group of Cypher statements
+Neocons 2.0 gains support for [transactions](http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html).
+
+
+#### Higher Level API
+
+A group of Cypher statements can be executed in a transaction
+that will be committed automatically upon success. Any error
+during the execution will trigger a rollback.
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.transaction :as tx])
+
+(tx/in-transaction
+  (tx/statement "CREATE (n {props} RETURN n)" {:props {:name "Node 1"}})
+  (tx/statement "CREATE (n {props} RETURN n)" {:props {:name "Node 2"}}))
+```
+
+#### Lower Level API
+
+Transactions are instantiated from a group of Cypher statements
 that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 
 ``` clojure
@@ -23,8 +41,6 @@ that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 `clojurewerkz.neocons.rest.transaction/commit` and
 `clojurewerkz.neocons.rest.transaction/rollback` commit
 and roll a transaction back, respectively.
-
-This API is a subject to change.
 
 
 
