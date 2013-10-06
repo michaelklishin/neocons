@@ -9,7 +9,7 @@
   [^String commit ^String location ^String expires]
   {:commit commit :location location :expires expires})
 
-(defn instantiate-statement
+(defn statement
   ([^String query]
      {:query query :parameters nil})
   ([^String query parameters]
