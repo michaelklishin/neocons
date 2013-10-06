@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest.transaction
-  (:require [clojurewerkz.neocons.rest         :as rest]
-            [clojurewerkz.neocons.rest.records :as records]
-            [cheshire.custom                   :as json]
+  (:require [clojurewerkz.neocons.rest          :as rest]
+            [clojurewerkz.neocons.rest.records  :as records]
+            [cheshire.custom                    :as json]
             [clojurewerkz.support.http.statuses :refer :all]))
 
 
@@ -93,4 +93,14 @@
   (let [{:keys [status headers body]}   (rest/DELETE (:location transaction))
         payload                         (json/decode body true)]
     (check-error payload)
-    (:errors payload)))
+    (:results payload)))
+
+(defn in-transaction
+  "It takes multiple statements and starts a transaction and commits them in a single HTTP request.
+  For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request"
+  [ & coll]
+  (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
+       [status headers payload]      (make-request coll uri)]
+    (check-error payload)
+    (when-not (missing? status)
+      (make-cypher-responses payload))))
