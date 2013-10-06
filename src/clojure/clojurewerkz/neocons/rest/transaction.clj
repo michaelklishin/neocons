@@ -23,7 +23,7 @@
   [xs]
   {:statements (filter :statement (map tx-statement-from xs))} )
 
-(defn- check-error
+(defn- raise-on-any-errors
   [payload]
   (let [error (:errors payload)]
     (if (not= error [])
@@ -34,7 +34,7 @@
   (let [req-body                      (json/encode (tx-payload-from xs))
         {:keys [status headers body]} (rest/POST uri :body req-body)
         payload                       (json/decode body true)]
-    (check-error payload)
+    (raise-on-any-errors payload)
     [status headers payload]))
 
 (defn- make-cypher-responses
@@ -92,7 +92,7 @@
   [transaction]
   (let [{:keys [status headers body]}   (rest/DELETE (:location transaction))
         payload                         (json/decode body true)]
-    (check-error payload)
+    (raise-on-any-errors payload)
     (:results payload)))
 
 (defn in-transaction
@@ -101,6 +101,6 @@
   [ & coll]
   (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
        [status headers payload]      (make-request coll uri)]
-    (check-error payload)
+    (raise-on-any-errors payload)
     (when-not (missing? status)
       (make-cypher-responses payload))))
