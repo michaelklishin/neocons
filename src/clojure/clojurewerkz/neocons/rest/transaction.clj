@@ -94,3 +94,11 @@
         payload                         (json/decode body true)]
     (check-error payload)
     (:errors payload)))
+
+(defn in-transaction
+  [ & coll]
+  (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
+        [status headers payload]     (make-request coll uri)]
+    (check-error payload)
+    (when-not (missing? status)
+      (make-cypher-responses payload))))

@@ -99,3 +99,13 @@
                           (tx/execute
                             transaction
                             [(tx/statement "CREATE n RETURN id(m)" nil)])))))
+
+(deftest ^{:edge-features true} test-simple-transaction
+  (let [result (tx/in-transaction
+                  (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})
+                  (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Another Node"}}))]
+    (is (= (count result) 2))
+    (is (= (:data (first result)) [{:row [{:name "My Node"}]}]))
+    (is (= (:columns (first result)) ["n"] ))
+    (is (= (:data (second result)) [{:row [{:name "My Another Node"}]}]))
+    (is (= (:columns (second result)) ["n"] ))))
