@@ -93,7 +93,7 @@
   (let [{:keys [status headers body]}   (rest/DELETE (:location transaction))
         payload                         (json/decode body true)]
     (check-error payload)
-    (:errors payload)))
+    (:results payload)))
 
 (defn in-transaction
   [ & coll]
