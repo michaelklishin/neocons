@@ -22,12 +22,6 @@
 (defrecord CypherQueryResponse
     [data columns])
 
-(defrecord Statement
-    [^String query parameters])
-
-(defrecord Transaction
-    [^String commit ^String location ^String expires])
-
 
 
 (def ^{:const true} slash    "/")
@@ -181,13 +175,3 @@
                           (not (:type payload)))      instantiate-path-from
                           :else                            identity)]
     (f payload)))
-
-(defn instantiate-transaction
-  [^String commit ^String location ^String expires]
-  (Transaction. commit location expires))
-
-(defn instantiate-statement
-  ([^String query]
-     (Statement. query nil))
-  ([^String query parameters]
-     (Statement. query parameters)))

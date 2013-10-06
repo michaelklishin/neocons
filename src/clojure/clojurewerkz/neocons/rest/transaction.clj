@@ -5,6 +5,16 @@
             [clojurewerkz.support.http.statuses :refer :all]))
 
 
+(defn- instantiate-transaction
+  [^String commit ^String location ^String expires]
+  {:commit commit :location location :expires expires})
+
+(defn statement
+  ([^String query]
+     {:query query :parameters nil})
+  ([^String query parameters]
+     {:query query :parameters parameters}))
+
 (defn tx-statement-from
   [m]
   {:statement (:query m) :parameters (:parameters m)})
@@ -38,7 +48,7 @@
   ([] (begin []))
   ([xs]
    (let [[status headers payload]       (make-request xs (:transaction-uri rest/*endpoint*))
-        neo-trans                       (records/instantiate-transaction
+        neo-trans                       (instantiate-transaction
                                           (:commit payload)
                                           (headers "location")
                                           (get-in payload [:transaction :expires]))]
@@ -59,7 +69,7 @@
     (let [[status headers payload]          (make-request xs uri)]
       (if (missing? status)
         nil
-        [(records/instantiate-transaction
+        [(instantiate-transaction
            (:commit payload)
            (:location transaction)
            (get-in payload [:transaction :expires]))
