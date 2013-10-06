@@ -96,6 +96,8 @@
     (:results payload)))
 
 (defn in-transaction
+  "It makes multiple statements and starts a transaction and commits them in a single HTTP request.
+  For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request"
   [ & coll]
   (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
         [status headers payload]     (make-request coll uri)]
