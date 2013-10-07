@@ -107,14 +107,12 @@
 
 
 (defmacro with-transaction
-  [commit-on-success name & body]
-  `(let [trans#    (begin)
-         ~name     (first trans#)]
-     (try
-       ~@body
-       (when ~commit-on-success
-         (commit ~name))
-       (catch Exception e#
-         ((when-not (re-find #"Transaction failed and rolled back" (. e# getMessage))
-            (rollback ~name))
-          (throw e#))))))
+  [transaction commit-on-success & body]
+  `(try
+     ~@body
+     (when ~commit-on-success
+       (commit ~transaction))
+     (catch Exception e#
+       ((when-not (re-find #"Transaction failed and rolled back" (. e# getMessage))
+          (rollback ~transaction))
+        (throw e#)))))

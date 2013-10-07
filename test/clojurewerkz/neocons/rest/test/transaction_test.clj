@@ -111,52 +111,56 @@
     (is (= (:columns (second result)) ["n"] ))))
 
 (deftest ^{:edge-features true} test-with-transaction-commit-success
-  (is (= (tx/with-transaction
-           true
-           transaction
-           (are [x] (not (nil? (x transaction)))
-                :commit
-                :location
-                :expires)
-           (let [[_ r] (tx/execute
-                         transaction
-                         [(tx/statement "CREATE (n {props}) RETURN n"
-                                        {:props {:name "My Node"}})])]
-             (= (count (:data r)) 1)
-             (= (:data r) [{:row [{:name "My Node"}]}])
-             (= (:columns r) ["n"]))))
-      []))
+  (let [[transaction _] (tx/begin)]
+    (is (= (tx/with-transaction
+             transaction
+             true
+             (are [x] (not (nil? (x transaction)))
+                  :commit
+                  :location
+                  :expires)
+             (let [[_ r] (tx/execute
+                           transaction
+                           [(tx/statement "CREATE (n {props}) RETURN n"
+                                          {:props {:name "My Node"}})])]
+               (= (count (:data r)) 1)
+               (= (:data r) [{:row [{:name "My Node"}]}])
+               (= (:columns r) ["n"]))))
+        [])))
 
 
 (deftest ^{:edge-features true} test-with-transaction-rollback-success
-  (tx/with-transaction
-    false
-    transaction
-    (let [[_ r] (tx/execute
-                  transaction
-                  [(tx/statement "CREATE (n {props}) RETURN n"
-                                 {:props {:name "My Node"}})])]
-      (= (count (:data r)) 1)
-      (= (:data r) [{:row [{:name "My Node"}]}])
-      (= (:columns r) ["n"]))
-    (is (= (tx/rollback transaction)
-           []))))
+  (let [[transaction _] (tx/begin)]
+    (tx/with-transaction
+      transaction
+      false
+      (let [[_ r] (tx/execute
+                    transaction
+                    [(tx/statement "CREATE (n {props}) RETURN n"
+                                   {:props {:name "My Node"}})])]
+        (= (count (:data r)) 1)
+        (= (:data r) [{:row [{:name "My Node"}]}])
+        (= (:columns r) ["n"]))
+      (is (= (tx/rollback transaction)
+             [])))))
 
 (deftest ^{:edge-features true} test-with-transaction-manual-failure
-  (is (thrown-with-msg?
-        Exception #"Rolling back"
-        (tx/with-transaction
-          true
-          transaction
-          (tx/execute
-            transaction [(tx/statement "CREATE (n) RETURN ID(n)")])
-          (throw (Exception. "Rolling back"))))))
+  (let [[transaction _] (tx/begin)]
+    (is (thrown-with-msg?
+          Exception #"Rolling back"
+          (tx/with-transaction
+            transaction
+            true
+            (tx/execute
+              transaction [(tx/statement "CREATE (n) RETURN ID(n)")])
+            (throw (Exception. "Rolling back")))))))
 
 (deftest ^{:edge-features true} test-with-transaction-transaction-failure
-  (is (thrown-with-msg?
-        Exception #"STATEMENT_SYNTAX_ERROR"
-        (tx/with-transaction
-          true
-          transaction
-          (tx/execute
-            transaction [(tx/statement "CREATE (n) RETURN ID(m)")])))))
+  (let [[transaction _] (tx/begin)]
+    (is (thrown-with-msg?
+          Exception #"STATEMENT_SYNTAX_ERROR"
+          (tx/with-transaction
+            transaction
+            true
+            (tx/execute
+              transaction [(tx/statement "CREATE (n) RETURN ID(m)")]))))))

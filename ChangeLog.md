@@ -51,17 +51,17 @@ committing or checking for exceptions, you can use the
 ``` clojure
 (require '[clojurewerkz.neocons.rest.transaction :as tx])
 
-(tx/with-transaction
-  true
-  transaction
-  (let [[_ result] (tx/execute transaction [(tx/statement "CREATE (n) RETURN ID(n)")])]
-    (println result)))
+(let [[transaction _] (tx/begin)]
+  (tx/with-transaction
+    transaction
+    true
+    (let [[_ result] (tx/execute transaction [(tx/statement "CREATE (n) RETURN ID(n)")])]
+    (println result))))
 ```
 
 If there any errors while processing, the transaction is rolled back.
 
-The first argument to the macro is `commit-on-success`, the second argument is
-the name of the variable you want to use for holding the transaction information.
+The first argument is the variable which holds the transaction information. The second argument to the macro is `commit-on-success`, which commits the transaction there are no errors.
 
 ## Changes between Neocons 1.1.0-beta4 and 1.1.0
 
