@@ -42,7 +42,7 @@ that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 `clojurewerkz.neocons.rest.transaction/rollback` commit
 and roll a transaction back, respectively.
 
-#### Macro for working with a transaction.
+#### Macro for working with a transaction
 
 If you want a more fine grained control of working in a transaction without manually
 committing or checking for exceptions, you can use the
@@ -60,7 +60,7 @@ committing or checking for exceptions, you can use the
 
 If there any errors while processing, the transaction is rolled back.
 
-The first argument to the macro is `commit-on-sucess`, the second argument is
+The first argument to the macro is `commit-on-success`, the second argument is
 the name of the variable you want to use for holding the transaction information.
 
 ## Changes between Neocons 1.1.0-beta4 and 1.1.0
