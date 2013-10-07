@@ -56,6 +56,11 @@
       nil
       [neo-trans (make-cypher-responses payload)]))))
 
+(defn begin-tx
+  "Starts a transaction without any cypher statements."
+  []
+  (first (begin [])))
+
 (defn execute
   "Executes cypher statements in an existing transaction and returns the new transaction record along
   with the cypher results. If no cypher statement is give, the effect is to keep the transaction alive
@@ -104,3 +109,15 @@
     (raise-on-any-errors payload)
     (when-not (missing? status)
       (make-cypher-responses payload))))
+
+
+(defmacro with-transaction
+  [transaction commit-on-success? & body]
+  `(try
+     ~@body
+     (when ~commit-on-success?
+       (commit ~transaction))
+     (catch Exception e#
+       ((when-not (re-find #"Transaction failed and rolled back" (. e# getMessage))
+          (rollback ~transaction))
+        (throw e#)))))
