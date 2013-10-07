@@ -42,7 +42,26 @@ that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 `clojurewerkz.neocons.rest.transaction/rollback` commit
 and roll a transaction back, respectively.
 
+#### Macro for working with a transaction.
 
+If you want a more fine grained control of working in a transaction without manually
+committing or checking for exceptions, you can use the
+`clojurewerkz.neocons.rest.transaction/with-transaction` macro.
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.transaction :as tx])
+
+(tx/with-transaction
+  true
+  transaction
+  (let [result (tx/execute transaction (tx/statement "CREATE (n) RETURN n")]
+    (println (last result))))
+```
+
+If there any errors while processing, the transaction is rolled back.
+
+The first argument to the macro is `commit-on-sucess`, the second argument is
+the name of the variable you want to use for holding the transaction information.
 
 ## Changes between Neocons 1.1.0-beta4 and 1.1.0
 
@@ -229,7 +248,7 @@ the index unique (that allows/guarantees only one entry per key).
 
 `clojurewerkz.neocons.rest.relationships/create-index` works the same way.
 
-`clojurewerkz.neocons.rest.nodes/add-to-index` and 
+`clojurewerkz.neocons.rest.nodes/add-to-index` and
 `clojurewerkz.neocons.rest.relationships/add-to-index` now take an additional (optional) argument that, when set to true,
 will add the entity to the index [as unique](http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html)
 

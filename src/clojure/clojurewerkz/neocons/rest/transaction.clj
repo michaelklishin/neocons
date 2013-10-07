@@ -104,3 +104,17 @@
     (raise-on-any-errors payload)
     (when-not (missing? status)
       (make-cypher-responses payload))))
+
+
+(defmacro with-transaction
+  [commit-on-sucess name & body]
+  `(let [trans#    (begin)
+         ~name     (first trans#)]
+     (try
+       ~@body
+       (when ~commit-on-sucess
+         (commit ~name))
+       (catch Exception e#
+         ((when-not (re-find #"Transaction failed and rolled back" (. e# getMessage))
+            (rollback ~name))
+          (throw e#))))))
