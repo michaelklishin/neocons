@@ -109,3 +109,62 @@
     (is (= (:columns (first result)) ["n"] ))
     (is (= (:data (second result)) [{:row [{:name "My Another Node"}]}]))
     (is (= (:columns (second result)) ["n"] ))))
+
+(deftest ^{:edge-features true} test-empty-begin-tx
+  (let [transaction (tx/begin-tx)]
+    (are [x] (not (nil? (x transaction)))
+         :commit
+         :location
+         :expires)))
+
+
+(deftest ^{:edge-features true} test-with-transaction-commit-success
+  (let [transaction (tx/begin-tx)]
+    (is (= (tx/with-transaction
+             transaction
+             true
+             (let [[_ r] (tx/execute
+                           transaction
+                           [(tx/statement "CREATE (n {props}) RETURN n"
+                                          {:props {:name "My Node"}})])]
+               (= (count (:data r)) 1)
+               (= (:data r) [{:row [{:name "My Node"}]}])
+               (= (:columns r) ["n"]))))
+        [])))
+
+
+(deftest ^{:edge-features true} test-with-transaction-rollback-success
+  (let [transaction (tx/begin-tx)]
+    (tx/with-transaction
+      transaction
+      false
+      (let [[_ r] (tx/execute
+                    transaction
+                    [(tx/statement "CREATE (n {props}) RETURN n"
+                                   {:props {:name "My Node"}})])]
+        (= (count (:data r)) 1)
+        (= (:data r) [{:row [{:name "My Node"}]}])
+        (= (:columns r) ["n"]))
+      (is (= (tx/rollback transaction)
+             [])))))
+
+(deftest ^{:edge-features true} test-with-transaction-manual-failure
+  (let [transaction (tx/begin-tx)]
+    (is (thrown-with-msg?
+          Exception #"Rolling back"
+          (tx/with-transaction
+            transaction
+            true
+            (tx/execute
+              transaction [(tx/statement "CREATE (n) RETURN ID(n)")])
+            (throw (Exception. "Rolling back")))))))
+
+(deftest ^{:edge-features true} test-with-transaction-transaction-failure
+  (let [transaction (tx/begin-tx)]
+    (is (thrown-with-msg?
+          Exception #"STATEMENT_SYNTAX_ERROR"
+          (tx/with-transaction
+            transaction
+            true
+            (tx/execute
+              transaction [(tx/statement "CREATE (n) RETURN ID(m)")]))))))
