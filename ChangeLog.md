@@ -31,10 +31,10 @@ that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 ``` clojure
 (require '[clojurewerkz.neocons.rest.transaction :as tx])
 
-(let [t (tx/begin [{:statement "CREATE (n {props} RETURN n)" {:props {:name "My node"}}}])]
+(let [[t _] (tx/begin [{:statement "CREATE (n {props}) RETURN n" :props {:name "My node"}}])]
   (tx/commit t))
 
-(let [t (tx/begin)]
+(let [[t _] (tx/begin)]
   (tx/rollback t))
 ```
 
@@ -54,8 +54,8 @@ committing or checking for exceptions, you can use the
 (tx/with-transaction
   true
   transaction
-  (let [result (tx/execute transaction (tx/statement "CREATE (n) RETURN n")]
-    (println (last result))))
+  (let [[_ result] (tx/execute transaction [(tx/statement "CREATE (n) RETURN ID(n)")])]
+    (println result)))
 ```
 
 If there any errors while processing, the transaction is rolled back.
