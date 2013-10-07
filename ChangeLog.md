@@ -51,7 +51,7 @@ committing or checking for exceptions, you can use the
 ``` clojure
 (require '[clojurewerkz.neocons.rest.transaction :as tx])
 
-(let [[transaction _] (tx/begin)]
+(let [transaction (tx/begin-tx)]
   (tx/with-transaction
     transaction
     true
