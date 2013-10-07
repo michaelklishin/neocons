@@ -1,4 +1,4 @@
-## Changes between Neocons 1.1.0 and 2.0.0-beta1
+## Changes between Neocons 1.1.0 and 2.0.0-beta2
 
 ### Clojure 1.3 Support Dropped
 
