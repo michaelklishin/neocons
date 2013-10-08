@@ -46,7 +46,7 @@
   ([node] (get-labels (str (:location-uri node) "/labels"))))
 
 (defn- encode-params
-  [label ^String x y]
+  [^String label ^String x y]
   (str (:uri rest/*endpoint*)
        "label/"
        label
@@ -63,7 +63,7 @@
 
   You can also pass a property name and value you want to filter the nodes on.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-get-nodes-by-label-and-property"
-  ([label] (get-all-nodes label nil nil))
+  ([^String label] (get-all-nodes label nil nil))
   ([^String label ^String prop-name prop-value]
    (let [base-uri (encode-params label prop-name prop-value)
          {:keys [status headers body]} (rest/GET base-uri)]
