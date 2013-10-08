@@ -1,3 +1,11 @@
+## Changes between Neocons 2.0.0-beta2 and 2.0.0-beta3
+
+### Labels Support (Neo4J 2.0 Only)
+
+TBD
+
+
+
 ## Changes between Neocons 1.1.0 and 2.0.0-beta2
 
 ### Clojure 1.3 Support Dropped
