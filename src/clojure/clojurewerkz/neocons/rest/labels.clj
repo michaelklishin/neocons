@@ -1,7 +1,9 @@
 (ns clojurewerkz.neocons.rest.labels
-  (:require [clojurewerkz.neocons.rest          :as rest]
-            [clojurewerkz.neocons.rest.records  :as records]
+  (:require [clj-http.client                    :as http]
             [cheshire.custom                    :as json]
+            [clojure.string                     :as string]
+            [clojurewerkz.neocons.rest          :as rest]
+            [clojurewerkz.neocons.rest.records  :as records]
             [clojurewerkz.support.http.statuses :as support])
   (:refer-clojure :exclude [replace remove]))
 
@@ -24,12 +26,12 @@
 (defn remove
   "This removes the specified label from the node.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-removing-a-label-from-a-node"
-  [node label]
+  [node ^String label]
   (rest/DELETE
     (str (:location-uri node) "/labels/" label)))
 
 (defn- get-labels
-  [uri]
+  [^String uri]
   (let [{:keys [status headers body]} (rest/GET uri)]
     (when-not (support/missing? status)
       (json/decode body true))))
@@ -43,11 +45,23 @@
   ([] (get-labels (str (:uri rest/*endpoint*) "labels")))
   ([node] (get-labels (str (:location-uri node) "/labels"))))
 
+(defn- encode-params
+  [^String x y]
+  (when-not (or (string/blank? x) (string/blank? y))
+    (str "?"
+         (http/generate-query-string
+           [[x (json/encode y)]]))))
+
+
 (defn get-all-nodes
   "This returns all the nodes which have a particular label.
-  See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-get-all-nodes-with-a-label"
-  [label]
-  (let [base-uri (str (:uri rest/*endpoint*) "label/" label "/nodes")
-        {:keys [status headers body]} (rest/GET base-uri)]
-    (when-not (support/missing? status)
-      (map records/instantiate-node-from (json/decode body true)))))
+  See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-get-all-nodes-with-a-label
+
+  You can also pass a property name and value you want to filter the nodes on.
+  See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-get-nodes-by-label-and-property"
+  ([label] (get-all-nodes label nil nil))
+  ([^String label ^String prop-name prop-value]
+   (let [base-uri (str (:uri rest/*endpoint*) "label/" label "/nodes" (encode-params prop-name prop-value))
+         {:keys [status headers body]} (rest/GET base-uri)]
+     (when-not (support/missing? status)
+       (map records/instantiate-node-from (json/decode body true))))))

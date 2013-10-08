@@ -39,9 +39,12 @@
     (labels/add n "MyLabel")
     (is (some #(= (:id %) (:id n)) (labels/get-all-nodes "MyLabel")))))
 
+(deftest test-get-all-nodes-with-label-and-property
+  (let [n (nodes/create {"name" "bob ross"})]
+    (labels/add n "MyLabel")
+    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes "MyLabel" "name" "bob ross")))))
+
 (deftest test-get-all-labels
   (let [n (nodes/create)]
     (labels/add n "MyLabel")
     (is (some #(= % "MyLabel") (labels/get-all-labels)))))
-
-
