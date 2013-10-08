@@ -46,11 +46,15 @@
   ([node] (get-labels (str (:location-uri node) "/labels"))))
 
 (defn- encode-params
-  [^String x y]
-  (when-not (or (string/blank? x) (string/blank? y))
-    (str "?"
-         (http/generate-query-string
-           [[x (json/encode y)]]))))
+  [label ^String x y]
+  (str (:uri rest/*endpoint*)
+       "label/"
+       label
+       "/nodes"
+       (when-not (or (string/blank? x) (string/blank? y))
+         (str "?"
+              (http/generate-query-string
+                [[x (json/encode y)]])))))
 
 
 (defn get-all-nodes
@@ -61,7 +65,7 @@
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-get-nodes-by-label-and-property"
   ([label] (get-all-nodes label nil nil))
   ([^String label ^String prop-name prop-value]
-   (let [base-uri (str (:uri rest/*endpoint*) "label/" label "/nodes" (encode-params prop-name prop-value))
+   (let [base-uri (encode-params label prop-name prop-value)
          {:keys [status headers body]} (rest/GET base-uri)]
      (when-not (support/missing? status)
        (map records/instantiate-node-from (json/decode body true))))))
