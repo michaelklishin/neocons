@@ -19,8 +19,8 @@ during the execution will trigger a rollback.
 (require '[clojurewerkz.neocons.rest.transaction :as tx])
 
 (tx/in-transaction
-  (tx/statement "CREATE (n {props} RETURN n)" {:props {:name "Node 1"}})
-  (tx/statement "CREATE (n {props} RETURN n)" {:props {:name "Node 2"}}))
+  (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "Node 1"}})
+  (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "Node 2"}}))
 ```
 
 #### Lower Level API
@@ -29,12 +29,10 @@ Transactions are instantiated from a group of Cypher statements
 that are passed as maps to `clojurewerkz.neocons.rest.transaction/begin`:
 
 ``` clojure
-(require '[clojurewerkz.neocons.rest.transaction :as tx])
-
-(let [[t _] (tx/begin [{:statement "CREATE (n {props}) RETURN n" :props {:name "My node"}}])]
+(let [t (tx/begin-tx [{:statement "CREATE (n {props}) RETURN n" {:props {:name "My node"}}}])]
   (tx/commit t))
 
-(let [[t _] (tx/begin)]
+(let [t (tx/begin-tx)]
   (tx/rollback t))
 ```
 
