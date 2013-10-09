@@ -17,7 +17,7 @@
     (when-not (support/missing? status)
       (json/decode body true))))
 
-(defn get-all-indexes
+(defn get-all
   "Gets all indices for a given label.
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-indexes.html#rest-api-list-indexes-for-a-label"
 
