@@ -49,8 +49,10 @@
 
   If no label is passed, gets information about all the constraints.
   http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-get-all-constraints"
-  ([] (get-uniquess-constraints "" ""))
-  ([label] (get-uniquess-constraints label "")))
+  ([]
+     (get-uniquess-constraints "" ""))
+  ([label]
+     (get-uniquess-constraints label "")))
 
 (defn drop
   "Drops an existing uniquenss constraint on an label and property.
