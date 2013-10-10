@@ -1,4 +1,5 @@
 (ns clojurewerkz.neocons.rest.batch
+  "Batch operation execution"
   (:require [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.records :as rec]
             [cheshire.custom                   :as json]))
