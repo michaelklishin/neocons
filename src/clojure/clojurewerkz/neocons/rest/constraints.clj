@@ -22,26 +22,26 @@
         {:keys [status headers body]} (rest/POST (get-uniqueness-url label) :body req-body)]
     (when-not (missing? status)
       (conv/map-values-to-kw
-        (json/decode body true)
-        [:label :property-keys]))))
+       (json/decode body true)
+       [:label :property-keys]))))
 
 (defn- get-uniquess-constraints
   [label ^String uri]
   (let [{:keys [status headers body]} (rest/GET (str (get-url label) uri))]
     (when-not (missing? status)
       (map
-        #(conv/map-values-to-kw % [:label :property-keys])
-        (json/decode body true)))))
+       #(conv/map-values-to-kw % [:label :property-keys])
+       (json/decode body true)))))
 
 (defn get-unique
   "Gets information about a unique contrainst on a given label and a property.
   If no property is passed, gets all the various uniqueness constraints for that label.
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-get-all-uniqueness-constraints-for-a-label
   and http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-get-all-constraints-for-a-label"
-([label]
- (get-uniquess-constraints label "/uniqueness"))
-([label property]
- (get-uniquess-constraints label (str "/uniqueness/" (conv/kw-to-string property)))))
+  ([label]
+     (get-uniquess-constraints label "/uniqueness"))
+  ([label property]
+     (get-uniquess-constraints label (str "/uniqueness/" (conv/kw-to-string property)))))
 
 (defn get-all
   "Gets information about all the different constraints associated with a label.
