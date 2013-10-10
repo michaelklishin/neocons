@@ -29,3 +29,11 @@
   (if (coll? x)
     (map keyword x)
     (keyword x)))
+
+(defn map-values-to-kw
+  [m keyseq]
+  "Converts a subset of values of a map into keywords"
+  (into m
+        (map
+          (fn [[x y]] [x (string-to-kw y)])
+          (select-keys m keyseq))))

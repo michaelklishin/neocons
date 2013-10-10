@@ -20,13 +20,17 @@
   (let [req-body                      (json/encode {"property_keys" [(conv/kw-to-string property)]})
         {:keys [status headers body]} (rest/POST (get-uniqueness-url label) :body req-body)]
     (when-not (support/missing? status)
-      (json/decode body true))))
+      (conv/map-values-to-kw
+        (json/decode body true)
+        [:label :property-keys]))))
 
 (defn- get-uniquess-constraints
   [label ^String uri]
   (let [{:keys [status headers body]} (rest/GET (str (get-url label) uri))]
     (when-not (support/missing? status)
-      (json/decode body true))))
+      (map
+        #(conv/map-values-to-kw % [:label :property-keys])
+        (json/decode body true)))))
 
 (defn get-unique
   "Gets information about a unique contrainst on a given label and a property.

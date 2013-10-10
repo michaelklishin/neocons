@@ -16,7 +16,9 @@
   (let [req-body                      (json/encode {"property_keys" [(conv/kw-to-string property)]})
         {:keys [status headers body]} (rest/POST (get-url label) :body req-body)]
     (when-not (support/missing? status)
-      (json/decode body true))))
+      (conv/map-values-to-kw
+        (json/decode body true)
+        [:label]))))
 
 (defn get-all
   "Gets all indices for a given label.

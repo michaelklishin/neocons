@@ -6,12 +6,12 @@
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
-(def dummy-label (gensym "DummyPerson"))
+(def dummy-label :DummyPerson)
 
 (deftest ^{:edge-features true} test-indexes
   (if (= (idx/get-all dummy-label)  [])
     (let [a (idx/create dummy-label :name)]
-      (is (= a {:label (str dummy-label), :property-keys ["name"]}))
+      (is (= a {:label dummy-label, :property-keys ["name"]}))
       (idx/drop dummy-label :name)
       (is (= (idx/get-all dummy-label) [])))
     (let [b (idx/drop dummy-label :name)]
