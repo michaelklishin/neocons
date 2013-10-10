@@ -1,4 +1,5 @@
 (ns clojurewerkz.neocons.rest.constraints
+  "Operations on constraints (Neo4J 2.0+ only)"
   (:require [clojurewerkz.neocons.rest              :as rest]
             [cheshire.custom                        :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
