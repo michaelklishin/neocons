@@ -2,7 +2,7 @@
   (:require [clojurewerkz.neocons.rest          :as rest]
             [clojurewerkz.neocons.rest.records  :as records]
             [cheshire.custom                    :as json]
-            [clojurewerkz.support.http.statuses :refer :all]))
+            [clojurewerkz.support.http.statuses :refer [missing?]]))
 
 
 (defn- instantiate-transaction
