@@ -1,40 +1,43 @@
 (ns clojurewerkz.neocons.rest.labels
-  (:require [clj-http.client                    :as http]
-            [cheshire.custom                    :as json]
-            [clojure.string                     :as string]
-            [clojurewerkz.neocons.rest          :as rest]
-            [clojurewerkz.neocons.rest.records  :as records]
-            [clojurewerkz.support.http.statuses :as support])
+  (:require [clj-http.client                          :as http]
+            [cheshire.custom                          :as json]
+            [clojure.string                           :as string]
+            [clojurewerkz.neocons.rest                :as rest]
+            [clojurewerkz.neocons.rest.conversion     :as conv]
+            [clojurewerkz.neocons.rest.records        :as records]
+            [clojurewerkz.support.http.statuses       :as support])
   (:refer-clojure :exclude [replace remove]))
 
 (defn add
-  "Adds a string label or a list of string labels to a node.
+  "Adds a string label or a list of labels (string or keyword) to a node.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-adding-a-label-to-a-node"
   [node labels]
   (rest/POST
     (str (:location-uri node) "/labels")
-    :body (json/encode labels)))
+    :body (json/encode (conv/kw-to-string labels))))
 
 (defn replace
   "This removes any existing labels for the node and adds the labels passes to the function.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-replacing-labels-on-a-node"
   [node labels]
-  (rest/PUT
-    (str (:location-uri node) "/labels")
-    :body (json/encode labels)))
+  (conv/string-to-kw
+    (rest/PUT
+      (str (:location-uri node) "/labels")
+      :body (json/encode labels))))
 
 (defn remove
   "This removes the specified label from the node.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-removing-a-label-from-a-node"
-  [node ^String label]
+  [node label]
   (rest/DELETE
-    (str (:location-uri node) "/labels/" label)))
+    (str (:location-uri node) "/labels/" (conv/kw-to-string label))))
 
 (defn- get-labels
   [^String uri]
   (let [{:keys [status headers body]} (rest/GET uri)]
     (when-not (support/missing? status)
-      (json/decode body true))))
+      (conv/string-to-kw
+        (json/decode body true)))))
 
 (defn get-all-labels
   "This function gets all labels in the database if no argument is passed.
@@ -49,12 +52,12 @@
   [^String label ^String x y]
   (str (:uri rest/*endpoint*)
        "label/"
-       label
+       (conv/kw-to-string label)
        "/nodes"
-       (when-not (or (string/blank? x) (string/blank? y))
+       (when (and x y)
          (str "?"
               (http/generate-query-string
-                [[x (json/encode y)]])))))
+                [[(conv/kw-to-string x) (json/encode y)]])))))
 
 
 (defn get-all-nodes
@@ -63,8 +66,8 @@
 
   You can also pass a property name and value you want to filter the nodes on.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-get-nodes-by-label-and-property"
-  ([^String label] (get-all-nodes label nil nil))
-  ([^String label ^String prop-name prop-value]
+  ([label] (get-all-nodes label nil nil))
+  ([label prop-name prop-value]
    (let [base-uri (encode-params label prop-name prop-value)
          {:keys [status headers body]} (rest/GET base-uri)]
      (when-not (support/missing? status)

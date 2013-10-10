@@ -15,3 +15,15 @@
   nil
   (to-id [id]
     nil))
+
+(defn kw-to-string
+  [x]
+  (if (coll? x)
+    (map name x)
+    (name x)))
+
+(defn string-to-kw
+  [x]
+  (if (coll? x)
+    (map keyword x)
+    (keyword x)))
