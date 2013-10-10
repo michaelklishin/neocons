@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.cypher
   (:refer-clojure :exclude [empty?])
-  (:require [cheshire.custom           :as json]
+  (:require [cheshire.core             :as json]
             [clojurewerkz.neocons.rest :as rest]
             [clojurewerkz.support.http.statuses :refer :all]
             [clojurewerkz.neocons.rest.helpers  :refer :all]

@@ -2,7 +2,7 @@
   "Transaction management functions (Neo4J 2.0+ only)"
   (:require [clojurewerkz.neocons.rest          :as rest]
             [clojurewerkz.neocons.rest.records  :as records]
-            [cheshire.custom                    :as json]
+            [cheshire.core                      :as json]
             [clojurewerkz.support.http.statuses :refer [missing?]]))
 
 

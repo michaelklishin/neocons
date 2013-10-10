@@ -1,7 +1,7 @@
 (ns clojurewerkz.neocons.rest.constraints
   "Operations on constraints (Neo4J 2.0+ only)"
   (:require [clojurewerkz.neocons.rest              :as rest]
-            [cheshire.custom                        :as json]
+            [cheshire.core                          :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
             [clojurewerkz.support.http.statuses     :refer [missing?]])
   (:refer-clojure :exclude [drop]))

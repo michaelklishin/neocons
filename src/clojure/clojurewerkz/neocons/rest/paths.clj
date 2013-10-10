@@ -2,7 +2,7 @@
   (:import  [java.net URI URL]
             clojurewerkz.neocons.rest.Neo4JEndpoint
             [clojurewerkz.neocons.rest.records Node Relationship Path])
-  (:require [cheshire.custom                 :as json]
+  (:require [cheshire.core                     :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.support.http.statuses :refer :all]
             [clojurewerkz.neocons.rest.helpers  :refer :all]

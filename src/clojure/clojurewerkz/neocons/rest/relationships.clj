@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.relationships
   (:refer-clojure :exclude [get find])
-  (:require [cheshire.custom                 :as json]
+  (:require [cheshire.core                     :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.cypher  :as cypher]
             [clojurewerkz.neocons.rest.paths   :as paths]

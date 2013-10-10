@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.index
   (:require [clojurewerkz.neocons.rest              :as rest]
-            [cheshire.custom                        :as json]
+            [cheshire.core                          :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
             [clojurewerkz.support.http.statuses     :refer [missing?]])
   (:refer-clojure :exclude [drop]))

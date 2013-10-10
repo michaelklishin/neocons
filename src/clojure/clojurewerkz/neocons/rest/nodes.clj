@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.nodes
   (:require [clj-http.client                         :as http]
-            [cheshire.custom                         :as json]
+            [cheshire.core                           :as json]
             [clojurewerkz.neocons.rest               :as rest]
             [clojurewerkz.neocons.rest.relationships :as relationships]
             [clojurewerkz.neocons.rest.paths         :as paths]
