@@ -15,3 +15,25 @@
   nil
   (to-id [id]
     nil))
+
+(defn kw-to-string
+  "Converts a single keyword/string or a list of keywords/strings to string/strings"
+  [x]
+  (if (coll? x)
+    (map name x)
+    (name x)))
+
+(defn string-to-kw
+  "Converts a single string or a list of strings to keyword/keywords."
+  [x]
+  (if (coll? x)
+    (map keyword x)
+    (keyword x)))
+
+(defn map-values-to-kw
+  [m keyseq]
+  "Converts a subset of values of a map into keywords"
+  (into m
+        (map
+          (fn [[x y]] [x (string-to-kw y)])
+          (select-keys m keyseq))))
