@@ -47,14 +47,14 @@
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-a-transaction"
   ([] (begin []))
   ([xs]
-   (let [[status headers payload]       (make-request xs (:transaction-uri rest/*endpoint*))
-        neo-trans                       (instantiate-transaction
-                                          (:commit payload)
-                                          (headers "location")
-                                          (get-in payload [:transaction :expires]))]
-    (if (missing? status)
-      nil
-      [neo-trans (make-cypher-responses payload)]))))
+     (let [[status headers payload]       (make-request xs (:transaction-uri rest/*endpoint*))
+           neo-trans                       (instantiate-transaction
+                                            (:commit payload)
+                                            (headers "location")
+                                            (get-in payload [:transaction :expires]))]
+       (if (missing? status)
+         nil
+         [neo-trans (make-cypher-responses payload)]))))
 
 (defn begin-tx
   "Starts a transaction without any cypher statements."
@@ -71,14 +71,14 @@
   ([transaction] (execute transaction []))
   ([transaction xs] (execute transaction xs (:location transaction)))
   ([transaction xs uri]
-    (let [[status headers payload]          (make-request xs uri)]
-      (if (missing? status)
-        nil
-        [(instantiate-transaction
+     (let [[status headers payload]          (make-request xs uri)]
+       (if (missing? status)
+         nil
+         [(instantiate-transaction
            (:commit payload)
            (:location transaction)
            (get-in payload [:transaction :expires]))
-         (make-cypher-responses payload)]))))
+          (make-cypher-responses payload)]))))
 
 (defn commit
   "Commits an existing transaction with option cypher statements which are applied
@@ -87,8 +87,8 @@
 
   ([transaction] (commit transaction []))
   ([transaction xs]
-   (let [[_ result] (execute transaction xs (:commit transaction))]
-    result)))
+     (let [[_ result] (execute transaction xs (:commit transaction))]
+       result)))
 
 (defn rollback
   "Rolls back an existing transaction.
@@ -105,7 +105,7 @@
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request"
   [ & coll]
   (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
-       [status headers payload]      (make-request coll uri)]
+        [status headers payload]      (make-request coll uri)]
     (raise-on-any-errors payload)
     (when-not (missing? status)
       (make-cypher-responses payload))))
