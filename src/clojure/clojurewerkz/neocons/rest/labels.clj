@@ -1,4 +1,5 @@
 (ns clojurewerkz.neocons.rest.labels
+  "Operations on labels (Neo4J 2.0+)"
   (:require [clj-http.client                          :as http]
             [cheshire.custom                          :as json]
             [clojure.string                           :as string]
