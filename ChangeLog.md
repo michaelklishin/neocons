@@ -31,6 +31,19 @@ Deleting a label from a node is possible with `clojurewerkz.neocons.rest.labels/
 (nl/remove node "database")
 ```
 
+`clojurewerkz.neocons.rest.labels/get-all-labels` is the function that lists
+either all labels in the database (w/o arguments) or on a specific node
+(1-arity):
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.labels :as nl])
+
+(nl/get-all-labels node)
+;= [all labels]
+(nl/get-all-labels node)
+;= [labels on node]
+```
+
 
 
 
