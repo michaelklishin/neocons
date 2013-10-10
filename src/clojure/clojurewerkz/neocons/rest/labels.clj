@@ -5,7 +5,7 @@
             [clojurewerkz.neocons.rest                :as rest]
             [clojurewerkz.neocons.rest.conversion     :as conv]
             [clojurewerkz.neocons.rest.records        :as records]
-            [clojurewerkz.support.http.statuses       :as support])
+            [clojurewerkz.support.http.statuses       :refer [missing?]])
   (:refer-clojure :exclude [replace remove]))
 
 (defn add
@@ -35,7 +35,7 @@
 (defn- get-labels
   [^String uri]
   (let [{:keys [status headers body]} (rest/GET uri)]
-    (when-not (support/missing? status)
+    (when-not (missing? status)
       (conv/string-to-kw
         (json/decode body true)))))
 
@@ -70,5 +70,5 @@
   ([label prop-name prop-value]
    (let [base-uri (encode-params label prop-name prop-value)
          {:keys [status headers body]} (rest/GET base-uri)]
-     (when-not (support/missing? status)
+     (when-not (missing? status)
        (map records/instantiate-node-from (json/decode body true))))))

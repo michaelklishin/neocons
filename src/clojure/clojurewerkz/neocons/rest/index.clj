@@ -2,7 +2,7 @@
   (:require [clojurewerkz.neocons.rest              :as rest]
             [cheshire.custom                        :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
-            [clojurewerkz.support.http.statuses     :as support])
+            [clojurewerkz.support.http.statuses     :refer [missing?]])
   (:refer-clojure :exclude [drop]))
 
 (defn- get-url
@@ -15,7 +15,7 @@
   [label property]
   (let [req-body                      (json/encode {"property_keys" [(conv/kw-to-string property)]})
         {:keys [status headers body]} (rest/POST (get-url label) :body req-body)]
-    (when-not (support/missing? status)
+    (when-not (missing? status)
       (conv/map-values-to-kw
         (json/decode body true)
         [:label]))))
@@ -26,7 +26,7 @@
 
   [label]
   (let [{:keys [status headers body]} (rest/GET (get-url label))]
-    (when-not (support/missing? status)
+    (when-not (missing? status)
       (json/decode body true))))
 
 (defn drop

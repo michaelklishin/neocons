@@ -2,7 +2,7 @@
   (:require [clojurewerkz.neocons.rest              :as rest]
             [cheshire.custom                        :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
-            [clojurewerkz.support.http.statuses     :as support])
+            [clojurewerkz.support.http.statuses     :refer [missing?]])
   (:refer-clojure :exclude [drop]))
 
 (defn- get-url
@@ -19,7 +19,7 @@
   [label property]
   (let [req-body                      (json/encode {"property_keys" [(conv/kw-to-string property)]})
         {:keys [status headers body]} (rest/POST (get-uniqueness-url label) :body req-body)]
-    (when-not (support/missing? status)
+    (when-not (missing? status)
       (conv/map-values-to-kw
         (json/decode body true)
         [:label :property-keys]))))
@@ -27,7 +27,7 @@
 (defn- get-uniquess-constraints
   [label ^String uri]
   (let [{:keys [status headers body]} (rest/GET (str (get-url label) uri))]
-    (when-not (support/missing? status)
+    (when-not (missing? status)
       (map
         #(conv/map-values-to-kw % [:label :property-keys])
         (json/decode body true)))))
