@@ -17,12 +17,14 @@
     nil))
 
 (defn kw-to-string
+  "Converts a single keyword/string or a list of keywords/strings to string/strings"
   [x]
   (if (coll? x)
     (map name x)
     (name x)))
 
 (defn string-to-kw
+  "Converts a single string or a list of strings to keyword/keywords."
   [x]
   (if (coll? x)
     (map keyword x)
