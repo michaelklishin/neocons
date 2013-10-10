@@ -46,7 +46,8 @@
   "Starts a transaction with the given cypher statements and returns a transaction record along with
   the result of the cypher statements. 0-arity creates a transaction without any cypher statements.
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-a-transaction"
-  ([] (begin []))
+  ([]
+     (begin []))
   ([xs]
      (let [[status headers payload]       (make-request xs (:transaction-uri rest/*endpoint*))
            neo-trans                       (instantiate-transaction
@@ -86,7 +87,8 @@
   before the transaction is committed.
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-commit-an-open-transaction"
 
-  ([transaction] (commit transaction []))
+  ([transaction]
+     (commit transaction []))
   ([transaction xs]
      (let [[_ result] (execute transaction xs (:commit transaction))]
        result)))
