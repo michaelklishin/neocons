@@ -2,7 +2,35 @@
 
 ### Labels Support (Neo4J 2.0 Only)
 
-TBD
+`clojurewerkz.neocons.rest.labels` is a new namespace that provides
+support for [labels in Neo4J 2.0](http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html).
+
+It is possible to add, replace, remove and retrieve labels to/from a node.
+
+To add labels to a node, use `clojurewerkz.neocons.rest.labels/add`:
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.labels :as nl])
+
+(nl/add node ["neo4j" "clojure"])
+```
+
+To add replaces all labels on a node, use `clojurewerkz.neocons.rest.labels/replace`:
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.labels :as nl])
+
+(nl/replace node ["graph" "database"])
+```
+
+Deleting a label from a node is possible with `clojurewerkz.neocons.rest.labels/remove`:
+
+``` clojure
+(require '[clojurewerkz.neocons.rest.labels :as nl])
+
+(nl/remove node "database")
+```
+
 
 
 
