@@ -1,5 +1,13 @@
 ## Changes between Neocons 2.0.0-beta2 and 2.0.0-beta3
 
+### Constraints Support (Neo4J 2.0 Only)
+
+`clojurewerkz.neocons.rest.constraints` is a new namespace that
+implements [Neo4J 2.0 constraints](http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html).
+
+TODO: code examples
+
+
 ### Labels Support (Neo4J 2.0 Only)
 
 `clojurewerkz.neocons.rest.labels` is a new namespace that provides
