@@ -5,7 +5,19 @@
 `clojurewerkz.neocons.rest.constraints` is a new namespace that
 implements [Neo4J 2.0 constraints](http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html).
 
-TODO: code examples
+``` clojure
+(require '[clojurewerkz.neocons.rest.constraints :as cts])
+
+;; create a uniqueness constraint
+(cts/create-unique "Person" :name)
+
+;; get constraint info
+(cts/get-unique "Person" :name)
+
+;; drop a constraint
+(cts/drop "Person" :name)
+```
+
 
 
 ### Labels Support (Neo4J 2.0 Only)
