@@ -7,7 +7,7 @@
 (neorest/connect! "http://localhost:7474/db/data/")
 
 (def dummy-label :DummyPerson)
-(def dummy-constraint {:label dummy-label, :property-keys [:name], :type "UNIQUENESS"})
+(def dummy-constraint {:label dummy-label :property-keys [:name] :type "UNIQUENESS"})
 
 (deftest ^{:edge-features true} test-constraints
   (try
