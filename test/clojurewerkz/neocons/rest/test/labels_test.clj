@@ -14,8 +14,8 @@
 
 (deftest ^{:edge-features true} test-creating-multiple-label
   (let [n (nodes/create)]
-    (labels/add n [:MyLabel, :MyOtherLabel])
-    (is (= (labels/get-all-labels n) [:MyLabel, :MyOtherLabel]))))
+    (labels/add n [:MyLabel :MyOtherLabel])
+    (is (= (labels/get-all-labels n) [:MyLabel :MyOtherLabel]))))
 
 (deftest ^{:edge-features true} test-creating-invalid-label
   (let [n (nodes/create)]
@@ -25,8 +25,8 @@
 (deftest ^{:edge-features true} test-replacing-label
   (let [n (nodes/create)]
     (labels/add n :MyLabel)
-    (labels/replace n [:MyOtherLabel, :MyThirdLabel])
-    (is (= (labels/get-all-labels n) [:MyOtherLabel, :MyThirdLabel]))))
+    (labels/replace n [:MyOtherLabel :MyThirdLabel])
+    (is (= (labels/get-all-labels n) [:MyOtherLabel :MyThirdLabel]))))
 
 (deftest ^{:edge-features true} test-deleting-label
   (let [n (nodes/create)]
