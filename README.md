@@ -22,6 +22,8 @@ Neocons currently supports the following features (all via REST API, so [you can
  * Efficient multi-get via [Cypher queries](http://docs.neo4j.org/chunked/stable/cypher-query-lang.html)
  * Convenience functions for working with relationships and paths
  * Neo4J 2.0 [transactions](http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html)
+ * Neo4J 2.0 [labels](http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html)
+ * Neo4J 2.0 [constraints](http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html)
 
 
 ## Documentation & Examples
