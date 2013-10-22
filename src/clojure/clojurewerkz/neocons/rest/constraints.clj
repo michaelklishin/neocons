@@ -3,8 +3,7 @@
   (:require [clojurewerkz.neocons.rest              :as rest]
             [cheshire.core                          :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
-            [clojurewerkz.support.http.statuses     :refer [missing?]])
-  (:refer-clojure :exclude [drop]))
+            [clojurewerkz.support.http.statuses     :refer [missing?]]))
 
 (defn- get-url
   [^String label]
@@ -54,7 +53,7 @@
   ([label]
      (get-uniquess-constraints label "")))
 
-(defn drop
+(defn drop-unique
   "Drops an existing uniquenss constraint on an label and property.
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-drop-constraint"
 
