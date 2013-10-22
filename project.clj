@@ -34,6 +34,8 @@
                    :dev {:plugins [[codox "0.6.4"]]
                          :codox {:sources ["src/clojure"]
                                  :output-dir "doc/api"}}}
+  :codox {:src-dir-uri "https://github.com/michaelklishin/neocons/blob/master/"
+          :src-linenum-anchor-prefix "L"}
   :aliases        {"all" ["with-profile" "dev:dev,1.4:dev,1.6:dev,master"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
