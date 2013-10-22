@@ -1,4 +1,5 @@
 (ns clojurewerkz.neocons.rest.index
+  "Operations on indices (Neo4J 2.0+ only)."
   (:require [clojurewerkz.neocons.rest              :as rest]
             [cheshire.core                          :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]

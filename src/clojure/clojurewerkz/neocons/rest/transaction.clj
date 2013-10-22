@@ -1,5 +1,5 @@
 (ns clojurewerkz.neocons.rest.transaction
-  "Transaction management functions (Neo4J 2.0+ only)"
+  "Transaction management functions (Neo4J 2.0+ only)."
   (:require [clojurewerkz.neocons.rest          :as rest]
             [clojurewerkz.neocons.rest.records  :as records]
             [cheshire.core                      :as json]
@@ -44,7 +44,8 @@
 
 (defn begin
   "Starts a transaction with the given cypher statements and returns a transaction record along with
-  the result of the cypher statements. 0-arity creates a transaction without any cypher statements.
+  the result of the cypher statements. 0-arity function call starts a transaction without any cypher statements.
+
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-a-transaction"
   ([]
      (begin []))
@@ -65,7 +66,7 @@
 
 (defn execute
   "Executes cypher statements in an existing transaction and returns the new transaction record along
-  with the cypher results. If no cypher statement is give, the effect is to keep the transaction alive
+  with the cypher results. If no cypher statements are give, the effect is to keep the transaction alive
   (prevent it from timing out).
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-execute-statements-in-an-open-transaction"
@@ -83,8 +84,9 @@
           (make-cypher-responses payload)]))))
 
 (defn commit
-  "Commits an existing transaction with option cypher statements which are applied
+  "Commits an existing transaction with optional cypher statements which are applied
   before the transaction is committed.
+
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-commit-an-open-transaction"
 
   ([transaction]
@@ -95,6 +97,7 @@
 
 (defn rollback
   "Rolls back an existing transaction.
+
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-rollback-an-open-transaction"
 
   [transaction]
@@ -105,7 +108,14 @@
 
 (defn in-transaction
   "It takes multiple statements and starts a transaction and commits them in a single HTTP request.
-  For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request"
+
+  For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request
+
+  A simple example is given below,
+
+    (tx/in-transaction
+      (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Node\"}})
+      (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Another Node\"}}))"
   [ & coll]
   (let [uri                          (str (:transaction-uri rest/*endpoint*) "/commit")
         [status headers payload]      (make-request coll uri)]
