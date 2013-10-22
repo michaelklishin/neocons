@@ -69,6 +69,9 @@
   with the cypher results. If no cypher statements are give, the effect is to keep the transaction alive
   (prevent it from timing out).
 
+  If no uri is given, the uri defaults to the location uri of the transaction and it
+  should suffice for most use cases.
+
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-execute-statements-in-an-open-transaction"
 
   ([transaction] (execute transaction []))
@@ -111,7 +114,7 @@
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request
 
-  A simple example is given below,
+  A simple example is given below:
 
     (tx/in-transaction
       (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Node\"}})
@@ -125,6 +128,21 @@
 
 
 (defmacro with-transaction
+  "A basic macro which gives a fine grained control of working in a transaction without manually
+  committing or checking for exceptions.
+
+  If commit-on-success? is true, then the given transaction is committed on success. Else the user
+  is responsible for manually committing/rolling back the transaction. At any stage if there is an
+  error, the transaction is rolled back if necessary.
+
+  A simple example is given below:
+
+  (let [transaction (tx/begin-tx)]
+  (tx/with-transaction
+    transaction
+    true
+    (let [[_ result] (tx/execute transaction [(tx/statement \"CREATE (n) RETURN ID(n)\")])]
+    (println result))))"
   [transaction commit-on-success? & body]
   `(try
      ~@body

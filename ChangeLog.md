@@ -15,7 +15,7 @@ implements [Neo4J 2.0 constraints](http://docs.neo4j.org/chunked/milestone/rest-
 (cts/get-unique "Person" :name)
 
 ;; drop a constraint
-(cts/drop "Person" :name)
+(cts/drop-unique "Person" :name)
 ```
 
 
