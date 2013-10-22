@@ -31,7 +31,7 @@
   :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
                    :1.6 {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
                    :master {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
-                   :dev {:plugins [[codox "0.6.4"]]
+                   :dev {:plugins [[codox "0.6.6"]]
                          :codox {:sources ["src/clojure"]
                                  :output-dir "doc/api"}}}
   :codox {:src-dir-uri "https://github.com/michaelklishin/neocons/blob/master/"
