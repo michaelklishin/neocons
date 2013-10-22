@@ -20,7 +20,7 @@
       (is (contains? (set (cts/get-unique dummy-label)) dummy-constraint))
       (is (contains? (set (cts/get-all dummy-label)) dummy-constraint))
       (is (contains? (set (cts/get-all)) dummy-constraint))
-      (cts/drop dummy-label :name)
+      (cts/drop-unique dummy-label :name)
       (is (not (contains?
                  (set (cts/get-unique dummy-label))
                  dummy-constraint))))))
