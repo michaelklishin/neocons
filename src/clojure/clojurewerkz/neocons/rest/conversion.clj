@@ -1,4 +1,5 @@
-(ns clojurewerkz.neocons.rest.conversion)
+(ns clojurewerkz.neocons.rest.conversion
+  (:require [clj-http.util          :as hutil]))
 
 (defprotocol Identifier
   (^Long to-id [input] "Coerces the input to an id that Neo4J can use to identify nodes, relationships and so on"))
@@ -40,3 +41,8 @@
         (map
           (fn [[x y]] [x (string-to-kw y)])
           (select-keys m keyseq))))
+
+(defn encode-kw-to-string
+  {:no-doc true}
+  [x]
+  (hutil/url-encode (kw-to-string x)))

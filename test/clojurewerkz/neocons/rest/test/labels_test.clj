@@ -48,3 +48,10 @@
   (let [n (nodes/create)]
     (labels/add n :MyLabel)
     (is (some #(= % :MyLabel) (labels/get-all-labels)))))
+
+(deftest ^{:edge-features true} test-creating-delete-one-strange-label
+  (let [n (nodes/create)]
+    (is (= (labels/get-all-labels n) []))
+    (labels/add n "A&B")
+    (labels/remove n "A&B")
+    (is (= (labels/get-all-labels n) []))))

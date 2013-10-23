@@ -9,12 +9,16 @@
             [clojurewerkz.support.http.statuses       :refer [missing?]])
   (:refer-clojure :exclude [replace remove rest]))
 
+(defn- get-location-url
+  [node]
+  (str (:location-uri node) "/labels"))
+
 (defn add
   "Adds a string label or a list of labels (string or keyword) to a node.
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-adding-a-label-to-a-node"
   [node labels]
   (rest/POST
-   (str (:location-uri node) "/labels")
+   (get-location-url node)
    :body (json/encode (conv/kw-to-string labels))))
 
 (defn replace
@@ -23,7 +27,7 @@
   [node labels]
   (conv/string-to-kw
    (rest/PUT
-    (str (:location-uri node) "/labels")
+    (get-location-url node)
     :body (json/encode labels))))
 
 (defn remove
@@ -31,7 +35,7 @@
   See http://docs.neo4j.org/chunked/milestone/rest-api-node-labels.html#rest-api-removing-a-label-from-a-node"
   [node label]
   (rest/DELETE
-   (str (:location-uri node) "/labels/" (conv/kw-to-string label))))
+    (str (get-location-url node) "/" (conv/encode-kw-to-string label))))
 
 (defn- get-labels
   [^String uri]
@@ -49,13 +53,13 @@
   ([]
      (get-labels (str (:uri rest/*endpoint*) "labels")))
   ([node]
-     (get-labels (str (:location-uri node) "/labels"))))
+     (get-labels (get-location-url node))))
 
 (defn- encode-params
   [^String label ^String x y]
   (str (:uri rest/*endpoint*)
        "label/"
-       (conv/kw-to-string label)
+       (conv/encode-kw-to-string label)
        "/nodes"
        (when (and x y)
          (str "?"

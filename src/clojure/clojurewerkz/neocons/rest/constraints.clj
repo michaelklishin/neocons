@@ -8,7 +8,7 @@
 
 (defn- get-url
   [^String label]
-  (str (:uri rest/*endpoint*) "schema/constraint/" (conv/kw-to-string label)))
+  (str (:uri rest/*endpoint*) "schema/constraint/" (conv/encode-kw-to-string label)))
 
 (defn- get-uniqueness-url
   [label]
@@ -42,7 +42,7 @@
   ([label]
      (get-uniquess-constraints label "/uniqueness"))
   ([label property]
-     (get-uniquess-constraints label (str "/uniqueness/" (conv/kw-to-string property)))))
+     (get-uniquess-constraints label (str "/uniqueness/" (conv/encode-kw-to-string property)))))
 
 (defn get-all
   "Gets information about all the different constraints associated with a label.
@@ -60,5 +60,5 @@
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-drop-constraint"
 
   [label property]
-  (rest/DELETE (str (get-uniqueness-url label) "/" (conv/kw-to-string property))))
+  (rest/DELETE (str (get-uniqueness-url label) "/" (conv/encode-kw-to-string property))))
 
