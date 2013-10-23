@@ -3,7 +3,8 @@
   (:require [clojurewerkz.neocons.rest              :as rest]
             [cheshire.core                          :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
-            [clojurewerkz.support.http.statuses     :refer [missing?]]))
+            [clojurewerkz.support.http.statuses     :refer [missing?]])
+  (:refer-clojure :exclude [rest]))
 
 (defn- get-url
   [^String label]

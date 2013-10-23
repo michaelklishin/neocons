@@ -3,7 +3,8 @@
   (:require [clojurewerkz.neocons.rest          :as rest]
             [clojurewerkz.neocons.rest.records  :as records]
             [cheshire.core                      :as json]
-            [clojurewerkz.support.http.statuses :refer [missing?]]))
+            [clojurewerkz.support.http.statuses :refer [missing?]])
+  (:refer-clojure :exclude [rest]))
 
 
 (defn- instantiate-transaction
@@ -42,6 +43,17 @@
   [payload]
   (map records/instantiate-cypher-query-response-from (:results payload)))
 
+(defn- real-execute
+  [transaction xs uri]
+  (let [[status headers payload]          (make-request xs uri)]
+    (if (missing? status)
+      nil
+      [(instantiate-transaction
+         (:commit payload)
+         (:location transaction)
+         (get-in payload [:transaction :expires]))
+       (make-cypher-responses payload)])))
+
 (defn begin
   "Starts a transaction with the given cypher statements and returns a transaction record along with
   the result of the cypher statements. 0-arity function call starts a transaction without any cypher statements.
@@ -60,7 +72,7 @@
          [neo-trans (make-cypher-responses payload)]))))
 
 (defn begin-tx
-  "Starts a transaction without any cypher statements."
+  "Starts a transaction without any cypher statements and returns it."
   []
   (first (begin [])))
 
@@ -69,33 +81,21 @@
   with the cypher results. If no cypher statements are give, the effect is to keep the transaction alive
   (prevent it from timing out).
 
-  If no uri is given, the uri defaults to the location uri of the transaction and it
-  should suffice for most use cases.
-
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-execute-statements-in-an-open-transaction"
 
   ([transaction] (execute transaction []))
-  ([transaction xs] (execute transaction xs (:location transaction)))
-  ([transaction xs uri]
-     (let [[status headers payload]          (make-request xs uri)]
-       (if (missing? status)
-         nil
-         [(instantiate-transaction
-           (:commit payload)
-           (:location transaction)
-           (get-in payload [:transaction :expires]))
-          (make-cypher-responses payload)]))))
+  ([transaction xs] (real-execute transaction xs (:location transaction))))
 
 (defn commit
   "Commits an existing transaction with optional cypher statements which are applied
-  before the transaction is committed.
+  before the transaction is committed. It returns the result of the cypher statements.
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-commit-an-open-transaction"
 
   ([transaction]
      (commit transaction []))
   ([transaction xs]
-     (let [[_ result] (execute transaction xs (:commit transaction))]
+     (let [[_ result] (real-execute transaction xs (:commit transaction))]
        result)))
 
 (defn rollback
@@ -142,7 +142,7 @@
     transaction
     true
     (let [[_ result] (tx/execute transaction [(tx/statement \"CREATE (n) RETURN ID(n)\")])]
-    (println result))))"
+      (println result))))"
   [transaction commit-on-success? & body]
   `(try
      ~@body

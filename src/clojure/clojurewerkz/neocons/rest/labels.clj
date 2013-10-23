@@ -7,7 +7,7 @@
             [clojurewerkz.neocons.rest.conversion     :as conv]
             [clojurewerkz.neocons.rest.records        :as records]
             [clojurewerkz.support.http.statuses       :refer [missing?]])
-  (:refer-clojure :exclude [replace remove]))
+  (:refer-clojure :exclude [replace remove rest]))
 
 (defn add
   "Adds a string label or a list of labels (string or keyword) to a node.

@@ -18,6 +18,7 @@
 
 (defn kw-to-string
   "Converts a single keyword/string or a list of keywords/strings to string/strings"
+  {:no-doc true}
   [x]
   (if (coll? x)
     (map name x)
@@ -25,14 +26,16 @@
 
 (defn string-to-kw
   "Converts a single string or a list of strings to keyword/keywords."
+  {:no-doc true}
   [x]
   (if (coll? x)
     (map keyword x)
     (keyword x)))
 
 (defn map-values-to-kw
-  [m keyseq]
   "Converts a subset of values of a map into keywords"
+  {:no-doc true}
+  [m keyseq]
   (into m
         (map
           (fn [[x y]] [x (string-to-kw y)])
