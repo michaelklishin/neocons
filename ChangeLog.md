@@ -1,3 +1,9 @@
+
+## Changes between Neocons 2.0.0-beta3 and 2.0.0-rc1
+
+Renamed the `clojurewerkz.neocons.rest.constraints/drop` to `clojurewerkz.neocons.rest.constraints/drop-unique`
+for future portability.
+
 ## Changes between Neocons 2.0.0-beta2 and 2.0.0-beta3
 
 ### Constraints Support (Neo4J 2.0 Only)
@@ -15,7 +21,7 @@ implements [Neo4J 2.0 constraints](http://docs.neo4j.org/chunked/milestone/rest-
 (cts/get-unique "Person" :name)
 
 ;; drop a constraint
-(cts/drop-unique "Person" :name)
+(cts/drop "Person" :name)
 ```
 
 
