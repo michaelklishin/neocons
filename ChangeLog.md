@@ -1,8 +1,10 @@
-
 ## Changes between Neocons 2.0.0-beta3 and 2.0.0-rc1
 
-Renamed the `clojurewerkz.neocons.rest.constraints/drop` to `clojurewerkz.neocons.rest.constraints/drop-unique`
-for future portability.
+### Renamed Function
+
+Renamed the `clojurewerkz.neocons.rest.constraints/drop` to
+`clojurewerkz.neocons.rest.constraints/drop-unique` for future
+portability.
 
 ## Changes between Neocons 2.0.0-beta2 and 2.0.0-beta3
 
