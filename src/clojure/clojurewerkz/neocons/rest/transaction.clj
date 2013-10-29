@@ -145,9 +145,10 @@
       (println result))))"
   [transaction commit-on-success? & body]
   `(try
-     ~@body
-     (when ~commit-on-success?
-       (commit ~transaction))
+     (let [ret# (do ~@body)]
+       (when ~commit-on-success?
+         (commit ~transaction))
+       ret#)
      (catch Exception e#
        ((when-not (re-find #"Transaction failed and rolled back" (. e# getMessage))
           (rollback ~transaction))
