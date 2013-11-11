@@ -1,3 +1,11 @@
+## Changes between Neocons 2.0.0-rc1 and 2.0.0
+
+### Clojure 1.6 Compatibility Fixes
+
+Neocons is again compatible with recent
+releases of Clojure 1.6 (master).
+
+
 ## Changes between Neocons 2.0.0-beta3 and 2.0.0-rc1
 
 ### Renamed Function
