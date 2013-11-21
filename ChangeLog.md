@@ -1,6 +1,11 @@
 ## Changes between Neocons 2.0.0 and 2.0.1
 
-No changes yet.
+### Neo4J 2.0 Index Creation Fix
+
+Neocons will now use a key name accepted by Neo4J 2.0.0-rc1
+when creating indexes.
+
+Contributed by Rohit Aggarwal.
 
 
 
