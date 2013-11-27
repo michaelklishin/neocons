@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.spatial-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.spatial       :as sp])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.spatial       :as sp]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
