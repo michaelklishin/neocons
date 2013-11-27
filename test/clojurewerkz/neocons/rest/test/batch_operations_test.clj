@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.batch-operations-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nn]
-            [clojurewerkz.neocons.rest.batch         :as b])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.batch         :as b]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
