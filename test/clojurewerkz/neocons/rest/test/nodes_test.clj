@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.nodes-test
   (:require [clojurewerkz.neocons.rest       :as neorest]
-            [clojurewerkz.neocons.rest.nodes :as nodes])
-  (:use clojure.test
-        [clojurewerkz.neocons.rest.records :only [instantiate-node-from]]))
+            [clojurewerkz.neocons.rest.nodes :as nodes]
+            [clojure.test :refer :all]
+            [clojurewerkz.neocons.rest.records :refer [instantiate-node-from]]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
