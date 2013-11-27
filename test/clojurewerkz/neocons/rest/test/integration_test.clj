@@ -2,8 +2,8 @@
   (:require [clojurewerkz.neocons.rest :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nn]
             [clojurewerkz.neocons.rest.relationships :as nr]
-            [clojurewerkz.neocons.rest.paths         :as np])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.paths         :as np]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
