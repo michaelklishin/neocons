@@ -2,11 +2,10 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.paths         :as paths])
-  (:use clojure.test
-        [clojure.set :only [subset?]]
-        [clojure.pprint :only [pprint]]
-        [clojurewerkz.neocons.rest.records :only [instantiate-node-from instantiate-rel-from instantiate-path-from]]))
+            [clojurewerkz.neocons.rest.paths         :as paths]
+            [clojure.test :refer :all]
+            [clojure.set :refer [subset?]]
+            [clojurewerkz.neocons.rest.records :refer [instantiate-node-from instantiate-rel-from instantiate-path-from]]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
