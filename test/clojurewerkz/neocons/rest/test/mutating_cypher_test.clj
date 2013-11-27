@@ -4,8 +4,8 @@
             [clojurewerkz.neocons.rest.paths         :as paths]
             [clojurewerkz.neocons.rest.relationships :as rel]
             clojurewerkz.neocons.rest.records
-            [clojurewerkz.neocons.rest.cypher        :as cy])
-  (:use clojure.test)
+            [clojurewerkz.neocons.rest.cypher        :as cy]
+            [clojure.test :refer :all])
   (:import clojurewerkz.neocons.rest.records.Node))
 
 (neorest/connect! "http://localhost:7474/db/data/")
