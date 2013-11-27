@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.transaction-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.transaction   :as tx])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.transaction   :as tx]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
