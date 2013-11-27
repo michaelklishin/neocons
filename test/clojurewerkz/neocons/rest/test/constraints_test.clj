@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.constraints-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.constraints   :as cts])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.constraints   :as cts]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
