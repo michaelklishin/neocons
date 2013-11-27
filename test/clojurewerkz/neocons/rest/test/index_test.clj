@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.index-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.index         :as idx])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.index         :as idx]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
