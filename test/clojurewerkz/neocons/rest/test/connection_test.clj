@@ -1,6 +1,6 @@
 (ns clojurewerkz.neocons.rest.test.connection-test
-  (:require [clojurewerkz.neocons.rest :as neorest])
-  (:use clojure.test))
+  (:require [clojurewerkz.neocons.rest :as neorest]
+            [clojure.test :refer :all]))
 
 (println (str "Using Clojure version " *clojure-version*))
 (neorest/connect! "http://localhost:7474/db/data/")
