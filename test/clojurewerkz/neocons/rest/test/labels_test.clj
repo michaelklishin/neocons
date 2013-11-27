@@ -1,8 +1,8 @@
 (ns clojurewerkz.neocons.rest.test.labels-test
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
-            [clojurewerkz.neocons.rest.labels        :as labels])
-  (:use clojure.test))
+            [clojurewerkz.neocons.rest.labels        :as labels]
+            [clojure.test :refer :all]))
 
 (neorest/connect! "http://localhost:7474/db/data/")
 
