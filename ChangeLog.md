@@ -1,5 +1,10 @@
 ## Changes between Neocons 2.0.0 and 2.0.1
 
+### clj-http upgraded to 0.7.8
+
+Neocons now uses clj-http 0.7.8.
+
+
 ### Neo4J 2.0 Index Creation Fix
 
 Neocons will now use a key name accepted by Neo4J 2.0.0-rc1
