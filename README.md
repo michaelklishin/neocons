@@ -43,7 +43,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: as of October 2013, it is about 2
+Neocons is not a young project: as of October 2014, it is about 2
 years old, with active production use from week 1. It is now moving
 towards `2.0` release. Nearly API parts are set in stone and most
 documentation guides in good shape.
@@ -138,7 +138,7 @@ a pull request on Github.
 
 ## License
 
-Copyright (C) 2011-2013 Michael S. Klishin, Alex Petrov
+Copyright (C) 2011-2014 Michael S. Klishin, Alex Petrov
 
 Double licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html) (the same as Clojure) or
 the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
