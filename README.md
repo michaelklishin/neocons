@@ -157,3 +157,7 @@ is highly unlikely that it will ever cover embedding, should Neo4J license stay 
 
 If you need a solid well-maintained EPLv1-licensed embeddable graph database for Clojure 1.3.0 and later, please
 take a look at [Titanium](http://titanium.clojurewerkz.org) and [Jiraph](https://github.com/flatland/jiraph).
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/michaelklishin/neocons/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
