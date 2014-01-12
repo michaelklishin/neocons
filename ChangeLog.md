@@ -1,5 +1,9 @@
 ## Changes between Neocons 2.0.0 and 2.1.0-beta1
 
+### Cheshire 5.3
+
+Neocons now uses [Cheshire](https://github.com/dakrone/cheshire) 5.3.
+
 ### clj-http upgraded to 0.7.8
 
 Neocons now uses clj-http 0.7.8.
