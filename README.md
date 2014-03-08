@@ -43,10 +43,11 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: as of October 2014, it is about 2
-years old, with active production use from week 1. It is now moving
-towards `2.0` release. Nearly API parts are set in stone and most
-documentation guides in good shape.
+Neocons is not a young project: first released in October 2011, it is over 2
+years old, with active production use from week 1.
+
+It now supports Neo4j 2.0 release and the API is quite stable. Documentation
+is in good shape, too.
 
 
 
