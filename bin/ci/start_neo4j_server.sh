@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="2.0.0-RC1"
+VERSION="2.0.1"
 TARBALL="neo4j2.0.tar.gz"
 
 cd /tmp
