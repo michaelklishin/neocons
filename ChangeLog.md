@@ -4,9 +4,9 @@
 
 Neocons now uses [Cheshire](https://github.com/dakrone/cheshire) 5.3.
 
-### clj-http upgraded to 0.7.8
+### clj-http upgraded to 0.9.1
 
-Neocons now uses clj-http 0.7.8.
+Neocons now uses clj-http 0.9.1.
 
 ### Neo4J 2.0 Index Creation Fix
 
