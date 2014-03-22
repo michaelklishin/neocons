@@ -29,7 +29,7 @@
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
-                   :1.6 {:dependencies [[org.clojure/clojure "1.6.0-RC1"]]}
+                   :1.6 {:dependencies [[org.clojure/clojure "1.6.0-RC2"]]}
                    :master {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
                    :dev {:plugins [[codox "0.6.6"]]
                          :codox {:sources ["src/clojure"]
