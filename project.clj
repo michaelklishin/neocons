@@ -3,7 +3,7 @@
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure  "1.5.1"]
+  :dependencies [[org.clojure/clojure  "1.6.0"]
                  [cheshire             "5.3.1"]
                  [clj-http             "0.9.1"]
                  [clojurewerkz/support "0.20.0"]
@@ -29,8 +29,8 @@
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
-                   :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
-                   :master {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
+                   :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
+                   :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
                    :dev {:plugins [[codox "0.6.6"]]
                          :codox {:sources ["src/clojure"]
                                  :output-dir "doc/api"}}
@@ -40,7 +40,7 @@
                    :cljhttp076 {:dependencies [[clj-http "0.7.6"]]}}
   :codox {:src-dir-uri "https://github.com/michaelklishin/neocons/blob/master/"
           :src-linenum-anchor-prefix "L"}
-  :aliases        {"all" ["with-profile" "dev:dev,1.4:dev,1.6:dev,master:dev,cljhttp076:dev,1.6,cljhttp076"]}
+  :aliases        {"all" ["with-profile" "dev:dev,1.4:dev,1.5:dev,master:dev,cljhttp076:dev,1.5,cljhttp076"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail :update :always}}
