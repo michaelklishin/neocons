@@ -207,7 +207,10 @@
 
 
 (deftest test-listing-of-relationship-types
-  (is (subset? #{"links" "likes" "follows" "friend" "relative" "loves"} (set (relationships/all-types)))))
+  (let [node   (nodes/create)
+        _      (relationships/create node (nodes/create) :friend)
+        _      (relationships/create node (nodes/create) :relative)]
+    (is (subset? #{"friend" "relative"} (set (relationships/all-types))))))
 
 
 (deftest test-updating-relationship-properties
