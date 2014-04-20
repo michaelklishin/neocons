@@ -30,29 +30,32 @@
   global-options {:throw-entire-message? true
                   :accept                :json})
 
+(defn- get-options
+  [^Connection connection options]
+  (merge global-options (:http-auth connection) (:options connection) options))
+
 
 (defn GET
   [^Connection connection ^String uri & {:as options}]
   (io!
-   (http/get uri (merge global-options (:http-auth connection) (:options connection) options))))
+   (http/get uri (get-options connection options))))
 
 (defn POST
   [^Connection connection ^String uri &{:keys [body] :as options}]
   (io!
-   (http/post uri (merge global-options (:http-auth connection) (:options connection)
-                         options {:content-type :json :body body}))))
+   (http/post uri (merge (get-options connection options)
+                         {:content-type :json :body body}))))
 
 (defn PUT
   [^Connection connection ^String uri &{:keys [body] :as options}]
   (io!
-   (http/put uri (merge global-options (:http-auth connection) (:options connection)
-                        options {:content-type :json :body body}))))
+   (http/put uri (merge (get-options connection options)
+                        {:content-type :json :body body}))))
 
 (defn DELETE
   [^Connection connection ^String uri &{:keys [body] :as options}]
   (io!
-   (http/delete uri (merge global-options (:http-auth connection) (:options connection)
-                           options))))
+   (http/delete uri (get-options connection options))))
 
 ;; REMOVE THIS!! Only needed while we are porting code.
 (def *endpoint*)
