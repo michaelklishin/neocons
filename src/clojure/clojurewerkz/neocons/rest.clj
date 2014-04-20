@@ -19,6 +19,9 @@
 ;; Implementation
 ;;
 
+(defrecord Connection [endpoint http-auth options])
+
+
 (defn- env-var
   [^String s]
   (get (System/getenv) s))
@@ -29,24 +32,24 @@
 
 
 (defn GET
-  [connection ^String uri & {:as options}]
+  [^Connection connection ^String uri & {:as options}]
   (io!
    (http/get uri (merge global-options (:http-auth connection) (:options connection) options))))
 
 (defn POST
-  [connection ^String uri &{:keys [body] :as options}]
+  [^Connection connection ^String uri &{:keys [body] :as options}]
   (io!
    (http/post uri (merge global-options (:http-auth connection) (:options connection)
                          options {:content-type :json :body body}))))
 
 (defn PUT
-  [connection ^String uri &{:keys [body] :as options}]
+  [^Connection connection ^String uri &{:keys [body] :as options}]
   (io!
    (http/put uri (merge global-options (:http-auth connection) (:options connection)
                         options {:content-type :json :body body}))))
 
 (defn DELETE
-  [connection ^String uri &{:keys [body] :as options}]
+  [^Connection connection ^String uri &{:keys [body] :as options}]
   (io!
    (http/delete uri (merge global-options (:http-auth connection) (:options connection)
                            options))))
@@ -85,7 +88,9 @@
      (let [basic-auth              (if (and login password)
                                      {:basic-auth [login password]}
                                      {})
-           {:keys [status body]}   (GET (assoc basic-auth :options {}) uri)]
+           {:keys [status body]}   (GET (map->Connection
+                                         (assoc basic-auth :options {}))
+                                        uri)]
        (if (success? status)
          (let [payload    (json/decode body true)
                http-auth  (:basic-auth basic-auth)
@@ -104,6 +109,7 @@
                                           (maybe-append uri "/")
                                           (:cypher             payload)
                                           (:transaction        payload))]
-           {:endpoint  endpoint
-            :options   {}
-            :http-auth http-auth})))))
+           (map->Connection
+            {:endpoint  endpoint
+             :options   {}
+             :http-auth http-auth}))))))

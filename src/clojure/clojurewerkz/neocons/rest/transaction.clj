@@ -14,6 +14,7 @@
             [clojurewerkz.neocons.rest.records  :as records]
             [cheshire.core                      :as json]
             [clojurewerkz.support.http.statuses :refer [missing?]])
+  (:import [clojurewerkz.neocons.rest Connection])
   (:refer-clojure :exclude [rest]))
 
 
@@ -42,7 +43,7 @@
       (throw (Exception. (str "Transaction failed and rolled back. Error: " error))))))
 
 (defn- make-request
-  [conn xs uri]
+  [^Connection conn xs uri]
   (let [req-body                      (json/encode (tx-payload-from xs))
         {:keys [status headers body]} (rest/POST conn uri :body req-body)
         payload                       (json/decode body true)]
@@ -55,7 +56,7 @@
 
 
 (defn- real-execute
-  [conn transaction xs uri]
+  [^Connection conn transaction xs uri]
   (let [[status headers payload]          (make-request conn xs uri)]
     (if (missing? status)
       nil
@@ -71,9 +72,9 @@
   the result of the cypher statements. 0-arity function call starts a transaction without any cypher statements.
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-begin-a-transaction"
-  ([connection]
+  ([^Connection connection]
      (begin connection []))
-  ([connection xs]
+  ([^Connection connection xs]
      (let [[status headers payload]       (make-request connection xs (get-in connection [:endpoint :transaction-uri]))
            neo-trans                      (instantiate-transaction
                                            (:commit payload)
@@ -86,7 +87,7 @@
 
 (defn begin-tx
   "Starts a transaction without any cypher statements and returns it."
-  [connection]
+  [^Connection connection]
   (first (begin connection [])))
 
 
@@ -97,8 +98,8 @@
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-execute-statements-in-an-open-transaction"
 
-  ([connection transaction] (execute connection transaction []))
-  ([connection transaction xs] (real-execute connection transaction xs (:location transaction))))
+  ([^Connection connection transaction] (execute connection transaction []))
+  ([^Connection connection transaction xs] (real-execute connection transaction xs (:location transaction))))
 
 (defn commit
   "Commits an existing transaction with optional cypher statements which are applied
@@ -106,9 +107,9 @@
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-commit-an-open-transaction"
 
-  ([connection transaction]
+  ([^Connection connection transaction]
      (commit connection transaction []))
-  ([connection transaction xs]
+  ([^Connection connection transaction xs]
      (let [[_ result] (real-execute connection transaction xs (:commit transaction))]
        result)))
 
@@ -117,7 +118,7 @@
 
   For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html#rest-api-rollback-an-open-transaction"
 
-  [connection transaction]
+  [^Connection connection transaction]
   (let [{:keys [status headers body]}   (rest/DELETE connection (:location transaction))
         payload                         (json/decode body true)]
     (raise-on-any-errors payload)
@@ -133,7 +134,7 @@
     (tx/in-transaction connection
       (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Node\"}})
       (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Another Node\"}}))"
-  [connection & coll]
+  [^Connection connection & coll]
   (let [uri                          (str (get-in connection [:endpoint :transaction-uri]) "/commit")
         [status headers payload]     (make-request connection coll uri)]
     (raise-on-any-errors payload)
@@ -158,7 +159,7 @@
     true
     (let [[_ result] (tx/execute connection transaction [(tx/statement \"CREATE (n) RETURN ID(n)\")])]
       (println result))))"
-  [connection transaction commit-on-success? & body]
+  [^Connection connection transaction commit-on-success? & body]
   `(try
      (let [ret# (do ~@body)]
        (when ~commit-on-success?
