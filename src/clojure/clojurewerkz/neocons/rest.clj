@@ -24,33 +24,35 @@
   (get (System/getenv) s))
 
 (def ^{:private true}
-  global-options {:throw-entire-message? true})
+  global-options {:throw-entire-message? true
+                  :accept                :json})
 
-(def ^{:private true}
-  http-authentication-options {})
 
 (defn GET
-  [^String uri & {:as options}]
+  [connection ^String uri & {:as options}]
   (io!
-   (http/get uri (merge global-options http-authentication-options options {:accept :json}))))
+   (http/get uri (merge global-options (:http-auth connection) (:options connection) options))))
 
 (defn POST
-  [^String uri &{:keys [body] :as options}]
+  [connection ^String uri &{:keys [body] :as options}]
   (io!
-   (http/post uri (merge global-options http-authentication-options options {:accept :json :content-type :json :body body}))))
+   (http/post uri (merge global-options (:http-auth connection) (:options connection)
+                         options {:content-type :json :body body}))))
 
 (defn PUT
-  [^String uri &{:keys [body] :as options}]
+  [connection ^String uri &{:keys [body] :as options}]
   (io!
-   (http/put uri (merge global-options http-authentication-options options {:accept :json :content-type :json :body body}))))
+   (http/put uri (merge global-options (:http-auth connection) (:options connection)
+                        options {:content-type :json :body body}))))
 
 (defn DELETE
-  [^String uri &{:keys [body] :as options}]
+  [connection ^String uri &{:keys [body] :as options}]
   (io!
-   (http/delete uri (merge global-options http-authentication-options options {:accept :json}))))
+   (http/delete uri (merge global-options (:http-auth connection) (:options connection)
+                           options))))
 
-
-
+;; REMOVE THIS!! Only needed while we are porting code.
+(def *endpoint*)
 
 (defrecord Neo4JEndpoint
     [version
@@ -67,8 +69,6 @@
      cypher-uri
      transaction-uri])
 
-(def ^{:dynamic true} *endpoint*)
-
 ;;
 ;; API
 ;;
@@ -82,32 +82,28 @@
            password (env-var "NEO4J_PASSWORD")]
        (connect uri login password)))
   ([^String uri login password]
-     (let [{ :keys [status body] } (if (and login password)
-                                     (GET uri :basic-auth [login password])
-                                     (GET uri))]
+     (let [basic-auth              (if (and login password)
+                                     {:basic-auth [login password]}
+                                     {})
+           {:keys [status body]}   (GET (assoc basic-auth :options {}) uri)]
        (if (success? status)
-         (let [payload (json/decode body true)]
-           (alter-var-root (var http-authentication-options) (constantly { :basic-auth [login password] }))
-           (Neo4JEndpoint. (:neo4j_version      payload)
-                           (:node               payload)
-                           (str uri (if (.endsWith uri "/")
-                                      "relationship"
-                                      "/relationship"))
-                           (:node_index         payload)
-                           (:relationship_index payload)
-                           (:relationship_types payload)
-                           (:batch              payload)
-                           (:extensions_info    payload)
-                           (:extensions         payload)
-                           (:reference_node     payload)
-                           (maybe-append uri "/")
-                           (:cypher             payload)
-                           (:transaction        payload)
-                           ))))))
-
-(defn connect!
-  "Like connect but also mutates *endpoint* state to store the connection"
-  ([uri]
-     (alter-var-root (var *endpoint*) (fn [_] (connect uri))))
-  ([uri login password]
-     (alter-var-root (var *endpoint*) (fn [_] (connect uri login password)))))
+         (let [payload    (json/decode body true)
+               http-auth  (:basic-auth basic-auth)
+               endpoint   (Neo4JEndpoint. (:neo4j_version      payload)
+                                          (:node               payload)
+                                          (str uri (if (.endsWith uri "/")
+                                                     "relationship"
+                                                     "/relationship"))
+                                          (:node_index         payload)
+                                          (:relationship_index payload)
+                                          (:relationship_types payload)
+                                          (:batch              payload)
+                                          (:extensions_info    payload)
+                                          (:extensions         payload)
+                                          (:reference_node     payload)
+                                          (maybe-append uri "/")
+                                          (:cypher             payload)
+                                          (:transaction        payload))]
+           {:endpoint  endpoint
+            :options   {}
+            :http-auth http-auth})))))
