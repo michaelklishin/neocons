@@ -71,10 +71,6 @@
   (io!
    (http/delete uri (get-options connection options))))
 
-;; REMOVE THIS!! Only needed while we are porting code.
-(def *endpoint*)
-
-
 ;;
 ;; API
 ;;

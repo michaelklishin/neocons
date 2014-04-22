@@ -15,7 +15,7 @@
             [clojurewerkz.neocons.rest.helpers  :refer :all]
             [clojurewerkz.neocons.rest.records  :refer :all])
   (:import  [java.net URI URL]
-            clojurewerkz.neocons.rest.Neo4JEndpoint))
+            [clojurewerkz.neocons.rest Connection Neo4JEndpoint]))
 
 ;;
 ;; Implementation
@@ -26,9 +26,9 @@
   (str (:uri endpoint) "ext/SpatialPlugin/graphdb/" action))
 
 (defn- post-spatial
-  [item-type body]
-  (let [{:keys [status headers body]} (rest/POST
-                                       (spatial-location-for rest/*endpoint* item-type)
+  [^Connection connection item-type body]
+  (let [{:keys [status headers body]} (rest/POST connection
+                                       (spatial-location-for (:endpoint connection) item-type)
                                        :body (json/encode body))
         payload  (json/decode body true)]
     (map instantiate-node-from payload)))
@@ -39,18 +39,22 @@
 
 (defn add-simple-point-layer
   "Add a new point layer to the spatial index"
-  ([layer lat lon]
-     (first (post-spatial "addSimplePointLayer" {:layer layer :lat lat :lon lon})))
-  ([layer]
-     (first (post-spatial "addSimplePointLayer" {:layer layer}))))
+  ([^Connection connection layer lat lon]
+     (first (post-spatial connection "addSimplePointLayer" {:layer layer :lat lat :lon lon})))
+  ([^Connection connection layer]
+     (first (post-spatial connection "addSimplePointLayer" {:layer layer}))))
 
 
 (defn add-node-to-layer
   "Add a node with the appropriate latitude and longitude properties to the given layer"
-  [layer node]
-  (first (post-spatial "addNodeToLayer" {:layer layer :node (node-location-for rest/*endpoint* (:id node))})))
+  [^Connection connection layer node]
+  (first (post-spatial connection "addNodeToLayer" {:layer layer
+                                                    :node (node-location-for (:endpoint connection) (:id node))})))
 
 (defn find-within-distance
   "Find all points in the layer within a given distance of the given point"
-  [layer point-x point-y distance-in-km]
-  (post-spatial "findGeometriesWithinDistance" {:layer layer :pointX point-x :pointY point-y :distanceInKm distance-in-km}))
+  [^Connection connection layer point-x point-y distance-in-km]
+  (post-spatial connection "findGeometriesWithinDistance" {:layer layer
+                                                           :pointX point-x
+                                                           :pointY point-y
+                                                           :distanceInKm distance-in-km}))
