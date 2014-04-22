@@ -16,7 +16,7 @@
             [clojurewerkz.neocons.rest.helpers  :refer :all]
             [clojurewerkz.neocons.rest.records  :refer :all])
   (:import  [java.net URI URL]
-            clojurewerkz.neocons.rest.Neo4JEndpoint
+            clojurewerkz.neocons.rest.Connection
             clojurewerkz.neocons.rest.records.CypherQueryResponse))
 
 ;;
@@ -24,8 +24,8 @@
 ;;
 
 (defn cypher-query-location-for
-  [^Neo4JEndpoint endpoint]
-  (:cypher-uri endpoint))
+  [^Connection connection]
+  (get-in connection [:endpoint :cypher-uri]))
 
 
 
@@ -44,10 +44,11 @@
 
 (defn query
   "Performs a Cypher query, returning columns and rows separately (the way Neo4J REST API does)"
-  ([^String q]
-     (query q {}))
-  ([^String q params]
-     (let [{:keys [status headers body]} (rest/POST (cypher-query-location-for rest/*endpoint*) :body (json/encode {:query q :params params}))]
+  ([^Connection connection ^String q]
+     (query connection q {}))
+  ([^Connection connection ^String q params]
+     (let [{:keys [status headers body]} (rest/POST connection (cypher-query-location-for connection)
+                                                    :body (json/encode {:query q :params params}))]
        (if (missing? status)
          nil
          (instantiate-cypher-query-response-from (json/decode body true))))))

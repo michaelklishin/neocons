@@ -18,8 +18,22 @@
 ;;
 ;; Implementation
 ;;
+(defrecord Neo4JEndpoint
+    [version
+     node-uri
+     relationships-uri
+     node-index-uri
+     relationship-index-uri
+     relationship-types-uri
+     batch-uri
+     extensions-info-uri
+     extensions
+     reference-node-uri
+     uri
+     cypher-uri
+     transaction-uri])
 
-(defrecord Connection [endpoint http-auth options])
+(defrecord Connection [^Neo4JEndpoint endpoint http-auth options])
 
 
 (defn- env-var
@@ -60,20 +74,6 @@
 ;; REMOVE THIS!! Only needed while we are porting code.
 (def *endpoint*)
 
-(defrecord Neo4JEndpoint
-    [version
-     node-uri
-     relationships-uri
-     node-index-uri
-     relationship-index-uri
-     relationship-types-uri
-     batch-uri
-     extensions-info-uri
-     extensions
-     reference-node-uri
-     uri
-     cypher-uri
-     transaction-uri])
 
 ;;
 ;; API
