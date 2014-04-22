@@ -88,7 +88,7 @@
                                      {:basic-auth [login password]}
                                      {})
            {:keys [status body]}   (GET (map->Connection
-                                         (assoc basic-auth :options {}))
+                                         {:http-auth basic-auth :options {}})
                                         uri)]
        (if (success? status)
          (let [payload    (json/decode body true)
