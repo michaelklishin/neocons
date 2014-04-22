@@ -12,20 +12,21 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nn]
             [clojurewerkz.neocons.rest.batch         :as b]
-            [clojure.test :refer :all]))
+            [clojure.test :refer :all]
+            [clojurewerkz.neocons.rest.test.common   :refer :all]))
 
-(neorest/connect! "http://localhost:7474/db/data/")
+(use-fixtures :once once-fixture)
 
 
 (deftest ^{:batching true} test-basic-batching-of-inserts
          (let [n     100
                rng   (range 0 n)
                xs    (doall (map (fn [x] {:n x}) rng))
-               nodes (doall (nn/create-batch xs))]
+               nodes (doall (nn/create-batch *connection* xs))]
            ;; ensure that we aren't tripped by laziness
            (is (= (count nodes) n))
            (is (= (count (map :id nodes)) n))
-           (nn/delete-many (vec nodes))))
+           (nn/delete-many *connection* (vec nodes))))
 
 
 
@@ -44,5 +45,5 @@
                               :data {}
                               :type "knows"}
                      :id     2}]
-               res (doall (b/perform ops))]
+               res (doall (b/perform *connection* ops))]
            (is (= (count res) (count ops)))))

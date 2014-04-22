@@ -12,7 +12,8 @@
   "Batch operation execution"
   (:require [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.records :as rec]
-            [cheshire.core                     :as json]))
+            [cheshire.core                     :as json])
+  (:import  clojurewerkz.neocons.rest.Connection))
 
 
 
@@ -35,7 +36,8 @@
    If you need to insert a batch of nodes at once, consider using neocons.rest.nodes/create-batch.
 
    See http://docs.neo4j.org/chunked/milestone/rest-api-batch-ops.html for more information."
-  [ops]
-  (let [{:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/encode ops))
+  [^Connection connection ops]
+  (let [{:keys [status headers body]} (rest/POST connection (get-in connection [:endpoint :batch-uri])
+                                                 :body (json/encode ops))
         payload                       (map :body (json/decode body true))]
     (map rec/instantiate-record-from payload)))
