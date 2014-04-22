@@ -282,7 +282,7 @@
   ([^Connection connection ^String idx key value]
      (let [{:keys [status body]} (rest/GET connection (rel-index-lookup-location-for (:endpoint connection) idx key value))
            xs (json/decode body true)]
-       (map (fn [doc] (fetch-from (:indexed doc))) xs))))
+       (map (fn [doc] (fetch-from connection (:indexed doc))) xs))))
 
 (defn find-one
   "Finds a single relationship using the index"

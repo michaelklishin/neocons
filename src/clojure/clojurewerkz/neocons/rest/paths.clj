@@ -135,5 +135,5 @@
 
 
 (defmethod relationship-in? Relationship
-  [^Connection connection ^long rel ^Path path]
+  [^Connection connection ^Relationship rel ^Path path]
   (relationship-in? connection (:id rel) path))
