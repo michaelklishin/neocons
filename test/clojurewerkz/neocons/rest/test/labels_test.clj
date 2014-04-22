@@ -12,56 +12,58 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.labels        :as labels]
+            [clojurewerkz.neocons.rest.test.common   :refer :all]
             [clojure.test :refer :all]))
 
-(neorest/connect! "http://localhost:7474/db/data/")
+(use-fixtures :once once-fixture)
+
 
 (deftest ^{:edge-features true} test-creating-one-label
-  (let [n (nodes/create)]
-    (is (= (labels/get-all-labels n) []))
-    (labels/add n :MyLabel)
-    (is (= (labels/get-all-labels n) [:MyLabel]))))
+  (let [n (nodes/create *connection*)]
+    (is (= (labels/get-all-labels *connection* n) []))
+    (labels/add *connection* n :MyLabel)
+    (is (= (labels/get-all-labels *connection* n) [:MyLabel]))))
 
 (deftest ^{:edge-features true} test-creating-multiple-label
-  (let [n (nodes/create)]
-    (labels/add n [:MyLabel :MyOtherLabel])
-    (is (= (labels/get-all-labels n) [:MyLabel :MyOtherLabel]))))
+  (let [n (nodes/create *connection*)]
+    (labels/add *connection* n [:MyLabel :MyOtherLabel])
+    (is (= (labels/get-all-labels *connection* n) [:MyLabel :MyOtherLabel]))))
 
 (deftest ^{:edge-features true} test-creating-invalid-label
-  (let [n (nodes/create)]
+  (let [n (nodes/create *connection*)]
     (is (thrown-with-msg? Exception #"Unable to add label"
-                          (labels/add n "")))))
+                          (labels/add *connection* n "")))))
 
 (deftest ^{:edge-features true} test-replacing-label
-  (let [n (nodes/create)]
-    (labels/add n :MyLabel)
-    (labels/replace n [:MyOtherLabel :MyThirdLabel])
-    (is (= (labels/get-all-labels n) [:MyOtherLabel :MyThirdLabel]))))
+  (let [n (nodes/create *connection*)]
+    (labels/add *connection* n :MyLabel)
+    (labels/replace *connection* n [:MyOtherLabel :MyThirdLabel])
+    (is (= (labels/get-all-labels *connection* n) [:MyOtherLabel :MyThirdLabel]))))
 
 (deftest ^{:edge-features true} test-deleting-label
-  (let [n (nodes/create)]
-    (labels/add n :MyLabel)
-    (labels/remove n :MyLabel)
-    (is (= (labels/get-all-labels n) []))))
+  (let [n (nodes/create *connection*)]
+    (labels/add *connection* n :MyLabel)
+    (labels/remove *connection* n :MyLabel)
+    (is (= (labels/get-all-labels *connection* n) []))))
 
 (deftest ^{:edge-features true} test-get-all-nodes-with-label
-  (let [n (nodes/create)]
-    (labels/add n :MyLabel)
-    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes :MyLabel)))))
+  (let [n (nodes/create *connection*)]
+    (labels/add *connection* n :MyLabel)
+    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes *connection* :MyLabel)))))
 
 (deftest ^{:edge-features true} test-get-all-nodes-with-label-and-property
-  (let [n (nodes/create {"name" "bob ross"})]
-    (labels/add n :MyLabel)
-    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes :MyLabel :name "bob ross")))))
+  (let [n (nodes/create *connection* {"name" "bob ross"})]
+    (labels/add *connection* n :MyLabel)
+    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes *connection* :MyLabel :name "bob ross")))))
 
 (deftest ^{:edge-features true} test-get-all-labels
-  (let [n (nodes/create)]
-    (labels/add n :MyLabel)
-    (is (some #(= % :MyLabel) (labels/get-all-labels)))))
+  (let [n (nodes/create *connection*)]
+    (labels/add *connection* n :MyLabel)
+    (is (some #(= % :MyLabel) (labels/get-all-labels *connection*)))))
 
 (deftest ^{:edge-features true} test-creating-delete-one-strange-label
-  (let [n (nodes/create)]
-    (is (= (labels/get-all-labels n) []))
-    (labels/add n "A&B")
-    (labels/remove n "A&B")
-    (is (= (labels/get-all-labels n) []))))
+  (let [n (nodes/create *connection*)]
+    (is (= (labels/get-all-labels *connection* n) []))
+    (labels/add *connection* n "A&B")
+    (labels/remove *connection* n "A&B")
+    (is (= (labels/get-all-labels *connection* n) []))))

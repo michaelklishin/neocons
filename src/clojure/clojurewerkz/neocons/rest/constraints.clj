@@ -14,30 +14,33 @@
             [cheshire.core                          :as json]
             [clojurewerkz.neocons.rest.conversion   :as conv]
             [clojurewerkz.support.http.statuses     :refer [missing?]])
+  (:import  clojurewerkz.neocons.rest.Connection)
   (:refer-clojure :exclude [rest]))
 
 (defn- get-url
-  [^String label]
-  (str (:uri rest/*endpoint*) "schema/constraint/" (conv/encode-kw-to-string label)))
+  [^Connection connection ^String label]
+  (str (get-in connection [:endpoint :uri]) "schema/constraint/" (conv/encode-kw-to-string label)))
 
 (defn- get-uniqueness-url
-  [label]
-  (str (get-url label) "/uniqueness"))
+  [^Connection connection label]
+  (str (get-url connection label) "/uniqueness"))
 
 (defn create-unique
   "Creates a unique constraint on a given label and property.
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-create-uniqueness-constraint"
-  [label property]
+  [^Connection connection label property]
   (let [req-body                      (json/encode {"property_keys" [(conv/kw-to-string property)]})
-        {:keys [status headers body]} (rest/POST (get-uniqueness-url label) :body req-body)]
+        {:keys [status headers body]} (rest/POST connection (get-uniqueness-url connection label)
+                                                 :body req-body)]
     (when-not (missing? status)
       (conv/map-values-to-kw
        (json/decode body true)
        [:label :property-keys]))))
 
 (defn- get-uniquess-constraints
-  [label ^String uri]
-  (let [{:keys [status headers body]} (rest/GET (str (get-url label) uri))]
+  [^Connection connection label ^String uri]
+  (let [{:keys [status headers body]} (rest/GET connection (str (get-url connection label)
+                                                                uri))]
     (when-not (missing? status)
       (map
        #(conv/map-values-to-kw % [:label :property-keys])
@@ -49,10 +52,10 @@
 
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-get-all-uniqueness-constraints-for-a-label
   and http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-get-all-constraints-for-a-label"
-  ([label]
-     (get-uniquess-constraints label "/uniqueness"))
-  ([label property]
-     (get-uniquess-constraints label (str "/uniqueness/" (conv/encode-kw-to-string property)))))
+  ([^Connection connection label]
+     (get-uniquess-constraints connection label "/uniqueness"))
+  ([^Connection connection label property]
+     (get-uniquess-constraints connection label (str "/uniqueness/" (conv/encode-kw-to-string property)))))
 
 (defn get-all
   "Gets information about all the different constraints associated with a label.
@@ -60,15 +63,13 @@
 
   If no label is passed, gets information about all the constraints.
   http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-get-all-constraints"
-  ([]
-     (get-uniquess-constraints "" ""))
-  ([label]
-     (get-uniquess-constraints label "")))
+  ([^Connection connection ]
+     (get-uniquess-constraints connection "" ""))
+  ([^Connection connection label]
+     (get-uniquess-constraints connection label "")))
 
 (defn drop-unique
   "Drops an existing uniquenss constraint on an label and property.
   See http://docs.neo4j.org/chunked/milestone/rest-api-schema-constraints.html#rest-api-drop-constraint"
-
-  [label property]
-  (rest/DELETE (str (get-uniqueness-url label) "/" (conv/encode-kw-to-string property))))
-
+  [^Connection connection label property]
+  (rest/DELETE connection (str (get-uniqueness-url connection label) "/" (conv/encode-kw-to-string property))))
