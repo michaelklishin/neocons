@@ -18,7 +18,7 @@
 (use-fixtures :once once-fixture)
 
 (def dummy-label :DummyPerson)
-(def dummy-constraint {:label dummy-label :property-keys [:name] :type "UNIQUENESS"})
+(def dummy-constraint {:label dummy-label :property_keys ["name"] :type "UNIQUENESS"})
 
 (deftest test-constraints
   (try
