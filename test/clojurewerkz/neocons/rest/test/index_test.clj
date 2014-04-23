@@ -19,7 +19,7 @@
 
 (def dummy-label :DummyPerson)
 
-(deftest ^{:edge-features true} test-indexes
+(deftest test-indexes
   (if (= (idx/get-all *connection* dummy-label)  [])
     (let [a (idx/create *connection* dummy-label :name)]
       (is (= a {:label dummy-label, :property_keys ["name"]}))

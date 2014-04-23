@@ -20,7 +20,7 @@
 (def dummy-label :DummyPerson)
 (def dummy-constraint {:label dummy-label :property-keys [:name] :type "UNIQUENESS"})
 
-(deftest ^{:edge-features true} test-constraints
+(deftest test-constraints
   (try
     (let [a (cts/create-unique *connection* dummy-label :name)]
       (is (= a dummy-constraint))

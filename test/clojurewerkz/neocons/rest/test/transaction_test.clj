@@ -31,7 +31,7 @@
                     :parameters {:props {:name "My Node"}}}]}
       [] {:statements []}))
 
-(deftest ^{:edge-features true} test-empty-transaction-rollback
+(deftest test-empty-transaction-rollback
   (let [[transaction y] (tx/begin *connection*)]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -40,7 +40,7 @@
     (is (= [] y))
     (is (= (tx/rollback *connection* transaction) []))))
 
-(deftest ^{:edge-features true} test-transaction-rollback
+(deftest test-transaction-rollback
   (let [[transaction [result]] (tx/begin *connection* [(tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -51,7 +51,7 @@
     (is (= (:columns result) ["n"]))
     (is (= (tx/rollback *connection* transaction) []))))
 
-(deftest ^{:edge-features true} test-transaction-commit-empty
+(deftest test-transaction-commit-empty
   (let [[transaction [result]] (tx/begin *connection* [(tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -63,7 +63,7 @@
 
     (is (= (tx/commit *connection* transaction) []))))
 
-(deftest ^{:edge-features true} test-transaction-commit
+(deftest test-transaction-commit
   (let [[transaction [result]] (tx/begin *connection* [(tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -77,7 +77,7 @@
       (is (= (:columns result) ["id(n)"]))
       (is (= (count (:data result)) 1)))))
 
-(deftest ^{:edge-features true} test-transaction-continue-commit
+(deftest test-transaction-continue-commit
   (let [[transaction [result]] (tx/begin *connection* [(tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -97,7 +97,7 @@
 
     (is (= (tx/commit *connection* transaction) []))))
 
-(deftest ^{:edge-features true} test-transaction-fail-rollback
+(deftest test-transaction-fail-rollback
   (let [[transaction [result]] (tx/begin *connection* [(tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})])]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -113,7 +113,7 @@
                            transaction
                            [(tx/statement "CREATE n RETURN id(m)" nil)])))))
 
-(deftest ^{:edge-features true} test-simple-transaction
+(deftest test-simple-transaction
   (let [result (tx/in-transaction
                 *connection*
                 (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})
@@ -124,7 +124,7 @@
     (is (= (:data (second result)) [{:row [{:name "My Another Node"}]}]))
     (is (= (:columns (second result)) ["n"] ))))
 
-(deftest ^{:edge-features true} test-empty-begin-tx
+(deftest test-empty-begin-tx
   (let [transaction (tx/begin-tx *connection*)]
     (are [x] (not (nil? (x transaction)))
          :commit
@@ -132,7 +132,7 @@
          :expires)))
 
 
-(deftest ^{:edge-features true} test-with-transaction-commit-success
+(deftest test-with-transaction-commit-success
   (let [transaction (tx/begin-tx *connection*)]
     (is (= (tx/with-transaction
              *connection*
@@ -149,7 +149,7 @@
         [])))
 
 
-(deftest ^{:edge-features true} test-with-transaction-rollback-success
+(deftest test-with-transaction-rollback-success
   (let [transaction (tx/begin-tx *connection*)]
     (tx/with-transaction
       *connection*
@@ -166,7 +166,7 @@
       (is (= (tx/rollback *connection* transaction)
              [])))))
 
-(deftest ^{:edge-features true} test-with-transaction-manual-failure
+(deftest test-with-transaction-manual-failure
   (let [transaction (tx/begin-tx *connection*)]
     (is (thrown-with-msg?
           Exception #"Rolling back"
@@ -180,7 +180,7 @@
              [(tx/statement "CREATE (n) RETURN ID(n)")])
             (throw (Exception. "Rolling back")))))))
 
-(deftest ^{:edge-features true} test-with-transaction-transaction-failure
+(deftest test-with-transaction-transaction-failure
   (let [transaction (tx/begin-tx *connection*)]
     (is (thrown-with-msg?
           Exception #"InvalidSyntax"
