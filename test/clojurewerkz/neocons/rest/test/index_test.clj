@@ -12,20 +12,18 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.index         :as idx]
-            [clojure.test :refer :all]
-            [clojurewerkz.neocons.rest.test.common   :refer :all]))
-
-(use-fixtures :once once-fixture)
+            [clojure.test :refer :all]))
 
 (def dummy-label :DummyPerson)
 
-(deftest test-indexes
-  (if (= (idx/get-all *connection* dummy-label)  [])
-    (let [a (idx/create *connection* dummy-label :name)]
+(let [conn (neorest/connect "http://localhost:7474/db/data/")]
+  (deftest test-indexes
+  (if (= (idx/get-all conn dummy-label)  [])
+    (let [a (idx/create conn dummy-label :name)]
       (is (= a {:label dummy-label, :property_keys ["name"]}))
-      (idx/drop *connection* dummy-label :name)
-      (is (= (idx/get-all *connection* dummy-label) [])))
-    (let [b (idx/drop *connection* dummy-label :name)]
-      (is (= [] (idx/get-all *connection* dummy-label)))
-      (is (=(idx/create *connection* dummy-label :name)
-             {:label dummy-label, :property_keys ["name"]})))))
+      (idx/drop conn dummy-label :name)
+      (is (= (idx/get-all conn dummy-label) [])))
+    (let [b (idx/drop conn dummy-label :name)]
+      (is (= [] (idx/get-all conn dummy-label)))
+      (is (=(idx/create conn dummy-label :name)
+             {:label dummy-label, :property_keys ["name"]}))))))
