@@ -1,3 +1,19 @@
+## Changes between Neocons 2.1.0 and 3.0.0
+
+Neocons no longer uses a dynamic var to hold the state of the connection.
+This leads to significant changes to the API as the connection has to be
+passed to functions. The position of the connection argument is always the
+first argument for the sake of consistency.
+
+Additionally `connect!` function in `clojurewerkz.neocons.rest` no longer
+exists. This has been replaced by function `connect` in `clojurewerkz.neocons.rest`.
+The `connect` function has the same arguments as the `connect!` function
+only it returns a `Connection` record.
+
+The `Connection` record has a key called `:options` which can be used to pass
+additional parameters to be used by [clj-http](https://github.com/dakrone/clj-http)
+like `debug`.
+
 ## Changes between Neocons 2.0.0 and 2.1.0-beta1
 
 ### Clojure 1.6

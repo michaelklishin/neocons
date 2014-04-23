@@ -13,7 +13,6 @@
             [cheshire.core                           :as json]
             [clojurewerkz.neocons.rest               :as rest]
             [clojurewerkz.neocons.rest.relationships :as relationships]
-            [clojurewerkz.neocons.rest.paths         :as paths]
             [clojurewerkz.neocons.rest.cypher        :as cypher]
             [clojurewerkz.support.http.statuses :refer :all]
             [clojurewerkz.neocons.rest.helpers  :refer :all]
@@ -21,7 +20,7 @@
             [clojure.string :refer [join]]
             [clojurewerkz.neocons.rest.conversion :refer [to-id]])
   (:import  [java.net URI URL]
-            clojurewerkz.neocons.rest.Neo4JEndpoint
+            [clojurewerkz.neocons.rest Connection]
             [clojurewerkz.neocons.rest.records Node Relationship Index]
             clojure.lang.Named)
   (:refer-clojure :exclude [get find]))
@@ -40,17 +39,17 @@
 (declare add-to-index)
 (defn create
   "Creates and returns a node with given properties. 0-arity creates a node without properties."
-  ([]
-     (create {}))
-  ([data]
-     (let [{:keys [status headers body]} (rest/POST (:node-uri rest/*endpoint*) :body (json/encode data))
+  ([^Connection connection]
+     (create connection {}))
+  ([^Connection connection data]
+     (let [{:keys [status headers body]} (rest/POST connection (get-in connection [:endpoint :node-uri]) :body (json/encode data))
            payload  (json/decode body true)
            location (:self payload)]
        (Node. (extract-id location) location data (:relationships payload) (:create_relationship payload))))
-  ([data indexes]
-     (let [node (create data)]
+  ([^Connection connection data indexes]
+     (let [node (create connection data)]
        (doseq [[idx [k v]] indexes]
-         (add-to-index node idx k v))
+         (add-to-index connection node idx k v))
        node)))
 
 (defn create-unique-in-index
@@ -60,10 +59,10 @@
    only a single request.
 
    For more information, see http://docs.neo4j.org/chunked/milestone/rest-api-unique-indexes.html section (19.8.1)"
-  [idx k v data]
+  [^Connection connection idx k v data]
   (let [req-body    (json/encode {:key k :value v :properties data})
-        uri         (str (url-with-path (:node-index-uri rest/*endpoint*) idx) "?unique")
-        {:keys [status headers body]} (rest/POST uri :body req-body)
+        uri         (str (url-with-path (get-in connection [:endpoint :node-index-uri]) idx) "?unique")
+        {:keys [status headers body]} (rest/POST connection uri :body req-body)
         payload  (json/decode body true)
         location (:self payload)]
     (Node. (extract-id location) location (:data payload) (:relationships payload) (:create_relationship payload))))
@@ -73,25 +72,25 @@
    of nodes.
 
    This function returns a lazy sequence of results, so you may need to force it using clojure.core/doall"
-  [xs]
+  [^Connection connection xs]
   (let [batched (doall (reduce (fn [acc x]
                                  (conj acc {:body   x
                                             :to     "/node"
                                             :method "POST"})) [] xs))
-        {:keys [status headers body]} (rest/POST (:batch-uri rest/*endpoint*) :body (json/encode batched))
+        {:keys [status headers body]} (rest/POST connection (get-in connection [:endpoint :batch-uri]) :body (json/encode batched))
         payload                       (map :body (json/decode body true))]
     (map instantiate-node-from payload)))
 
 (defn get
   "Fetches a node by id"
-  [^long id]
-  (let [{:keys [status body]} (rest/GET (node-location-for rest/*endpoint* id))
+  [^Connection connection ^long id]
+  (let [{:keys [status body]} (rest/GET connection (node-location-for (:endpoint connection) id))
         payload  (json/decode body true)]
     (instantiate-node-from payload id)))
 
 (defn get-properties
-  [^long id]
-  (let [{:keys [status headers body]} (rest/GET (node-properties-location-for rest/*endpoint* id))]
+  [^Connection connection ^long id]
+  (let [{:keys [status headers body]} (rest/GET connection (node-properties-location-for (:endpoint connection) id))]
     (case (long status)
       200 (json/decode body true)
       204 {}
@@ -102,77 +101,108 @@
 
   This is a non-standard operation that requires Cypher support as well as support for that very feature
   by Cypher itself (Neo4j Server versions 1.6.3 and later)."
-  ([coll]
-     (let [{:keys [data]} (cypher/query "START x = node({ids}) RETURN x" {:ids coll})]
+  ([^Connection connection coll]
+     (let [{:keys [data]} (cypher/query connection "START x = node({ids}) RETURN x" {:ids coll})]
        (map (comp instantiate-node-from first) data))))
 
 (defn ^{:deprecated true} multi-get
   "Fetches multiple nodes by id. Deprecated, please use get-many instead."
-  [coll]
-  (apply get-many coll))
+  [^Connection connection coll]
+  (apply get-many connection coll))
 
-(defprotocol MutatingOperations
-  (delete       [node] "Deletes a node. The node must have no relationships")
-  (destroy      [node] "Deletes a node and all of its relationships")
-  (update       [node data] "Updates a node's data (properties)")
-  (set-property [node prop value] "Sets a single property on the given node"))
 
-(extend-protocol MutatingOperations
-  Node
-  (delete [^Node node]
-    (delete (:id node)))
-  (destroy [^Node node]
-    (relationships/purge-all node)
-    (delete (:id node)))
-  (update [^Node node data]
-    (update (:id node) data))
-  (set-property [^Node node prop value]
-    (set-property (:id node) prop value))
+(defmulti update
+  "Updated a node's data (properties)"
+  (fn [_ node _]
+    (class node)))
 
-  Long
-  (delete [^long id]
-    (let [{:keys [status headers]} (rest/DELETE (node-location-for rest/*endpoint* id))]
+(defmethod update Node
+  [^Connection connection ^Node node data]
+  (update connection (:id node) data))
+
+(defmethod update Long
+  [^Connection connection ^long id data]
+  (rest/PUT connection (node-properties-location-for (:endpoint connection) id) :body (json/encode data))
+  data)
+
+
+(defmulti delete
+  "Deletes a node. The node must have no relationships"
+  (fn [_ node]
+    (class node)))
+
+(defmethod delete Node
+  [^Connection connection ^Node node]
+  (delete connection (:id node)))
+
+(defmethod delete Long
+  [^Connection connection ^long id]
+  (let [{:keys [status headers]} (rest/DELETE connection (node-location-for (:endpoint connection) id))]
       [id status]))
-  (destroy [^long id]
-    ;; a little hack. Relationships purging implementation only needs
-    ;; id to be set on Node so we don't have to fetch the entire set of properties. MK.
-    (relationships/purge-all (Node. id nil nil nil nil))
-    (delete id))
-  (update [^long id data]
-    (rest/PUT (node-properties-location-for rest/*endpoint* id) :body (json/encode data))
-    data)
-  (set-property [^long id prop value]
-    (rest/PUT (node-property-location-for rest/*endpoint* id prop) :body (json/encode value))
-    value))
+
+
+(defmulti destroy
+  "Deletes a node and all of its relationships"
+  (fn [_ node]
+    (class node)))
+
+(defmethod destroy Node
+  [^Connection connection ^Node node]
+  (relationships/purge-all connection node)
+  (delete connection (:id node)))
+
+(defmethod destroy Long
+  [^Connection connection ^long id]
+  ;; a little hack. Relationships purging implementation only needs
+  ;; id to be set on Node so we don't have to fetch the entire set of properties. MK.
+  (relationships/purge-all connection (Node. id nil nil nil nil))
+  (delete connection id))
+
+
+(defmulti set-property
+  "Sets a single property on the given node"
+  (fn [_ node _ _]
+    (class node)))
+
+(defmethod set-property Node
+  [^Connection connection ^Node node prop value]
+  (set-property connection (:id node) prop value))
+
+(defmethod set-property Long
+  [^Connection connection ^long id prop value]
+  (rest/PUT connection (node-property-location-for (:endpoint connection) id prop) :body (json/encode value))
+  value)
+
 
 (defn delete-many
   "Deletes multiple nodes"
-  [xs]
+  [^Connection connection xs]
   (comment Once 1.8 is out, we should migrate this to mutating Cypher to avoid doing N requests)
   (doseq [x xs]
-    (delete x)))
+    (delete connection x)))
 
 (defn destroy-many
   "Destroys multiple nodes and all of their relationships"
-  [xs]
+  [^Connection connection xs]
   (comment Once 1.8 is out, we should migrate this to mutating Cypher to avoid doing N requests)
   (doseq [x xs]
-    (destroy x)))
+    (destroy connection x)))
 
 (defn delete-properties
-  [^long id]
-  (let [{:keys [status headers]} (rest/PUT (node-properties-location-for rest/*endpoint* id))]
+  [^Connection connection ^long id]
+  (let [{:keys [status headers]} (rest/PUT connection (node-properties-location-for (:endpoint connection) id))]
     [id status]))
 
 
 (defn create-index
   "Creates a new node index. Indexes are used for fast lookups by a property or full text search query."
-  ([^String s]
-     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*) :body (json/encode {:name (name s)}))
+  ([^Connection connection ^String s]
+     (let [{:keys [body]} (rest/POST connection (get-in connection [:endpoint :node-index-uri])
+                                     :body (json/encode {:name (name s)}))
            payload (json/decode body true)]
        (Index. (name s) (:template payload) "lucene" "exact")))
-  ([^String s configuration]
-     (let [{:keys [body]} (rest/POST (:node-index-uri rest/*endpoint*)
+  ([^Connection connection ^String s configuration]
+     (let [{:keys [body]} (rest/POST connection (get-in connection [:endpoint :node-index-uri])
                                      :query-string (if (:unique configuration)
                                                      {"unique" "true"}
                                                      {})
@@ -182,15 +212,15 @@
 
 (defn delete-index
   "Deletes a node index"
-  [^String s]
-  (let [{:keys [status]} (rest/DELETE (node-index-location-for rest/*endpoint* s))]
+  [^Connection connection ^String s]
+  (let [{:keys [status]} (rest/DELETE connection (node-index-location-for (:endpoint connection) s))]
     [s status]))
 
 
 (defn all-indexes
   "Returns all node indices"
-  []
-  (let [{:keys [status body]} (rest/GET (:node-index-uri rest/*endpoint*))]
+  [^Connection connection]
+  (let [{:keys [status body]} (rest/GET connection (get-in connection [:endpoint :node-index-uri]))]
     (if (= 204 (long status))
       []
       (map (fn [[idx props]] (Index. (name idx) (:template props) (:provider props) (:type props)))
@@ -199,38 +229,40 @@
 
 (defn add-to-index
   "Adds the given node to the index"
-  ([node idx ^String key value]
-     (add-to-index node idx key value false))
-  ([node idx ^String key value unique?]
+  ([^Connection connection node idx ^String key value]
+     (add-to-index connection node idx key value false))
+  ([^Connection connection node idx ^String key value unique?]
      (let [id                    (to-id node)
-           req-body              (json/encode {:key (name key) :value value :uri (node-location-for rest/*endpoint* (to-id node))})
-           {:keys [status body]} (rest/POST (node-index-location-for rest/*endpoint* idx) :body req-body :query-string (if unique?
-                                                                                                                         {"unique" "true"}
-                                                                                                                         {}))
+           req-body              (json/encode {:key (name key) :value value :uri (node-location-for (:endpoint connection) (to-id node))})
+           {:keys [status body]} (rest/POST connection (node-index-location-for (:endpoint connection) idx)
+                                            :body req-body
+                                            :query-string (if unique?
+                                                            {"unique" "true"}
+                                                            {}))
            payload  (json/decode body true)]
        (instantiate-node-from payload id))))
 
 
 (defn delete-from-index
   "Deletes the given node from index"
-  ([node idx]
+  ([^Connection connection node idx]
      (let [id               (to-id node)
-           {:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx))]
+           {:keys [status]} (rest/DELETE connection (node-in-index-location-for (:endpoint connection)  id idx))]
        [id status]))
-  ([node idx key]
+  ([^Connection connection node idx key]
      (let [id               (to-id node)
-           {:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key))]
+           {:keys [status]} (rest/DELETE connection (node-in-index-location-for (:endpoint connection) id idx key))]
        [id status]))
-  ([node idx key value]
+  ([^Connection connection node idx key value]
      (let [id               (to-id node)
-           {:keys [status]} (rest/DELETE (node-in-index-location-for rest/*endpoint* id idx key value))]
+           {:keys [status]} (rest/DELETE connection (node-in-index-location-for (:endpoint connection) id idx key value))]
        [id status])))
 
 
 (defn fetch-from
   "Fetches a node from given URI. Exactly like clojurewerkz.neocons.rest.nodes/get but takes a URI instead of an id."
-  [^String uri]
-  (let [{:keys [status body]} (rest/GET uri)
+  [^Connection connection ^String uri]
+  (let [{:keys [status body]} (rest/GET connection uri)
         payload (json/decode body true)
         id      (extract-id uri)]
     (instantiate-node-from payload id)))
@@ -238,66 +270,68 @@
 
 (defn find
   "Finds nodes using the index"
-  ([^String key value]
-     (let [{:keys [status body]} (rest/GET (auto-node-index-lookup-location-for rest/*endpoint* key value))
+  ([^Connection connection ^String key value]
+     (let [{:keys [status body]} (rest/GET connection (auto-node-index-lookup-location-for (:endpoint connection) key value))
            xs (json/decode body true)]
-       (map (fn [doc] (fetch-from (:indexed doc))) xs)))
-  ([^String idx ^String  key value]
-     (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
+       (map (fn [doc] (fetch-from connection (:indexed doc))) xs)))
+  ([^Connection connection ^String idx ^String  key value]
+     (let [{:keys [status body]} (rest/GET connection (node-index-lookup-location-for (:endpoint connection) idx key value))
            xs (json/decode body true)]
-       (map (fn [doc] (fetch-from (:indexed doc))) xs))))
+       (map (fn [doc] (fetch-from connection (:indexed doc))) xs))))
 
 (defn find-one
   "Finds a single node using the index"
-  [^String idx ^String key value]
-  (let [{:keys [status body]} (rest/GET (node-index-lookup-location-for rest/*endpoint* idx key value))
+  [^Connection connection ^String idx ^String key value]
+  (let [{:keys [status body]} (rest/GET connection (node-index-lookup-location-for (:endpoint connection) idx key value))
         [node] (json/decode body true)]
     (when node
-      (fetch-from (:indexed node)))))
+      (fetch-from connection (:indexed node)))))
 
 
 (defn query
   "Finds nodes using full text search query"
-  ([^String query]
-     (let [{:keys [status body]} (rest/GET (auto-node-index-location-for rest/*endpoint*) :query-params {"query" query})
+  ([^Connection connection ^String query]
+     (let [{:keys [status body]} (rest/GET connection (auto-node-index-location-for (:endpoint connection))
+                                           :query-params {"query" query})
            xs (json/decode body true)]
-       (map (fn [doc] (instantiate-node-from doc)) xs)))
-  ([^String idx ^String query]
-     (let [{:keys [status body]} (rest/GET (node-index-location-for rest/*endpoint* idx) :query-params {"query" query})
+       (map instantiate-node-from xs)))
+  ([^Connection connection ^String idx ^String query]
+     (let [{:keys [status body]} (rest/GET connection (node-index-location-for (:endpoint connection) idx)
+                                           :query-params {"query" query})
            xs (json/decode body true)]
-       (map (fn [doc] (instantiate-node-from doc)) xs))))
+       (map instantiate-node-from xs))))
 
 
 (defn traverse
   "Performs node traversal"
-  ([id & {:keys [order relationships
-                 uniqueness prune-evaluator
-                 return-filter max-depth] :or {order         "breadth_first"
-                                               uniqueness    "node_global"
-                                               prune-evaluator {:language "builtin" :name "none"}
-                                               return-filter   {:language "builtin" :name "all"}}}]
+  ([^Connection connection id & {:keys [order relationships
+                                        uniqueness prune-evaluator
+                                        return-filter max-depth] :or {order         "breadth_first"
+                                                                      uniqueness    "node_global"
+                                                                      prune-evaluator {:language "builtin" :name "none"}
+                                                                      return-filter   {:language "builtin" :name "all"}}}]
      (let [request-body {:order           order
                          :relationships   relationships
                          :uniqueness      uniqueness
                          :prune_evaluator prune-evaluator
                          :return_filter   return-filter
                          :max_depth       max-depth}
-           {:keys [status body]} (rest/POST (node-traverse-location-for rest/*endpoint* id) :body (json/encode request-body))
+           {:keys [status body]} (rest/POST connection (node-traverse-location-for (:endpoint connection) id)
+                                            :body (json/encode request-body))
            xs (json/decode body true)]
-       (map (fn [doc]
-              (instantiate-node-from doc)) xs))))
+       (map instantiate-node-from xs))))
 
 
 (defn all-connected-out
   "Returns all nodes given node has outgoing (outbound) relationships with"
-  [id &{:keys [types]}]
-  (let [rels (relationships/outgoing-for (get id) :types types)
+  [^Connection connection id &{:keys [types]}]
+  (let [rels (relationships/outgoing-for connection (get connection id) :types types)
         ids  (set (map #(extract-id (:end %)) rels))]
-    (get-many ids)))
+    (get-many connection ids)))
 
 (defn connected-out?
   "Returns true if given node has outgoing (outbound) relationships with the other node"
-  [id other-id &{:keys [types]}]
-  (let [rels (relationships/outgoing-for (get id) :types types)
+  [^Connection connection id other-id &{:keys [types]}]
+  (let [rels (relationships/outgoing-for connection (get connection id) :types types)
         uris (set (map :end rels))]
-    (uris (node-location-for rest/*endpoint* other-id))))
+    (uris (node-location-for (:endpoint connection) other-id))))
