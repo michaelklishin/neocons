@@ -58,8 +58,7 @@
 (defn- real-execute
   [^Connection conn transaction xs uri]
   (let [[status headers payload]          (make-request conn xs uri)]
-    (if (missing? status)
-      nil
+    (when-not (missing? status)
       [(instantiate-transaction
          (:commit payload)
          (:location transaction)
@@ -80,8 +79,7 @@
                                            (:commit payload)
                                            (headers "location")
                                            (get-in payload [:transaction :expires]))]
-       (if (missing? status)
-         nil
+       (when-not (missing? status)
          [neo-trans (make-cypher-responses payload)]))))
 
 

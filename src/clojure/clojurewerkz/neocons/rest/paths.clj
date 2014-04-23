@@ -45,8 +45,7 @@
            { :keys [status body] } (rest/POST connection (path-traverse-location-for (:endpoint connection) id)
                                               :body (json/encode request-body))
            xs (json/decode body true)]
-       (map (fn [doc]
-              (instantiate-path-from doc)) xs))))
+       (map instantiate-path-from xs))))
 
 
 (defn all-shortest-between
@@ -60,8 +59,7 @@
            { :keys [status body] } (rest/POST connection (paths-location-for (:endpoint connection) from)
                                               :body (json/encode request-body))
            xs (json/decode body true)]
-       (map (fn [doc]
-              (instantiate-path-from doc)) (json/decode body true)))))
+       (map instantiate-path-from (json/decode body true)))))
 
 
 (defn shortest-between
@@ -75,9 +73,8 @@
            { :keys [status body] } (rest/POST connection (path-location-for (:endpoint connection) from)
                                               :body (json/encode request-body)
                                               :throw-exceptions false)]
-       (if (or (missing? status)
-               (server-error? status))
-         nil
+       (when-not (or (missing? status)
+                     (server-error? status))
          (instantiate-path-from (json/decode body true))))))
 
 (defn exists-between?

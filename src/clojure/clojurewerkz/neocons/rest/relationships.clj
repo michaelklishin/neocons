@@ -42,8 +42,7 @@
   [^Connection connection ^Node node kind types]
   (let [{ :keys [status headers body] } (rest/GET connection (relationships-location-for (:endpoint connection) node kind types))
         xs  (json/decode body true)]
-    (if (missing? status)
-      nil
+    (when-not (missing? status)
       (map instantiate-rel-from xs))))
 
 
@@ -120,8 +119,7 @@
   [^Connection connection ^long id]
   (let [{:keys [status headers body]} (rest/GET connection (rel-location-for (:endpoint connection) id))
         payload  (json/decode body true)]
-    (if (missing? status)
-      nil
+    (when-not (missing? status)
       (instantiate-rel-from payload id))))
 
 (defn get-many
@@ -298,11 +296,11 @@
   ([^Connection connection ^String query]
      (let [{:keys [status body]} (rest/GET connection (auto-rel-index-location-for (:endpoint connection)) :query-params {"query" query})
            xs (json/decode body true)]
-       (map (fn [doc] (instantiate-rel-from doc)) xs)))
+       (map instantiate-rel-from xs)))
   ([^Connection connection ^String idx ^String query]
      (let [{:keys [status body]} (rest/GET connection (rel-index-location-for (:endpoint connection) idx) :query-params {"query" query})
            xs (json/decode body true)]
-       (map (fn [doc] (instantiate-rel-from doc)) xs))))
+       (map instantiate-rel-from xs))))
 
 
 ;;
@@ -398,5 +396,4 @@
                          :max_depth       max-depth}
            {:keys [status body]} (rest/POST connection (rel-traverse-location-for (:endpoint connection) id) :body (json/encode request-body))
            xs (json/decode body true)]
-       (map (fn [doc]
-              (instantiate-rel-from doc)) xs))))
+       (map instantiate-rel-from xs))))

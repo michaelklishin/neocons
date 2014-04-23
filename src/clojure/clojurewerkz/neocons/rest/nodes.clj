@@ -294,12 +294,12 @@
      (let [{:keys [status body]} (rest/GET connection (auto-node-index-location-for (:endpoint connection))
                                            :query-params {"query" query})
            xs (json/decode body true)]
-       (map (fn [doc] (instantiate-node-from doc)) xs)))
+       (map instantiate-node-from xs)))
   ([^Connection connection ^String idx ^String query]
      (let [{:keys [status body]} (rest/GET connection (node-index-location-for (:endpoint connection) idx)
                                            :query-params {"query" query})
            xs (json/decode body true)]
-       (map (fn [doc] (instantiate-node-from doc)) xs))))
+       (map instantiate-node-from xs))))
 
 
 (defn traverse
@@ -319,8 +319,7 @@
            {:keys [status body]} (rest/POST connection (node-traverse-location-for (:endpoint connection) id)
                                             :body (json/encode request-body))
            xs (json/decode body true)]
-       (map (fn [doc]
-              (instantiate-node-from doc)) xs))))
+       (map instantiate-node-from xs))))
 
 
 (defn all-connected-out

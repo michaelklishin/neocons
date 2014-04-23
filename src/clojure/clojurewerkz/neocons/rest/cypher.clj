@@ -49,8 +49,7 @@
   ([^Connection connection ^String q params]
      (let [{:keys [status headers body]} (rest/POST connection (cypher-query-location-for connection)
                                                     :body (json/encode {:query q :params params}))]
-       (if (missing? status)
-         nil
+       (when-not (missing? status)
          (instantiate-cypher-query-response-from (json/decode body true))))))
 
 (def ^{:doc "Performs a Cypher query, returning result formatted as a table (using tableize)"}
