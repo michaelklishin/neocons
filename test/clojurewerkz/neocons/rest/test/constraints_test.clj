@@ -12,26 +12,24 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.constraints   :as cts]
-            [clojure.test :refer :all]
-            [clojurewerkz.neocons.rest.test.common   :refer :all]))
-
-(use-fixtures :once once-fixture)
+            [clojure.test :refer :all]))
 
 (def dummy-label :DummyPerson)
 (def dummy-constraint {:label dummy-label :property_keys ["name"] :type "UNIQUENESS"})
 
-(deftest test-constraints
-  (try
-    (let [a (cts/create-unique *connection* dummy-label :name)]
-      (is (= a dummy-constraint))
-      (Thread/sleep 3000))
-    (catch Exception e (.getMessage e))
-    (finally
-      (is (= (cts/get-unique *connection* dummy-label :name) [dummy-constraint]))
-      (is (contains? (set (cts/get-unique *connection* dummy-label)) dummy-constraint))
-      (is (contains? (set (cts/get-all *connection* dummy-label)) dummy-constraint))
-      (is (contains? (set (cts/get-all *connection*)) dummy-constraint))
-      (cts/drop-unique *connection* dummy-label :name)
-      (is (not (contains?
-                 (set (cts/get-unique *connection* dummy-label))
-                 dummy-constraint))))))
+(let [conn (neorest/connect "http://localhost:7474/db/data/")]
+  (deftest test-constraints
+    (try
+      (let [a (cts/create-unique conn dummy-label :name)]
+        (is (= a dummy-constraint))
+        (Thread/sleep 3000))
+      (catch Exception e (.getMessage e))
+      (finally
+        (is (= (cts/get-unique conn dummy-label :name) [dummy-constraint]))
+        (is (contains? (set (cts/get-unique conn dummy-label)) dummy-constraint))
+        (is (contains? (set (cts/get-all conn dummy-label)) dummy-constraint))
+        (is (contains? (set (cts/get-all conn)) dummy-constraint))
+        (cts/drop-unique conn dummy-label :name)
+        (is (not (contains?
+                  (set (cts/get-unique conn dummy-label))
+                  dummy-constraint)))))))
