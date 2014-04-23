@@ -12,58 +12,55 @@
   (:require [clojurewerkz.neocons.rest               :as neorest]
             [clojurewerkz.neocons.rest.nodes         :as nodes]
             [clojurewerkz.neocons.rest.labels        :as labels]
-            [clojurewerkz.neocons.rest.test.common   :refer :all]
             [clojure.test :refer :all]))
 
-(use-fixtures :once once-fixture)
+(let [conn (neorest/connect "http://localhost:7474/db/data/")]
+  (deftest test-creating-one-label
+    (let [n (nodes/create conn)]
+      (is (= (labels/get-all-labels conn n) []))
+      (labels/add conn n :MyLabel)
+      (is (= (labels/get-all-labels conn n) [:MyLabel]))))
 
+  (deftest test-creating-multiple-label
+    (let [n (nodes/create conn)]
+      (labels/add conn n [:MyLabel :MyOtherLabel])
+      (is (= (labels/get-all-labels conn n) [:MyLabel :MyOtherLabel]))))
 
-(deftest test-creating-one-label
-  (let [n (nodes/create *connection*)]
-    (is (= (labels/get-all-labels *connection* n) []))
-    (labels/add *connection* n :MyLabel)
-    (is (= (labels/get-all-labels *connection* n) [:MyLabel]))))
+  (deftest test-creating-invalid-label
+    (let [n (nodes/create conn)]
+      (is (thrown-with-msg? Exception #"Unable to add label"
+                            (labels/add conn n "")))))
 
-(deftest test-creating-multiple-label
-  (let [n (nodes/create *connection*)]
-    (labels/add *connection* n [:MyLabel :MyOtherLabel])
-    (is (= (labels/get-all-labels *connection* n) [:MyLabel :MyOtherLabel]))))
+  (deftest test-replacing-label
+    (let [n (nodes/create conn)]
+      (labels/add conn n :MyLabel)
+      (labels/replace conn n [:MyOtherLabel :MyThirdLabel])
+      (is (= (labels/get-all-labels conn n) [:MyOtherLabel :MyThirdLabel]))))
 
-(deftest test-creating-invalid-label
-  (let [n (nodes/create *connection*)]
-    (is (thrown-with-msg? Exception #"Unable to add label"
-                          (labels/add *connection* n "")))))
+  (deftest test-deleting-label
+    (let [n (nodes/create conn)]
+      (labels/add conn n :MyLabel)
+      (labels/remove conn n :MyLabel)
+      (is (= (labels/get-all-labels conn n) []))))
 
-(deftest test-replacing-label
-  (let [n (nodes/create *connection*)]
-    (labels/add *connection* n :MyLabel)
-    (labels/replace *connection* n [:MyOtherLabel :MyThirdLabel])
-    (is (= (labels/get-all-labels *connection* n) [:MyOtherLabel :MyThirdLabel]))))
+  (deftest  test-get-all-nodes-with-label
+    (let [n (nodes/create conn)]
+      (labels/add conn n :MyLabel)
+      (is (some #(= (:id %) (:id n)) (labels/get-all-nodes conn :MyLabel)))))
 
-(deftest test-deleting-label
-  (let [n (nodes/create *connection*)]
-    (labels/add *connection* n :MyLabel)
-    (labels/remove *connection* n :MyLabel)
-    (is (= (labels/get-all-labels *connection* n) []))))
+  (deftest test-get-all-nodes-with-label-and-property
+    (let [n (nodes/create conn {"name" "bob ross"})]
+      (labels/add conn n :MyLabel)
+      (is (some #(= (:id %) (:id n)) (labels/get-all-nodes conn :MyLabel :name "bob ross")))))
 
-(deftest  test-get-all-nodes-with-label
-  (let [n (nodes/create *connection*)]
-    (labels/add *connection* n :MyLabel)
-    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes *connection* :MyLabel)))))
+  (deftest test-get-all-labels
+    (let [n (nodes/create conn)]
+      (labels/add conn n :MyLabel)
+      (is (some #(= % :MyLabel) (labels/get-all-labels conn)))))
 
-(deftest test-get-all-nodes-with-label-and-property
-  (let [n (nodes/create *connection* {"name" "bob ross"})]
-    (labels/add *connection* n :MyLabel)
-    (is (some #(= (:id %) (:id n)) (labels/get-all-nodes *connection* :MyLabel :name "bob ross")))))
-
-(deftest test-get-all-labels
-  (let [n (nodes/create *connection*)]
-    (labels/add *connection* n :MyLabel)
-    (is (some #(= % :MyLabel) (labels/get-all-labels *connection*)))))
-
-(deftest test-creating-delete-one-strange-label
-  (let [n (nodes/create *connection*)]
-    (is (= (labels/get-all-labels *connection* n) []))
-    (labels/add *connection* n "A&B")
-    (labels/remove *connection* n "A&B")
-    (is (= (labels/get-all-labels *connection* n) []))))
+  (deftest test-creating-delete-one-strange-label
+    (let [n (nodes/create conn)]
+      (is (= (labels/get-all-labels conn n) []))
+      (labels/add conn n "A&B")
+      (labels/remove conn n "A&B")
+      (is (= (labels/get-all-labels conn n) [])))))
