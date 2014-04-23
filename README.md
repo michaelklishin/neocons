@@ -97,9 +97,14 @@ The most recent stable Clojure release is highly recommended.
 
 ## Supported Neo4J Server versions
 
-### Neocons 2.0 (master)
+### Neocons 3.0 (master)
 
-Neocons `2.0` tracks Neo4J Server 2.0 changes, although currently
+Neocons `3.0` targets Neo4J Server 2.0 and later versions.
+`1.9.x` compatibility may be less than complete.
+
+### Neocons 2.0
+
+Neocons `2.0` targets Neo4J Server 2.0, although 
 the test suite also passes against 1.9.x.
 
 There are incompatible changes in 1.9 and 2.0 in mutating Cypher
