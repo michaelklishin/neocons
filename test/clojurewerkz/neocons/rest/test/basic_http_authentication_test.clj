@@ -41,7 +41,7 @@
           (let [d (.getData e)]
             (is (= (-> d :object :status) 401))))))
 
-    (deftest ^{:http-auth true} test-connection-and-discovery-using-user-info-in-string-uri
+    (deftest ^{:http-auth true} test-connection-and-discovery-using-user-info-in-string-uri-2
       (try
         (neorest/connect "http://neocons:SEcRe7@neo4j-proxy.local/db/data/")
         (catch Exception e

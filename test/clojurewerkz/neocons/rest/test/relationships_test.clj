@@ -257,17 +257,21 @@
 ;;
 
 (deftest test-deletion-of-nodes-with-relationships
-  (let [john (nodes/create *connection* {:name "John" :age 28 :location "New York City, NY"})
-        beth (nodes/create *connection* {:name "Elizabeth" :age 30 :location "Chicago, IL"})
-        gael (nodes/create *connection* {:name "Gaël"      :age 31 :location "Montpellier"})
-        rel1 (relationships/create *connection* john beth :knows)
-        rel5 (relationships/create *connection* beth gael :knows)
-        rt   {:type "knows" :direction "out"}]
+  (let [john        (nodes/create *connection* {:name "John" :age 28 :location "New York City, NY"})
+        beth        (nodes/create *connection* {:name "Elizabeth" :age 30 :location "Chicago, IL"})
+        gael        (nodes/create *connection* {:name "Gaël"      :age 31 :location "Montpellier"})
+        rel1        (relationships/create *connection* john beth :knows)
+        rel5        (relationships/create *connection* beth gael :knows)
+        rt          {:type "knows" :direction "out"}
+        john-know   (set (nodes/all-connected-out *connection* (:id john)))
+        beth-know   (set (nodes/all-connected-out *connection* (:id beth)))]
     (is (paths/exists-between? *connection* (:id john) (:id gael) :relationships [rt] :max-depth 3))
-    (is (set (nodes/all-connected-out *connection* (:id john))) (:id beth))
+    (is (= (count john-know) 1))
+    (is (= (:id (first john-know)) (:id beth)))
     (is (nodes/connected-out? *connection* (:id john) (:id beth)))
     (is (not (nodes/connected-out? *connection* (:id john) (:id gael))))
-    (is (set (nodes/all-connected-out *connection* (:id beth))) (:id gael))
+    (is (= (count beth-know) 1))
+    (is (= (:id (first beth-know)) (:id gael)))
     (is (nodes/connected-out? *connection* (:id beth) (:id gael)))
     ;; deletion of a node affects reachability of two other nodes. MK.
     (is (thrown? Exception

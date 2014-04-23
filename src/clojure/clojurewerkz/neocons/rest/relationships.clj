@@ -143,7 +143,7 @@
 (defn maybe-delete
   "Deletes relationship by id but only if it exists. Otherwise, does nothing and returns nil"
   [^Connection connection ^long id]
-  (if-let [n (get id)]
+  (if-let [n (get connection id)]
     (delete connection id)))
 
 (defn delete-many
@@ -158,7 +158,7 @@
   "Deletes outgoing relationship of given type between two nodes but only if it exists.
    Otherwise, does nothing and returns nil"
   ([^Connection connection ^long id]
-     (if-let [n (get id)]
+     (if-let [n (get connection id)]
        (delete connection id)))
   ([^Connection connection from to rels]
      (if-let [rel (first-outgoing-between connection from to rels)]
@@ -276,7 +276,7 @@
   ([^Connection connection ^String key value]
      (let [{:keys [status body]} (rest/GET connection (auto-rel-index-lookup-location-for (:endpoint connection) key value))
            xs (json/decode body true)]
-       (map (fn [doc] (fetch-from (:indexed doc))) xs)))
+       (map (fn [doc] (fetch-from connection (:indexed doc))) xs)))
   ([^Connection connection ^String idx key value]
      (let [{:keys [status body]} (rest/GET connection (rel-index-lookup-location-for (:endpoint connection) idx key value))
            xs (json/decode body true)]

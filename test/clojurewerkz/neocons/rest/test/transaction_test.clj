@@ -134,19 +134,18 @@
 
 (deftest test-with-transaction-commit-success
   (let [transaction (tx/begin-tx *connection*)]
-    (is (= (tx/with-transaction
-             *connection*
-             transaction
-             true
-             (let [[_ [r]] (tx/execute
-                            *connection*
-                            transaction
-                            [(tx/statement "CREATE (n {props}) RETURN n"
-                                           {:props {:name "My Node"}})])]
-               (is (= (count (:data r)) 1))
-               (is (= (:data r) [{:row [{:name "My Node"}]}]))
-               (is (= (:columns r) ["n"])))))
-        [])))
+    (tx/with-transaction
+        *connection*
+        transaction
+        true
+        (let [[_ [r]] (tx/execute
+                       *connection*
+                       transaction
+                       [(tx/statement "CREATE (n {props}) RETURN n"
+                                      {:props {:name "My Node"}})])]
+          (is (= (count (:data r)) 1))
+          (is (= (:data r) [{:row [{:name "My Node"}]}]))
+          (is (= (:columns r) ["n"]))))))
 
 
 (deftest test-with-transaction-rollback-success
