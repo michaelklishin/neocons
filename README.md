@@ -89,13 +89,13 @@ With Maven:
 CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 
-## Supported Clojure versions
+## Supported Clojure Versions
 
 Neocons requires Clojure 1.4+.
 The most recent stable Clojure release is highly recommended.
 
 
-## Supported Neo4J Server versions
+## Supported Neo4J Server Versions
 
 ### Neocons 3.0 (master)
 
