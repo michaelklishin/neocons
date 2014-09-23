@@ -92,7 +92,7 @@
                                         uri)]
        (if (success? status)
          (let [payload    (json/decode body true)
-               http-auth  (:basic-auth basic-auth)
+               http-auth  basic-auth
                endpoint   (Neo4JEndpoint. (:neo4j_version      payload)
                                           (:node               payload)
                                           (str uri (if (.endsWith uri "/")
