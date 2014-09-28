@@ -10,11 +10,6 @@ Contributed by Øystein Jakobsen.
 
 Neocons now uses ClojureWerkz Support 1.1.0.
 
-### clj-http Upgrade
-
-Neocons now uses clj-http 1.0.0.
-
-
 
 ## Changes between Neocons 2.0.0 and 3.0.0
 
