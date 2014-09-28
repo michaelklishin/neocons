@@ -1,3 +1,13 @@
+## Changes between Neocons 3.0.0 and 3.1.0
+
+### HTTP Authentication via URI
+
+It is now possible to specify credentials in the URI.
+
+Contributed by Øystein Jakobsen.
+
+
+
 ## Changes between Neocons 2.0.0 and 3.0.0
 
 Neocons no longer uses a dynamic var to hold the state of the connection.
