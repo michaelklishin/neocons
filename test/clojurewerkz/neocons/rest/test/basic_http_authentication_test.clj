@@ -37,41 +37,41 @@
     (deftest ^{:http-auth true} test-connection-and-discovery-using-user-info-in-string-uri
       (try
         (neorest/connect "http://neocons:incorrec7-pazzwd@neo4j-proxy.local/db/data/")
+        (is false)
         (catch Exception e
           (let [d (.getData e)]
-            (is (= (-> d :object :status) 401))))))
-
-    (deftest ^{:http-auth true} test-connection-and-discovery-using-user-info-in-string-uri-2
-      (try
-        (neorest/connect "http://neocons:SEcRe7@neo4j-proxy.local/db/data/")
-        (catch Exception e
-          (let [d (.getData e)]
-            (println d)
-            (is (= (-> d :object :status) 401))))))
-
+            (is (some #{(-> d :object :status)} [401 403]))))))
+    
+    (with-redefs [clojurewerkz.neocons.rest/env-var (constantly nil)]
+      (deftest ^{:http-auth true} test-connection-and-discovery-using-user-info-in-string-uri-2
+        (let [conn (neorest/connect "http://neocons:SEcRe7@neo4j-proxy.local/db/data/")]
+          (is (= (-> conn :http-auth :basic-auth) ["neocons" "SEcRe7"])))))
+    
     (let [neo4j-login    (get (System/getenv) "NEO4J_LOGIN")
           neo4j-password (get (System/getenv) "NEO4J_PASSWORD")]
       (when (and neo4j-login neo4j-password)
         (deftest ^{:http-auth true} test-connection-and-discovery-with-http-credentials-provided-via-env-variables
           (let   [conn (neorest/connect "http://neo4j-proxy.local/db/data/")]
+            (is (= (-> conn :http-auth :basic-auth) ["neocons" "SEcRe7"]))
             (is (:version                (:endpoint conn)))
             (is (:node-uri               (:endpoint conn)))
             (is (:batch-uri              (:endpoint conn)))
             (is (:relationship-types-uri (:endpoint conn)))))))
-
+    
     (deftest ^{:http-auth true} test-connection-and-discovery-with-provided-http-credentials
       (let   [conn (neorest/connect "http://neo4j-proxy.local/db/data/" "neocons" "SEcRe7")]
+        (is (= (-> conn :http-auth :basic-auth) ["neocons" "SEcRe7"]))
         (is (:version                (:endpoint conn)))
         (is (:node-uri               (:endpoint conn)))
         (is (:batch-uri              (:endpoint conn)))
         (is (:relationship-types-uri (:endpoint conn)))))
-
-    (let  [conn  (neorest/connect "http://localhost:7474/db/data/" "neocons" "SEcRe7")]
+    
+    (let  [conn  (neorest/connect "http://neocons:SEcRe7@neo4j-proxy.local/db/data/")]
       (deftest ^{:http-auth true} test-creating-and-immediately-accessing-a-node-without-properties-with-http-auth
         (let [created-node (nodes/create conn)
               fetched-node (nodes/get conn (:id created-node))]
           (is (= (:id created-node) (:id fetched-node)))))
-
+      
       (deftest ^{:http-auth true} test-creating-and-immediately-accessing-a-node-with-properties-with-http-auth
         (let [data         { :key "value" }
               created-node (nodes/create conn data)

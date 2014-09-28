@@ -80,8 +80,9 @@
 (defn connect
   "Connects to given Neo4J REST API endpoint and performs service discovery"
   ([^String uri]
-     (let [login    (env-var "NEO4J_LOGIN")
-           password (env-var "NEO4J_PASSWORD")]
+     (let [[login password] (http/parse-user-info (:user-info (http/parse-url uri)))
+           login    (or login    (env-var "NEO4J_LOGIN"))
+           password (or password (env-var "NEO4J_PASSWORD"))]
        (connect uri login password)))
   ([^String uri login password]
      (let [basic-auth              (if (and login password)
@@ -92,7 +93,7 @@
                                         uri)]
        (if (success? status)
          (let [payload    (json/decode body true)
-               http-auth  (:basic-auth basic-auth)
+               http-auth  basic-auth
                endpoint   (Neo4JEndpoint. (:neo4j_version      payload)
                                           (:node               payload)
                                           (str uri (if (.endsWith uri "/")
