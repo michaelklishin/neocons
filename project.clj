@@ -5,7 +5,7 @@
   :min-lein-version "2.5.0"
   :dependencies [[org.clojure/clojure  "1.6.0"]
                  [cheshire             "5.3.1"]
-                 [clj-http             "0.9.1"]
+                 [clj-http             "1.0.0"]
                  [clojurewerkz/support "1.1.0"]
                  [clojurewerkz/urly    "2.0.0-alpha5"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
@@ -28,7 +28,8 @@
                                                (:indexing m)))
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
-  :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
+  :profiles       {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]
+                                        [clj-http "0.9.1"]]}
                    :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
                    :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
                    :dev {:plugins [[codox "0.8.10"]]
