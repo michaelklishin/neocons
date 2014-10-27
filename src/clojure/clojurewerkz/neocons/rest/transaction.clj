@@ -23,14 +23,19 @@
   {:commit commit :location location :expires expires})
 
 (defn statement
+  "Populates a Cypher statement to be sent as part of a transaction."
   ([^String query]
      {:query query :parameters nil})
   ([^String query parameters]
-     {:query query :parameters parameters}))
+     {:query query :parameters parameters})
+  ([^String query parameters result-data-contents]
+     {:query query :parameters parameters :result-data-contents result-data-contents}))
 
 (defn tx-statement-from
-  [m]
-  {:statement (:query m) :parameters (:parameters m)})
+  [{:keys [query parameters result-data-contents] :as m}]
+  (into {:statement query :parameters parameters}
+        (when (contains? m :result-data-contents)
+          {:resultDataContents result-data-contents})))
 
 (defn tx-payload-from
   [xs]
@@ -60,9 +65,9 @@
   (let [[status headers payload]          (make-request conn xs uri)]
     (when-not (missing? status)
       [(instantiate-transaction
-         (:commit payload)
-         (:location transaction)
-         (get-in payload [:transaction :expires]))
+        (:commit payload)
+        (:location transaction)
+        (get-in payload [:transaction :expires]))
        (make-cypher-responses payload)])))
 
 
@@ -129,9 +134,9 @@
 
   A simple example is given below:
 
-    (tx/in-transaction connection
-      (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Node\"}})
-      (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Another Node\"}}))"
+  (tx/in-transaction connection
+  (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Node\"}})
+  (tx/statement \"CREATE (n {props}) RETURN n\" {:props {:name \"My Another Node\"}}))"
   [^Connection connection & coll]
   (let [uri                          (str (get-in connection [:endpoint :transaction-uri]) "/commit")
         [status headers payload]     (make-request connection coll uri)]
@@ -152,11 +157,11 @@
 
   (let [transaction (tx/begin-tx)]
   (tx/with-transaction
-    connection
-    transaction
-    true
-    (let [[_ result] (tx/execute connection transaction [(tx/statement \"CREATE (n) RETURN ID(n)\")])]
-      (println result))))"
+  connection
+  transaction
+  true
+  (let [[_ result] (tx/execute connection transaction [(tx/statement \"CREATE (n) RETURN ID(n)\")])]
+  (println result))))"
   [^Connection connection transaction commit-on-success? & body]
   `(try
      (let [ret# (do ~@body)]
