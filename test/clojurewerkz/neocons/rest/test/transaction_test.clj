@@ -20,6 +20,13 @@
          (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})
          {:statement "CREATE (n {props}) RETURN n"
           :parameters {:props {:name "My Node"}}}))
+  
+  (deftest test-converting-from-tx-statement-from-with-result-data-contents
+    (are [x y] (= y (tx/tx-statement-from x))
+         (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}} [:graph])
+         {:statement "CREATE (n {props}) RETURN n"
+          :parameters {:props {:name "My Node"}}
+          :resultDataContents [:graph]}))
 
   (deftest test-converting-from-tx-payload-from
     (are [x y] (= y (tx/tx-payload-from x))
