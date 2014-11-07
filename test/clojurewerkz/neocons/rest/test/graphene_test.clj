@@ -20,7 +20,7 @@
 ;; a hosted Neo4j solution. It is excluded from default
 ;; test selector and but it is run on the CI. Run it using
 ;;
-;; GRAPHENE_URL=testneo.sb02.stations.graphenedb.com GRAPHENE_LOGIN=neocons GRAPHENE_PASSWORD=SEcRe7 lein2 test :graphene
+;; GRAPHENE_HOST=testneo.sb02.stations.graphenedb.com GRAPHENE_LOGIN=neocons GRAPHENE_PASSWORD=SEcRe7 lein2 test :graphene
 ;;
 ;; You can create a free GrapheneDB account for testing by signing
 ;; up for the service here: http://www.graphenedb.com/
@@ -32,10 +32,10 @@
 
 
 (def GRAPHENE-HTTP-URL (str "http://"
-                            (env-var "GRAPHENE_URL")
+                            (env-var "GRAPHENE_HOST")
                             ":24789/db/data/"))
 (def GRAPHENE-HTTPS-URL (str "https://"
-                            (env-var "GRAPHENE_URL")
+                            (env-var "GRAPHENE_HOST")
                             ":24780/db/data/"))
 
 
