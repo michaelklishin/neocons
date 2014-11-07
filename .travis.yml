@@ -1,9 +1,14 @@
 language: clojure
 lein: lein2
 before_install:
-  - ./bin/ci/start_neo4j_server.sh
-script: lein2 all test
+- "./bin/ci/start_neo4j_server.sh"
+script: lein2 test :graphene
 jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
+- openjdk7
+- oraclejdk7
+- oraclejdk8
+env:
+  global:
+  - secure: OXYqvYhvBxi9iRWE8DVtnGmdM+80C0b37AJZWv/FDCNN9UcNNrsaTbKGaqiM0ZlqXu9EKY5+Wqgrw2YRfP7Vk3S7k/Y54JKXj8h1pQkHeScjmKNlxoyLfgyKiEV+5dBx1H+Cx08fAG4RZcHhIKsWBzB2IHJpOEKQ6MXiFRbY5fI=
+  - secure: YJqq7iYjjyeAIzi/t5CJNHS9P/E3uKwNlEj81apNnnIOXasf7agC3efNlydpf+o9GVsaR8fWrboHs0EFj+5dAxdBOI26c6ZcAVx3+ey6kedibzsUi1SVYYTTHwgW4sPSobYe8D7+lx/xjZtzePUlWOE8xYc0l30LAmRJ5rQL1hk=
+  - secure: UA3obs4DGQXEQrTbbIP48n27dEYOrC2oyTrkcP1/cJTbiMSMhkYGROA7wEnAvQl9qp9xeNd5Rz/RmL/5wMAGv+Y4KmtzOHK8IGH3rJ2U+KfWAU9JVv/30Z4ZuPV3uYlw9OKj+ezQH1ZS6yyEVqhmh4XrbuovWuSOmTfsclw4tBU=

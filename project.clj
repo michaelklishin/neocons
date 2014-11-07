@@ -11,11 +11,17 @@
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
+                                                (not (:graphene m))
+                                                (not (:spatial m))))
+                   :travis         (fn [m] (and (not (:time-consuming m))
+                                                (not (:http-auth m))
+                                                (not (:edge-features m))
                                                 (not (:spatial m))))
                    :time-consuming :time-consuming
                    :focus          :focus
                    :indexing       :indexing
                    :cypher         :cypher
+                   :graphene       :graphene
                    :http-auth      :http-auth
                    :spatial        :spatial
                    ;; as in, bleeding edge Neo4J Server
