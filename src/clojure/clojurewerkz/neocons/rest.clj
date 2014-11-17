@@ -18,6 +18,12 @@
 ;;
 ;; Implementation
 ;;
+
+(def ^:const VERSION "3.1.0-beta3")
+
+(def USER-AGENT {:headers
+                 {"User-Agent" (str "neocons.clj/" VERSION)}})
+
 (defrecord Neo4JEndpoint
     [version
      node-uri
@@ -89,7 +95,7 @@
                                      {:basic-auth [login password]}
                                      {})
            {:keys [status body]}   (GET (map->Connection
-                                         {:http-auth basic-auth :options {}})
+                                         {:http-auth basic-auth :options USER-AGENT})
                                         uri)]
        (if (success? status)
          (let [payload    (json/decode body true)
@@ -111,5 +117,5 @@
                                           (:transaction        payload))]
            (map->Connection
             {:endpoint  endpoint
-             :options   {}
+             :options   USER-AGENT
              :http-auth http-auth}))))))
