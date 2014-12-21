@@ -23,7 +23,7 @@
                                         :body (json/encode {:password old-password
                                                             :new_password new-password}))]
     (when (success? status)
-      (println (get (json/decode body) "authorization_token")))))
+      (get (json/decode body) "authorization_token"))))
 
 (def cli-options
   [["-d" "--uri URI" "Neo4j URI"
@@ -70,6 +70,11 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-    (println (get-token (:uri options)
-                        (:user options)
-                        (:password options)))))
+    (if (:new-password options)
+      (println (change-password (:uri options)
+                          (:user options)
+                          (:password options)
+                          (:new-password options)))
+      (println (get-token (:uri options)
+                          (:user options)
+                          (:password options))))))
