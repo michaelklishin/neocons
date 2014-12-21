@@ -4,6 +4,7 @@
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.5.0"
   :dependencies [[org.clojure/clojure  "1.6.0"]
+                 [org.clojure/tools.cli "0.3.1"]
                  [cheshire             "5.3.1"]
                  [clj-http             "1.0.0"]
                  [clojurewerkz/support "1.1.0"]

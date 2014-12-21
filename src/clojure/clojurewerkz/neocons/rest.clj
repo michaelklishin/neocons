@@ -11,7 +11,9 @@
 (ns clojurewerkz.neocons.rest
   (:import  java.net.URI)
   (:require [clj-http.client   :as http]
+            [clj-http.util     :as util]
             [cheshire.custom   :as json]
+            [clojure.string :refer [blank?]]
             [clojurewerkz.support.http.statuses :refer :all]
             [clojurewerkz.neocons.rest.helpers :refer [maybe-append]]))
 
@@ -71,29 +73,14 @@
   (io!
    (http/delete uri (get-options connection options))))
 
-;;
-;; API
-;;
 
-
-
-(defn connect
-  "Connects to given Neo4J REST API endpoint and performs service discovery"
-  ([^String uri]
-     (let [[login password] (http/parse-user-info (:user-info (http/parse-url uri)))
-           login    (or login    (env-var "NEO4J_LOGIN"))
-           password (or password (env-var "NEO4J_PASSWORD"))]
-       (connect uri login password)))
-  ([^String uri login password]
-     (let [basic-auth              (if (and login password)
-                                     {:basic-auth [login password]}
-                                     {})
-           {:keys [status body]}   (GET (map->Connection
-                                         {:http-auth basic-auth :options {}})
-                                        uri)]
-       (if (success? status)
+(defn- process-connect
+  [^String uri http-auth options]
+  (let  [{:keys [status body]}   (GET (map->Connection
+                                       {:options options :http-auth http-auth})
+                                      uri)]
+    (if (success? status)
          (let [payload    (json/decode body true)
-               http-auth  basic-auth
                endpoint   (Neo4JEndpoint. (:neo4j_version      payload)
                                           (:node               payload)
                                           (str uri (if (.endsWith uri "/")
@@ -111,5 +98,31 @@
                                           (:transaction        payload))]
            (map->Connection
             {:endpoint  endpoint
-             :options   {}
-             :http-auth http-auth}))))))
+             :options   options
+             :http-auth http-auth})))))
+
+
+;;
+;; API
+;;
+
+
+(defn connect
+  "Connects to given Neo4J REST API endpoint and performs service discovery"
+  ([^String uri]
+     (let [[login password] (http/parse-user-info (:user-info (http/parse-url uri)))
+           login    (or login    (env-var "NEO4J_LOGIN"))
+           password (or password (env-var "NEO4J_PASSWORD"))
+           token    (env-var "NEO4J_AUTH_TOKEN")]
+       (if (blank? token)
+         (connect uri login password)
+         (connect uri token))))
+  ([^String uri token]
+   (let   [encoded-token  (util/base64-encode (util/utf8-bytes (str ":" token)))
+           auth           {"authorization" (str "Basic realm=\"Neo4j\" " encoded-token)}]
+     (process-connect uri {} {:headers auth})))
+  ([^String uri login password]
+     (let [basic-auth              (if (and login password)
+                                     {:basic-auth [login password]}
+                                     {})]
+       (process-connect uri basic-auth {}))))
