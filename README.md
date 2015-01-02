@@ -144,7 +144,7 @@ a pull request on Github.
 
 ## License
 
-Copyright (C) 2011-2014 Michael S. Klishin, Alex Petrov
+Copyright (C) 2011-2015 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
 
 Double licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html) (the same as Clojure) or
 the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
