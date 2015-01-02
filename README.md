@@ -91,7 +91,7 @@ CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 ## Supported Clojure Versions
 
-Neocons requires Clojure 1.4+.
+Neocons requires Clojure 1.6+.
 The most recent stable Clojure release is highly recommended.
 
 
