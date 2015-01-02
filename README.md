@@ -161,5 +161,5 @@ authors strongly prefer business-friendly licenses and Clojure community commitm
 Neocons namespace structure leave the door open for future Neo4J Server features like the binary protocol but it
 is highly unlikely that it will ever cover embedding, should Neo4J license stay GPL forever.
 
-If you need a solid well-maintained EPLv1-licensed embeddable graph database for Clojure 1.3.0 and later, please
+If you need a solid well-maintained EPLv1-licensed embeddable graph database for Clojure, please
 take a look at [Titanium](http://titanium.clojurewerkz.org) and [Jiraph](https://github.com/flatland/jiraph).
