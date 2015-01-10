@@ -2,7 +2,7 @@
   :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API"
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
-  :min-lein-version "2.5.0"
+  :min-lein-version "2.5.1"
   :dependencies [[org.clojure/clojure  "1.6.0"]
                  [cheshire             "5.4.0"]
                  [clj-http             "1.0.1"]
