@@ -41,9 +41,12 @@
       (is (= 2 (count data)))
       (is (= ["john" "fof"] columns))
       (is (same-node? john (first row1)))
-      (is (same-node? maria (last row1)))
+      (is (or (same-node? maria (last row1))
+              (same-node? steve (last row1))))
       (is (same-node? john (first row2)))
-      (is (same-node? steve (last row2)))))
+      (is (or (same-node? maria (last row2))
+              (same-node? steve (last row2))))
+      (is (not (same-node? (last row2) (last row1))))))
 
   (deftest ^{:cypher true} test-cypher-query-example2
     (let [john  (nodes/create conn {:name "John"})
