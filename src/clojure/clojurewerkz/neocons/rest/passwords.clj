@@ -1,4 +1,4 @@
-(ns clojurewerkz.neocons.rest.password
+(ns clojurewerkz.neocons.rest.passwords
   (:require [cheshire.core             :as json]
             [clojurewerkz.neocons.rest :as nr]
             [clojurewerkz.support.http.statuses :refer [success?]])
