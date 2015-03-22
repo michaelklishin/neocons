@@ -8,3 +8,4 @@ doc/*
 deploy.docs.sh
 .lein-*
 target/*
+.nrepl-*
