@@ -9,3 +9,5 @@ deploy.docs.sh
 .lein-*
 target/*
 .nrepl-*
+.idea
+*.iml
