@@ -1,6 +1,5 @@
 (ns clojurewerkz.neocons.rest.records
   (:require clojurewerkz.neocons.rest
-            [clojurewerkz.urly.core :as u]
             [clojure.string :as s]
             [clojurewerkz.neocons.rest.helpers  :refer :all]
             [clojurewerkz.neocons.rest.conversion :refer [to-id]])
@@ -30,10 +29,15 @@
   [^String s]
   (.replaceAll s "/" "%2F"))
 
+
+(defn ^String encode-path
+  "Escapes input as URI path"
+  [^String s]
+  (.replace (URLEncoder/encode s) "+" "%20"))
+
 (defn ^String encode-segment
   [^String s]
-  (encode-slashes (u/encode-path s)))
-
+  (encode-slashes (encode-path s)))
 
 
 (defn ^String url-with-path
