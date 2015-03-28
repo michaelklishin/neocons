@@ -1,5 +1,26 @@
 ## Changes between Neocons 3.0.0 and 3.1.0
 
+### Neo4J 2.2: Ability to Change Password
+
+`clojurewerkz.neocons.rest.password/change-password` is a new function that
+can be used to update user credentials:
+
+``` clojure
+(require 'clojurewerkz.neocons.rest.password :as pwd)
+
+(pwd/change-password uri "joe" "old-pwd" "new-pwd")
+```
+
+Contributed by Rohit Aggarwal.
+
+
+### Urly Dependency Dropped
+
+Neocons no longer depends on Urly, a deprecated ClojureWerkz library.
+
+Contributed by Ricardo J. Mendez.
+
+
 ### clj-http Upgrade
 
 clj-http dependency has been updated to `1.0.1`.
