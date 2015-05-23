@@ -23,7 +23,7 @@
             [clojurewerkz.neocons.rest Connection]
             [clojurewerkz.neocons.rest.records Node Relationship Index]
             clojure.lang.Named)
-  (:refer-clojure :exclude [get find]))
+  (:refer-clojure :exclude [get find update]))
 
 ;;
 ;; Implementation
