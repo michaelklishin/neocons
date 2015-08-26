@@ -11,9 +11,7 @@
 (ns clojurewerkz.neocons.rest.test.basic-http-authentication-test
   (:require [clojurewerkz.neocons.rest :as neorest]
             [clojurewerkz.neocons.rest.nodes :as nodes]
-            [slingshot.slingshot :as slingshot]
-            [clojure.test :refer :all])
-  (:import [slingshot ExceptionInfo]))
+            [clojure.test :refer :all]))
 
 ;; This group of tests assumes you have Nginx or Apache proxy set up at neo4j-proxy.local
 ;; that proxies to whatever Neo4J Server installation you want to use. It is excluded from default

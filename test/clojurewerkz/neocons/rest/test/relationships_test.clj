@@ -127,7 +127,7 @@
       (relationships/delete conn 87238467666)
       (catch Exception e
         (let [d (.getData e)]
-          (is (= (-> d :object :status) 404))))))
+          (is (= (d :status) 404))))))
 
   (deftest test-creating-multiple-relationships-at-once
     (let [from-node    (nodes/create conn)
