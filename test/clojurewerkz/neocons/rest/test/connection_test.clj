@@ -1,4 +1,4 @@
-;; Copyright (c) 2011-2014 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
+;; Copyright (c) 2011-2015 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
 ;; Team
 ;;
 ;; The use and distribution terms for this software are covered by the
