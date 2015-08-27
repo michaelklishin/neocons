@@ -69,14 +69,14 @@ definition to your `pom.xml`:
 
 With Leiningen:
 
-    [clojurewerkz/neocons "3.0.0"]
+    [clojurewerkz/neocons "3.1.0-rc1"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>3.0.0</version>
+      <version>3.1.0-rc1</version>
     </dependency>
 
 
