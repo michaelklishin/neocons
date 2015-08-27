@@ -97,6 +97,10 @@ The most recent stable Clojure release is highly recommended.
 
 ## Supported Neo4J Server Versions
 
+### Neocons 3.1
+
+Neocons `3.1` targets Neo4J Server 2.2.
+
 ### Neocons 3.0
 
 Neocons `3.0` targets Neo4J Server 2.0 and later versions.
