@@ -18,7 +18,7 @@ Neocons currently supports the following features (all via REST API, so [you can
  * Find shortest path or all paths between nodes
  * Predicates over paths, for example, if they include specific nodes/relationships
  * [Cypher queries](http://docs.neo4j.org/chunked/stable/cypher-query-lang.html)
- * Basic HTTP authentication, including [Heroku Neo4J add-on](https://devcenter.heroku.com/articles/neo4j) compatibility
+ * Basic HTTP authentication, including [Heroku GrapheneDB add-on](https://devcenter.heroku.com/articles/graphenedb) compatibility
  * Efficient multi-get via [Cypher queries](http://docs.neo4j.org/chunked/stable/cypher-query-lang.html)
  * Convenience functions for working with relationships and paths
  * Neo4J 2.0 [transactions](http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html)
