@@ -46,7 +46,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 Neocons is not a young project: first released in October 2011, it is over 3
 years old, with active production use from week 1.
 
-It now supports Neo4j 2.0 release and the API is stable. Documentation
+It now supports Neo4j 2.x release and the API is stable. Documentation
 is in good shape, too.
 
 
@@ -69,14 +69,14 @@ definition to your `pom.xml`:
 
 With Leiningen:
 
-    [clojurewerkz/neocons "3.1.0-rc1"]
+    [clojurewerkz/neocons "3.1.0"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>3.1.0-rc1</version>
+      <version>3.1.0</version>
     </dependency>
 
 
