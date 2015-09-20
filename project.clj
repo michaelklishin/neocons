@@ -1,12 +1,12 @@
-(defproject clojurewerkz/neocons "3.1.0-rc2-SNAPSHOT"
+(defproject clojurewerkz/neocons "3.1.0"
   :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API"
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.5.1"
   :dependencies [[org.clojure/clojure  "1.7.0"]
                  [cheshire             "5.5.0"]
-                 [clj-http             "2.0.0"]
-                 [clojurewerkz/support "1.1.0"]]
+                 [clj-http             "2.0.0" :exclusions [org.clojure/clojure]]
+                 [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
