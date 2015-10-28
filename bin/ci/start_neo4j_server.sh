@@ -1,7 +1,7 @@
 #!/bin/sh
 
-VERSION="2.2.5"
-TARBALL="neo4j2.2.tar.gz"
+VERSION="2.3.0"
+TARBALL="neo4j2.3.tar.gz"
 
 cd /tmp
 wget -O $TARBALL "http://dist.neo4j.org/neo4j-community-$VERSION-unix.tar.gz?edition=community&version=$VERSION&distribution=tarball&dlid=2803678"
