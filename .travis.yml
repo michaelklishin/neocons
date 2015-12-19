@@ -4,8 +4,6 @@ before_install:
 - "./bin/ci/start_neo4j_server.sh"
 script: "./bin/ci/test.sh"
 jdk:
-- openjdk7
-- oraclejdk7
 - oraclejdk8
 env:
   global:
