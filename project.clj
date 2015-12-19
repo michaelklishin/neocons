@@ -35,9 +35,8 @@
   :source-paths ["src/clojure"]
   :profiles       {:1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
                    :master {:dependencies [[org.clojure/clojure "1.8.0-master-SNAPSHOT"]]}
-                   :dev {:plugins [[codox "0.8.10"]]
-                         :codox {:sources ["src/clojure"]
-                                 :output-dir "doc/api"}}
+                   :dev {:plugins [[lein-codox "0.9.0"]]
+                         :codox {:source-paths ["src/clojure"]}}
                    ;; this version of clj-http depends on HTTPCore 4.2.x which
                    ;; some projects (e.g. using Spring's RestTemplate) can rely on,
                    ;; so we test for compatibility with it. MK.
