@@ -155,7 +155,7 @@
 
   A simple example is given below:
 
-  (let [transaction (tx/begin-tx)]
+  (let [transaction (tx/begin-tx connection)]
   (tx/with-transaction
   connection
   transaction
