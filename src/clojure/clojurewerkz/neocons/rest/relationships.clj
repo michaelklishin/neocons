@@ -9,7 +9,7 @@
 ;; You must not remove this notice, or any other, from this software.
 
 (ns clojurewerkz.neocons.rest.relationships
-  (:refer-clojure :exclude [get find])
+  (:refer-clojure :exclude [get find update])
   (:require [cheshire.core                     :as json]
             [clojurewerkz.neocons.rest         :as rest]
             [clojurewerkz.neocons.rest.cypher  :as cypher]
