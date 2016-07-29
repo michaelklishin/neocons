@@ -20,7 +20,7 @@
          (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})
          {:statement "CREATE (n {props}) RETURN n"
           :parameters {:props {:name "My Node"}}}))
-  
+
   (deftest test-converting-from-tx-statement-from-with-result-data-contents
     (are [x y] (= y (tx/tx-statement-from x))
          (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}} [:graph])
@@ -51,7 +51,7 @@
            :location
            :expires)
 
-      (is (= (:data result) [{:row [{:name "My Node"}]}]))
+      (is (= (get-in result [:data 0 :row]) [{:name "My Node"}]))
       (is (= (:columns result) ["n"]))
       (is (= (tx/rollback conn transaction) []))))
 
@@ -62,7 +62,7 @@
            :location
            :expires)
 
-      (is (= (:data result) [{:row [{:name "My Node"}]}]))
+      (is (= (get-in result [:data 0 :row]) [{:name "My Node"}]))
       (is (= (:columns result) ["n"]))
 
       (is (= (tx/commit conn transaction) []))))
@@ -74,10 +74,10 @@
            :location
            :expires)
 
-      (is (= (:data result) [{:row [{:name "My Node"}]}]))
+      (is (= (get-in result [:data 0 :row]) [{:name "My Node"}]))
       (is (= (:columns result) ["n"]))
 
-      (let [[result] (tx/commit conn transaction [(tx/statement "CREATE n RETURN id(n)" nil)] )]
+      (let [[result] (tx/commit conn transaction [(tx/statement "CREATE (n) RETURN id(n)" nil)] )]
         (is (= (:columns result) ["id(n)"]))
         (is (= (count (:data result)) 1)))))
 
@@ -88,10 +88,10 @@
            :location
            :expires)
 
-      (is (= (:data result) [{:row [{:name "My Node"}]}]))
+      (is (= (get-in result [:data 0 :row]) [{:name "My Node"}]))
       (is (= (:columns result) ["n"]))
 
-      (let [[a [b]] (tx/execute conn transaction [(tx/statement "CREATE n RETURN id(n)" nil)] )]
+      (let [[a [b]] (tx/execute conn transaction [(tx/statement "CREATE (n) RETURN id(n)" nil)] )]
         (are [x] (not (nil? (x a)))
              :commit
              :location
@@ -108,7 +108,7 @@
            :location
            :expires)
 
-      (is (= (:data result) [{:row [{:name "My Node"}]}]))
+      (is (= (get-in result [:data 0 :row]) [{:name "My Node"}]))
       (is (= (:columns result) ["n"]))
 
       (is (thrown-with-msg? Exception #"Transaction failed and rolled back"
@@ -121,11 +121,14 @@
     (let [result (tx/in-transaction
                   conn
                   (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Node"}})
-                  (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Another Node"}}))]
+                  (tx/statement "CREATE (n {props}) RETURN n" {:props {:name "My Another Node"}}))
+          result (vec result)]
       (is (= (count result) 2))
-      (is (= (:data (first result)) [{:row [{:name "My Node"}]}]))
+      (is (= (get-in result [0 :data 0 :row])
+             [{:name "My Node"}]))
       (is (= (:columns (first result)) ["n"] ))
-      (is (= (:data (second result)) [{:row [{:name "My Another Node"}]}]))
+      (is (= (get-in result [1 :data 0 :row])
+             [{:name "My Another Node"}]))
       (is (= (:columns (second result)) ["n"] ))))
 
   (deftest test-empty-begin-tx
@@ -148,7 +151,7 @@
                        [(tx/statement "CREATE (n {props}) RETURN n"
                                       {:props {:name "My Node"}})])]
           (is (= (count (:data r)) 1))
-          (is (= (:data r) [{:row [{:name "My Node"}]}]))
+          (is (= (get-in r [:data 0 :row]) [{:name "My Node"}]))
           (is (= (:columns r) ["n"]))))))
 
 
@@ -164,7 +167,7 @@
                        [(tx/statement "CREATE (n {props}) RETURN n"
                                       {:props {:name "My Node"}})])]
           (is (= (count (:data r)) 1))
-          (is (= (:data r) [{:row [{:name "My Node"}]}]))
+          (is (= (get-in r [:data 0 :row]) [{:name "My Node"}]))
           (is (= (:columns r) ["n"])))
         (is (= (tx/rollback conn transaction)
                [])))))
@@ -186,7 +189,7 @@
   (deftest test-with-transaction-transaction-failure
     (let [transaction (tx/begin-tx conn)]
       (is (thrown-with-msg?
-           Exception #"InvalidSyntax"
+           Exception #"failed"
            (tx/with-transaction
              conn
              transaction

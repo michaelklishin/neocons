@@ -45,7 +45,7 @@
   (deftest ^{:cypher true} test-creating-a-relationship-between-nodes-via-mutating-cypher
     (let [n1    (nodes/create conn)
           n2    (nodes/create conn)
-          [{r "r"}] (cy/tquery conn "START n1 = node({id1}), n2 = node({id2}) CREATE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
+          [{r "r"}] (cy/tquery conn "START n1 = node({id1}), n2 = node({id2}) CREATE (n1)-[r:knows]->(n2) RETURN r" {:id1 (:id n1)
                                                                                                                          :id2 (:id n2)})
           xs     (rel/all-outgoing-between conn n1 n2 ["knows"])]
       (is (= 1 (count xs)))
@@ -55,9 +55,9 @@
   (deftest ^{:cypher true} test-creating-a-relationship-between-nodes-if-it-does-not-exist
     (let [n1    (nodes/create conn)
           n2    (nodes/create conn)
-          [{r "r"}] (cy/tquery conn "START n1 = node({id1}), n2 = node({id2}) CREATE UNIQUE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
+          [{r "r"}] (cy/tquery conn "START n1 = node({id1}), n2 = node({id2}) CREATE UNIQUE (n1)-[r:knows]->(n2) RETURN r" {:id1 (:id n1)
                                                                                                                                 :id2 (:id n2)})
-          _ (cy/tquery conn "START n1 = node({id1}), n2 = node({id2}) CREATE UNIQUE n1-[r:knows]->n2 RETURN r" {:id1 (:id n1)
+          _ (cy/tquery conn "START n1 = node({id1}), n2 = node({id2}) CREATE UNIQUE (n1)-[r:knows]->(n2) RETURN r" {:id1 (:id n1)
                                                                                                                         :id2 (:id n2)})
           xs     (rel/all-outgoing-between conn n1 n2 ["knows"])]
       (is (= 1 (count xs)))
@@ -72,7 +72,7 @@
           rel2 (rel/create conn john gael :knows)]
       (is (thrown? Exception
                    (nodes/delete conn (:id john))))
-      (is (cy/empty? (cy/query conn "START n = node({sid}) MATCH n-[r]-() DELETE n, r" {:sid (:id john)})))
+      (is (cy/empty? (cy/query conn "START n = node({sid}) MATCH (n)-[r]-() DELETE n, r" {:sid (:id john)})))
       (is (missing? conn john))
       (is (exists? conn beth))
       (is (exists? conn gael))))
@@ -81,6 +81,7 @@
     (let [urls     ["http://clojurewerkz.org/"
                     "http://clojurewerkz.org/articles/about.html"
                     "http://clojurewerkz.org/articles/community.html"]
-          response (cy/tquery conn "CREATE (n {xs}) RETURN n", {:xs (map #(hash-map :url %) urls)})
+          ;;CREATE (n obj)
+          response (cy/tquery conn "WITH {xs} AS objs UNWIND objs AS obj CREATE (n {url: obj}) RETURN n", {:xs urls})
           returned-urls (map #(-> (get % "n") :data :url) response)]
       (is (= urls returned-urls)))))
