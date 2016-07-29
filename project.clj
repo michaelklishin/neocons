@@ -1,12 +1,13 @@
 (defproject clojurewerkz/neocons "3.2.0-SNAPSHOT"
-  :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API"
+  :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API. It also supports Bolt protocol."
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.5.1"
   :dependencies [[org.clojure/clojure  "1.7.0"]
                  [cheshire             "5.5.0"]
                  [clj-http             "2.0.0" :exclusions [org.clojure/clojure]]
-                 [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]]
+                 [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]
+                 [org.neo4j.driver/neo4j-java-driver "1.0.4"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
