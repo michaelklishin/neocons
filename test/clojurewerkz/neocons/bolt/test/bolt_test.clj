@@ -12,7 +12,7 @@
   (:require [clojurewerkz.neocons.bolt :as neobolt]
             [clojure.test :refer :all])
   (:import (java.util Map)
-           (org.neo4j.driver.v1 Driver Session)))
+           (org.neo4j.driver.v1 Driver Session Transaction)))
 
 (deftest test-connection
   (with-open [driver (neobolt/connect "bolt://localhost")]
@@ -28,3 +28,31 @@
     (with-open [session (neobolt/create-session driver)]
       (let [res   (neobolt/query session "CREATE (n {name: {name}}) RETURN n.name AS name;" {"name" "Arthur"})]
         (is (= res [{"name" "Arthur"}]))))))
+
+(deftest test-transaction-successful
+  (with-open [driver (neobolt/connect "bolt://localhost")]
+    (with-open [session (neobolt/create-session driver)]
+      (let [n  (str (gensym "alicesuccess"))]
+        (with-open [tx (neobolt/begin-tx session)]
+          (is (instance? Transaction tx))
+          (is (= [{"name" n}]
+                 (neobolt/query tx "CREATE (n:Person {name: {name}}) RETURN n.name AS name;"
+                                {"name" n})))
+          (neobolt/tx-successful tx))
+        (let [res  (neobolt/query session "MATCH (n:Person {name: {name}}) RETURN n.name AS name"
+                                  {"name" n})]
+          (is (pos? (count res))))))))
+
+(deftest test-transaction-successful
+  (with-open [driver (neobolt/connect "bolt://localhost")]
+    (with-open [session (neobolt/create-session driver)]
+      (let [n  (str (gensym "bobfail"))]
+        (with-open [tx (neobolt/begin-tx session)]
+          (is (instance? Transaction tx))
+          (is (= [{"name" n}]
+                 (neobolt/query tx "CREATE (n:Person {name: {name}}) RETURN n.name AS name;"
+                                {"name" n})))
+          (neobolt/tx-failure tx))
+        (let [res  (neobolt/query session "MATCH (n:Person {name: {name}}) RETURN n.name AS name"
+                                  {"name" n})]
+          (is (zero? (count res))))))))

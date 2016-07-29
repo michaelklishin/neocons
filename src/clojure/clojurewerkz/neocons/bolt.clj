@@ -13,7 +13,8 @@
   (:import (java.util Map)
            (org.neo4j.driver.v1 AuthTokens Config Driver
                                 GraphDatabase Record Session
-                                StatementResult Values)))
+                                StatementResult StatementRunner
+                                Transaction Values)))
 
 (defn- env-var
   [^String s]
@@ -37,9 +38,21 @@
   (.session driver))
 
 (defn query
-  ([^Session session ^String qry]
-   (query session qry {}))
-  ([^Session session ^String qry ^Map params]
+  ([^StatementRunner runner ^String qry]
+   (query runner qry {}))
+  ([^StatementRunner runner ^String qry ^Map params]
    (map (fn [^Record r]
           (into {} (.asMap r)))
-        (iterator-seq (.run session qry params)))))
+        (iterator-seq (.run runner qry params)))))
+
+(defn begin-tx
+  ^Transaction [^Session session]
+  (.beginTransaction session))
+
+(defn tx-successful
+  [^Transaction transaction]
+  (.success transaction))
+
+(defn tx-failure
+  [^Transaction transaction]
+  (.failure transaction))
