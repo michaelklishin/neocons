@@ -3,11 +3,11 @@
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.5.1"
-  :dependencies [[org.clojure/clojure  "1.7.0"]
-                 [cheshire             "5.5.0"]
-                 [clj-http             "2.0.0" :exclusions [org.clojure/clojure]]
+  :dependencies [[org.clojure/clojure  "1.8.0"]
+                 [cheshire             "5.6.3"]
+                 [clj-http             "3.3.0" :exclusions [org.clojure/clojure]]
                  [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]
-                 [org.neo4j.driver/neo4j-java-driver "1.0.4"]]
+                 [org.neo4j.driver/neo4j-java-driver "1.0.6"]]
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
@@ -35,7 +35,7 @@
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
-                   :1.8 {:dependencies [[org.clojure/clojure "1.8.0-RC4"]]}
+                   :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
                    :master {:dependencies [[org.clojure/clojure "1.8.0-master-SNAPSHOT"]]}
                    :dev {:plugins [[lein-codox "0.9.0"]]
                          :codox {:source-paths ["src/clojure"]}}
