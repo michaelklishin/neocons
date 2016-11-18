@@ -34,8 +34,7 @@
                                                (:indexing m)))
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
-  :profiles       {:1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
-                   :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
+  :profiles       {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
                    :master {:dependencies [[org.clojure/clojure "1.8.0-master-SNAPSHOT"]]}
                    :dev {:plugins [[lein-codox "0.9.0"]]
                          :codox {:source-paths ["src/clojure"]}}
@@ -45,7 +44,7 @@
                    :cljhttp076 {:dependencies [[clj-http "0.7.6"]]}}
   :codox {:src-dir-uri "https://github.com/michaelklishin/neocons/blob/master/"
           :src-linenum-anchor-prefix "L"}
-  :aliases        {"all" ["with-profile" "dev:dev,1.6:dev,1.8:dev,master:dev,cljhttp076:dev,1.6,cljhttp076"]}
+  :aliases        {"all" ["with-profile" "dev:dev,1.8:dev,master:dev,cljhttp076:dev,cljhttp076"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail :update :always}}
