@@ -5,6 +5,12 @@ Neocons is a feature rich idiomatic [Clojure client for the Neo4J REST API](http
 
 ## Supported Features
 
+Neocons currently supports the following features via the Bolt Protocol:
+
+* [Cypher queries](http://docs.neo4j.org/chunked/stable/cypher-query-lang.html)
+* Sessions
+* Transactions
+
 Neocons currently supports the following features (all via REST API, so [you can use open source Neo4J Server edition for commercial projects](http://neo4j.org/licensing-guide/)):
 
  * Create, read, update and delete nodes
@@ -46,7 +52,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 Neocons is not a young project: first released in October 2011, it is over 3
 years old, with active production use from week 1.
 
-It now supports Neo4j 2.x release and the API is stable. Documentation
+It now supports Neo4j 3.x & 2.x release(s) and the API is stable. Documentation
 is in good shape, too.
 
 
@@ -69,14 +75,14 @@ definition to your `pom.xml`:
 
 With Leiningen:
 
-    [clojurewerkz/neocons "3.1.0"]
+    [clojurewerkz/neocons "3.2.0"]
 
 With Maven:
 
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>neocons</artifactId>
-      <version>3.1.0</version>
+      <version>3.2.0</version>
     </dependency>
 
 
@@ -91,11 +97,15 @@ CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 ## Supported Clojure Versions
 
-Neocons requires Clojure 1.6+.
+Neocons requires Clojure 1.7+.
 The most recent stable Clojure release is highly recommended.
 
 
 ## Supported Neo4J Server Versions
+
+### Neocons 3.2
+
+Neocons `3.2` targets Neo4j Server 3.0.x & 3.1.x,  and includes Neo4j's Bolt Protocol.
 
 ### Neocons 3.1
 
@@ -148,7 +158,7 @@ a pull request on Github.
 
 ## License
 
-Copyright (C) 2011-2016 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
+Copyright (C) 2011-2017 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
 
 Double licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html) (the same as Clojure) or
 the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
