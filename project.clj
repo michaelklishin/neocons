@@ -1,12 +1,14 @@
-(defproject clojurewerkz/neocons "3.2.0-SNAPSHOT"
-  :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API"
+(defproject clojurewerkz/neocons "3.2.0"
+  :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API. It also supports Bolt protocol."
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.5.1"
   :dependencies [[org.clojure/clojure  "1.8.0"]
                  [cheshire             "5.6.3"]
                  [clj-http             "3.3.0" :exclusions [org.clojure/clojure]]
-                 [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]]
+                 [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]
+                 [org.neo4j.driver/neo4j-java-driver "1.0.6"]]
+
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
                                                 (not (:edge-features m))
@@ -34,6 +36,7 @@
                    :all            (constantly true)}
   :source-paths ["src/clojure"]
   :profiles       {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
+
                    :master {:dependencies [[org.clojure/clojure "1.9.0-master-SNAPSHOT"]]}
                    :dev {:plugins [[lein-codox "0.9.0"]]
                          :codox {:source-paths ["src/clojure"]}}
@@ -43,6 +46,7 @@
                    :cljhttp076 {:dependencies [[clj-http "0.7.6"]]}}
   :codox {:src-dir-uri "https://github.com/michaelklishin/neocons/blob/master/"
           :src-linenum-anchor-prefix "L"}
+
   :aliases        {"all" ["with-profile" "dev:dev,1.7:dev,master:dev,cljhttp076"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false

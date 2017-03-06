@@ -35,7 +35,7 @@
           rel2  (rel/create conn john joe :friend)
           rel3  (rel/create conn sarah maria :friend)
           rel4  (rel/create conn joe steve :friend)
-          {:keys [data columns]} (cy/query conn "START john=node({sid}) MATCH john-[:friend]->()-[:friend]->fof RETURN john, fof" {:sid (:id john)})
+          {:keys [data columns]} (cy/query conn "START john=node({sid}) MATCH (john)-[:friend]->()-[:friend]->(fof) RETURN john, fof" {:sid (:id john)})
           row1  (map instantiate-node-from (first  data))
           row2  (map instantiate-node-from (second data))]
       (is (= 2 (count data)))
@@ -52,7 +52,7 @@
     (let [john  (nodes/create conn {:name "John"})
           sarah (nodes/create conn {:name "Sarah"})
           rel1  (rel/create conn john sarah :friend)
-          [row1] (cy/tquery conn "START x = node({sid}) MATCH path = (x--friend) RETURN path, friend.name" {:sid (:id john)})
+          [row1] (cy/tquery conn "START x = node({sid}) MATCH path = (x)--(friend) RETURN path, friend.name" {:sid (:id john)})
           path   (instantiate-path-from (get row1 "path"))]
       (is (paths/included-in? conn john path))
       (is (paths/included-in? conn sarah path))
