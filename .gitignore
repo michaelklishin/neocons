@@ -11,3 +11,4 @@ target/*
 .nrepl-*
 .idea
 *.iml
+.DS_Store
