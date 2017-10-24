@@ -24,7 +24,7 @@
   (deftest test-creating-multiple-label
     (let [n (nodes/create conn)]
       (labels/add conn n [:MyLabel :MyOtherLabel])
-      (is (= (labels/get-all-labels conn n) [:MyLabel :MyOtherLabel]))))
+      (is (= (set (labels/get-all-labels conn n)) #{:MyLabel :MyOtherLabel}))))
 
   (deftest test-creating-invalid-label
     (let [n (nodes/create conn)]
@@ -35,7 +35,7 @@
     (let [n (nodes/create conn)]
       (labels/add conn n :MyLabel)
       (labels/replace conn n [:MyOtherLabel :MyThirdLabel])
-      (is (= (labels/get-all-labels conn n) [:MyOtherLabel :MyThirdLabel]))))
+      (is (= (set (labels/get-all-labels conn n)) #{:MyOtherLabel :MyThirdLabel}))))
 
   (deftest test-deleting-label
     (let [n (nodes/create conn)]
