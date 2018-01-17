@@ -5,8 +5,8 @@ script: "lein test :default"
 jdk:
 - oraclejdk8
 env:
-  - NEO4J_LOGIN=neo4j NEO4J_PASSWORD=qwerty
   global:
+  - NEO4J_LOGIN=neo4j NEO4J_PASSWORD=qwerty
   - secure: OXYqvYhvBxi9iRWE8DVtnGmdM+80C0b37AJZWv/FDCNN9UcNNrsaTbKGaqiM0ZlqXu9EKY5+Wqgrw2YRfP7Vk3S7k/Y54JKXj8h1pQkHeScjmKNlxoyLfgyKiEV+5dBx1H+Cx08fAG4RZcHhIKsWBzB2IHJpOEKQ6MXiFRbY5fI=
   - secure: YJqq7iYjjyeAIzi/t5CJNHS9P/E3uKwNlEj81apNnnIOXasf7agC3efNlydpf+o9GVsaR8fWrboHs0EFj+5dAxdBOI26c6ZcAVx3+ey6kedibzsUi1SVYYTTHwgW4sPSobYe8D7+lx/xjZtzePUlWOE8xYc0l30LAmRJ5rQL1hk=
   - secure: hlT6ceiUWlxfwIlQ2RPYGrZg6+oflOH+TxsSfA2u5bSiGEzcRIjUV9XYEtJQps9zz6lhgN+f+scvnyhXV5xhkifSdjUSlcGCOz0lpRorK5Pya0x0LvSlsLm3qnjGr4CAHTAprfIArknyMf7lCKQVtAL5yzDMBz4k/qKoUD+rSKs=
