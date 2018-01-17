@@ -1,3 +1,19 @@
+## Changes between Neocons 3.2.0 and 3.2.1
+
+No changes yet.
+
+
+## Changes between Neocons 3.1.0 and 3.2.0 (Jan 18th, 2018)
+
+### Neo4J Bolt Protocol Support
+
+GitHub issue: [#89](https://github.com/michaelklishin/neocons/pull/89)
+
+### Neo4J 3.2 Support
+
+Neocons now supports Neo4J Server 3.2.
+
+
 ## Changes between Neocons 3.0.0 and 3.1.0
 
 ### Neo4J 2.2: Ability to Change Password
