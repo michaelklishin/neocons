@@ -9,12 +9,13 @@
 ;; You must not remove this notice, or any other, from this software.
 
 (ns clojurewerkz.neocons.bolt
-  (:require [clojure.string :as string])
+  (:require [clojure.string :as string]
+            [taoensso.timbre :as log])
   (:import (java.util Map)
            (org.neo4j.driver.v1 AuthTokens Config Driver
                                 GraphDatabase Record Session
                                 StatementResult StatementRunner
-                                Transaction Values)))
+                                Transaction TransactionWork Values)))
 
 (defn- env-var
   [^String s]
@@ -48,6 +49,11 @@
 (defn begin-tx
   ^Transaction [^Session session]
   (.beginTransaction session))
+
+(defn run-tx
+  [^Transaction transaction ^String qry ^Map params]
+  (map (fn [^Record r] (into {} (.asMap r)))
+     (iterator-seq (.run transaction qry params))))
 
 (defn tx-successful
   [^Transaction transaction]

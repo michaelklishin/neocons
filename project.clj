@@ -3,11 +3,12 @@
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
   :min-lein-version "2.5.1"
-  :dependencies [[org.clojure/clojure  "1.9.0-beta1"]
+  :dependencies [[org.clojure/clojure  "1.9.0"]
                  [cheshire             "5.8.0"]
                  [clj-http             "3.7.0" :exclusions [org.clojure/clojure]]
                  [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]
-                 [org.neo4j.driver/neo4j-java-driver "1.4.4"]]
+                 [com.taoensso/timbre "4.10.0"]
+                 [org.neo4j.driver/neo4j-java-driver "1.5.0"]]
 
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))
                                                 (not (:http-auth m))
