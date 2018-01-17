@@ -49,8 +49,8 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: first released in October 2011, it is over 3
-years old, with active production use from week 1.
+Neocons is not a young project: first released in October 2011, it's been
+in production use from week 1.
 
 It now supports Neo4j 3.x & 2.x release(s) and the API is stable. Documentation
 is in good shape, too.
@@ -167,7 +167,7 @@ and pass the default credentials to lein on the command line
 
 ## License
 
-Copyright (C) 2011-2017 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
+Copyright (C) 2011-2018 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
 
 Double licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html) (the same as Clojure) or
 the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
