@@ -7,7 +7,6 @@
                  [cheshire             "5.8.0"]
                  [clj-http             "3.7.0" :exclusions [org.clojure/clojure]]
                  [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava]]
-                 [com.taoensso/timbre "4.10.0"]
                  [org.neo4j.driver/neo4j-java-driver "1.5.0"]]
 
   :test-selectors {:default        (fn [m] (and (not (:time-consuming m))

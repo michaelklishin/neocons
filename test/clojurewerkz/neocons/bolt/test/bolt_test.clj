@@ -43,7 +43,7 @@
                                   {"name" n})]
           (is (pos? (count res))))))))
 
-(deftest test-transaction-successful
+(deftest test-transaction-failure
   (with-open [driver (neobolt/connect "bolt://localhost")]
     (with-open [session (neobolt/create-session driver)]
       (let [n  (str (gensym "bobfail"))]

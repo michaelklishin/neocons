@@ -1,4 +1,4 @@
-;; Copyright (c) 2011-2015 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
+;; Copyright (c) 2011-2018 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
 ;; Team
 ;;
 ;; The use and distribution terms for this software are covered by the
@@ -9,8 +9,7 @@
 ;; You must not remove this notice, or any other, from this software.
 
 (ns clojurewerkz.neocons.bolt
-  (:require [clojure.string :as string]
-            [taoensso.timbre :as log])
+  (:require [clojure.string :as string])
   (:import (java.util Map)
            (org.neo4j.driver.v1 AuthTokens Config Driver
                                 GraphDatabase Record Session
