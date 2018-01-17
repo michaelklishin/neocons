@@ -1,4 +1,4 @@
-(defproject clojurewerkz/neocons "3.2.0"
+(defproject clojurewerkz/neocons "3.3.0-SNAPSHOT"
   :description "Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API. It also supports Bolt protocol."
   :url "http://clojureneo4j.info"
   :license {:name "Eclipse Public License"}
