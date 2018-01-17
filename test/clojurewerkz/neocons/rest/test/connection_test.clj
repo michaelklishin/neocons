@@ -26,3 +26,11 @@
     (is (:node-uri               endpoint))
     (is (:batch-uri              endpoint))
     (is (:relationship-types-uri endpoint))))
+
+(deftest test-passing-clj-http-options-to-connect
+  (let [connection (neorest/connect "http://localhost:7474/db/data"
+                                    (get (System/getenv) "NEO4J_LOGIN")
+                                    (get (System/getenv) "NEO4J_PASSWORD")
+                                    {:save-request? true})]
+    (is (:endpoint connection))
+    (is (get-in connection [:options :save-request?]))))

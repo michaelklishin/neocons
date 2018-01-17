@@ -91,11 +91,14 @@
            password (or password (env-var "NEO4J_PASSWORD"))]
        (connect uri login password)))
   ([^String uri login password]
+   (connect uri login password {}))
+  ([^String uri login password options]
      (let [basic-auth              (if (and login password)
                                      {:basic-auth [login password]}
                                      {})
+           options                   (merge-with merge options USER-AGENT)
            {:keys [status body]}   (GET (map->Connection
-                                         {:http-auth basic-auth :options USER-AGENT})
+                                         {:http-auth basic-auth :options options})
                                         uri)]
        (if (success? status)
          (let [payload    (json/decode body true)
@@ -117,5 +120,5 @@
                                           (:transaction        payload))]
            (map->Connection
             {:endpoint  endpoint
-             :options   USER-AGENT
+             :options   options
              :http-auth http-auth}))))))
