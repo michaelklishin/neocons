@@ -1,10 +1,11 @@
 language: clojure
 before_install:
 - "./bin/ci/start_neo4j_server.sh"
-script: "./bin/ci/test.sh"
+script: "lein test :default"
 jdk:
 - oraclejdk8
 env:
+  - NEO4J_LOGIN=neo4j NEO4J_PASSWORD=qwerty
   global:
   - secure: OXYqvYhvBxi9iRWE8DVtnGmdM+80C0b37AJZWv/FDCNN9UcNNrsaTbKGaqiM0ZlqXu9EKY5+Wqgrw2YRfP7Vk3S7k/Y54JKXj8h1pQkHeScjmKNlxoyLfgyKiEV+5dBx1H+Cx08fAG4RZcHhIKsWBzB2IHJpOEKQ6MXiFRbY5fI=
   - secure: YJqq7iYjjyeAIzi/t5CJNHS9P/E3uKwNlEj81apNnnIOXasf7agC3efNlydpf+o9GVsaR8fWrboHs0EFj+5dAxdBOI26c6ZcAVx3+ey6kedibzsUi1SVYYTTHwgW4sPSobYe8D7+lx/xjZtzePUlWOE8xYc0l30LAmRJ5rQL1hk=
