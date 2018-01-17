@@ -1,7 +1,8 @@
 language: clojure
 before_install:
 - "./bin/ci/start_neo4j_server.sh"
-script: "lein test :default"
+before_script: "./bin/ci/before_script.sh"
+script: "./bin/ci/script.sh"
 jdk:
 - oraclejdk8
 env:
