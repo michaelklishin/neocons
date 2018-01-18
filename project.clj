@@ -43,7 +43,9 @@
   :codox {:src-dir-uri "https://github.com/michaelklishin/neocons/blob/master/"
           :src-linenum-anchor-prefix "L"}
 
+
   :aliases        {"all" ["with-profile" "dev:dev,1.8:dev,master"]}
+
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail :update :always}}

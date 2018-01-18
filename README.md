@@ -75,7 +75,7 @@ definition to your `pom.xml`:
 
 With Leiningen:
 
-    [clojurewerkz/neocons "3.2.0"]
+    [tuddman/neocons "3.2.1-SNAPSHOT"]
 
 With Maven:
 
@@ -97,8 +97,8 @@ CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 ## Supported Clojure Versions
 
-Neocons requires Clojure 1.7+.
-The most recent stable Clojure release is highly recommended.
+Neocons requires Clojure 1.8+.
+The most recent stable Clojure release (1.9) is highly recommended.
 
 
 ## Supported Neo4J Server Versions

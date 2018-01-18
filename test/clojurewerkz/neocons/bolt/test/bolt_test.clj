@@ -1,4 +1,4 @@
-;; Copyright (c) 2011-2015 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
+;; Copyright (c) 2011-2018 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
 ;; Team
 ;;
 ;; The use and distribution terms for this software are covered by the
@@ -43,7 +43,7 @@
                                   {"name" n})]
           (is (pos? (count res))))))))
 
-(deftest test-transaction-successful
+(deftest test-transaction-failure
   (with-open [driver (neobolt/connect "bolt://localhost")]
     (with-open [session (neobolt/create-session driver)]
       (let [n  (str (gensym "bobfail"))]

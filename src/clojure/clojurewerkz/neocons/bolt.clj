@@ -1,4 +1,4 @@
-;; Copyright (c) 2011-2015 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
+;; Copyright (c) 2011-2018 Michael S. Klishin, Alex Petrov, and The ClojureWerkz
 ;; Team
 ;;
 ;; The use and distribution terms for this software are covered by the
@@ -14,7 +14,7 @@
            (org.neo4j.driver.v1 AuthTokens Config Driver
                                 GraphDatabase Record Session
                                 StatementResult StatementRunner
-                                Transaction Values)))
+                                Transaction TransactionWork Values)))
 
 (defn- env-var
   [^String s]
@@ -48,6 +48,11 @@
 (defn begin-tx
   ^Transaction [^Session session]
   (.beginTransaction session))
+
+(defn run-tx
+  [^Transaction transaction ^String qry ^Map params]
+  (map (fn [^Record r] (into {} (.asMap r)))
+     (iterator-seq (.run transaction qry params))))
 
 (defn tx-successful
   [^Transaction transaction]
