@@ -1,6 +1,6 @@
 # Neocons, a Clojure client for the Neo4J REST API
 
-Neocons is a feature rich idiomatic [Clojure client for the Neo4J REST API](http://clojureneo4j.info).
+Neocons is a feature rich idiomatic Clojure client for the Neo4J REST API.
 
 
 ## Supported Features
@@ -34,9 +34,9 @@ Neocons currently supports the following features (all via REST API, so [you can
 
 ## Documentation & Examples
 
-To get started and see what using Neocons feels like, please use our [Getting started with Clojure and Neo4J Server](http://clojureneo4j.info/articles/getting_started.html) guide.
+To get started and see what using Neocons feels like, please use our [Getting started with Clojure and Neo4J Server](./docs/guides/getting_started.html) guide.
 
-[Documentation guides](http://clojureneo4j.info) are mostly complete.
+[Documentation guides](./docs/guides/) can be found in the same repository.
 For more examples, see our [test suite](test).
 
 
@@ -49,8 +49,7 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Neocons is not a young project: first released in October 2011, it's been
-in production use from week 1.
+First released in October 2011, it's been in production use from very early on.
 
 It now supports Neo4j 3.x & 2.x release(s) and the API is stable. Documentation
 is in good shape, too.
@@ -84,15 +83,6 @@ With Maven:
       <artifactId>neocons</artifactId>
       <version>3.2.0</version>
     </dependency>
-
-
-
-## Continuous Integration
-
-[![Continuous Integration status](https://secure.travis-ci.org/michaelklishin/neocons.png)](http://travis-ci.org/michaelklishin/neocons)
-
-
-CI is hosted by [travis-ci.org](http://travis-ci.org)
 
 
 ## Supported Clojure Versions
@@ -167,7 +157,7 @@ and pass the default credentials to lein on the command line
 
 ## License
 
-Copyright (C) 2011-2018 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
+Copyright (C) 2011-2024 Michael S. Klishin, Alex Petrov, and the ClojureWerkz team.
 
 Double licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html) (the same as Clojure) or
 the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
