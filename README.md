@@ -34,7 +34,7 @@ Neocons currently supports the following features (all via REST API, so [you can
 
 ## Documentation & Examples
 
-To get started and see what using Neocons feels like, please use our [Getting started with Clojure and Neo4J Server](./docs/guides/getting_started.html) guide.
+To get started and see what using Neocons feels like, please use our [Getting started with Clojure and Neo4J Server](./docs/guides/getting_started.md) guide.
 
 [Documentation guides](./docs/guides/) can be found in the same repository.
 For more examples, see our [test suite](test).
